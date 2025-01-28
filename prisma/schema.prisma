@@ -100,6 +100,7 @@ model transaction {
   purpose         String?
   max_amount      Decimal?
   amount          Decimal           // Transaction amount
+  sabpaisa_txn_id String?   // Use snake_case for the SabPaisa transaction ID
   created_at      DateTime          @default(now())
   updated_at      DateTime          @updatedAt
   user            user?             @relation(fields: [user_id], references: [user_id], name: "user_to_transaction")

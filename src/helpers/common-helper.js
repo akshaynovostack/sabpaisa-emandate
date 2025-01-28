@@ -67,3 +67,34 @@ exports.parseQueryString = (inputData) => {
     }
     return result;
 };
+exports.convertToCamelCase = (obj) => {
+    const toCamel = (s) =>
+        s.replace(/([-_][a-z])/g, (group) =>
+            group.toUpperCase().replace('-', '').replace('_', '')
+        );
+
+    if (obj instanceof Array) {
+        return obj.map((item) => convertToCamelCase(item));
+    }
+
+    if (obj !== null && obj.constructor === Object) {
+        return Object.keys(obj).reduce((acc, key) => {
+            acc[toCamel(key)] = convertToCamelCase(obj[key]);
+            return acc;
+        }, {});
+    }
+
+    return obj;
+};
+exports.jsonToQueryParams = (json) => {
+    const queryParams = Object.keys(json)
+        .map(key => {
+            if (json[key] !== null && json[key] !== undefined) {
+                return `${encodeURIComponent(key)}=${encodeURIComponent(json[key])}`;
+            }
+            return null;
+        })
+        .filter(param => param !== null)
+        .join('&');
+    return queryParams;
+}

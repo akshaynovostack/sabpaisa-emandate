@@ -1,10 +1,10 @@
 const logger = require('../../helpers/logger');
-const { decAESString, parseQueryString, encAESString } = require('../../helpers/common-helper');
+const { decAESString, parseQueryString, encAESString, jsonToQueryParams } = require('../../helpers/common-helper');
 const { createMandate, mandateEnquiry, getMerchantSlab } = require('../../services/mandateService');
 const { v4: uuidv4 } = require('uuid');
 const { saveOrUpdateUser } = require('../../services/userService');
 const { saveOrUpdateMerchant } = require('../../services/merchantService');
-const { saveTransaction, updateTransaction, saveOrUpdateTransaction, getLatestTransactionByUserId } = require('../../services/transactionService');
+const { updateTransaction, saveOrUpdateTransaction, getLatestTransactionByUserId } = require('../../services/transactionService');
 const handleError = require('../../helpers/error-helper');
 const { calculateDates } = require('../../helpers/date-helper');
 const moment = require('moment');
@@ -66,6 +66,8 @@ const handleCreateMandate = async (req, res) => {
         end_date, // End date (calculated)
         purpose: slab.mandate_category || 'NA', // Mandate category or default 'NA'
         max_amount: slab.emi_amount || null, // Maximum transaction amount set as EMI amount
+        sabpaisa_txn_id: parsedData.SPTxnId, // Updated to snake_case
+
       };
     })();
     const transaction = await saveOrUpdateTransaction(transactionData);
@@ -115,6 +117,7 @@ const webHook = async (req, res) => {
 
     // Fetch mandate details
     const enquiryData = await mandateEnquiry(id);
+
     logger.info('Mandate details fetched successfully');
     const { result } = enquiryData;
 
@@ -138,11 +141,12 @@ const webHook = async (req, res) => {
           throw new Error(`No transactions found for user_id: ${user.user_id}`);
         }
 
-        const transaction_id = latestTransaction.transaction_id;
+        const { transaction_id, sabpaisa_txn_id } = latestTransaction;
 
         // Update transaction
         await updateTransaction({
           transaction_id,
+          sabpaisa_txn_id,
           user_id: user.user_id,
           start_date: result.start_date,
           end_date: result.end_date,
@@ -180,32 +184,55 @@ const webHook = async (req, res) => {
     if (!transaction || !user) {
       throw new Error('Unable to fetch transaction or user details.');
     }
+    const merchant = await prisma.merchant.findFirst({
+      where: { merchant_id: transaction.merchant_id },
+      select: { merchant_code: true }, // Assuming `merchant_code` corresponds to `clientCode`
+    });
 
-    // Prepare cumulative data
+    if (!merchant) {
+      throw new Error(`Merchant not found for merchant_id: ${transaction.merchant_id}`);
+    }
+
     const cumulativeData = {
-      transaction_id: transaction.transaction_id,
-      user_id: user.user_id,
-      consumer_id: result.consumer_id,
-      mandate_details: {
-        ...result, // Directly use all fields from result
-      },
-      transaction_details: {
-        amount: transaction.amount,
-        monthly_emi: transaction.monthly_emi,
-        start_date: transaction.start_date,
-        end_date: transaction.end_date,
-        purpose: transaction.purpose,
-        max_amount: transaction.max_amount,
-      },
-      timestamp: new Date().toISOString(),
+      sabpaisaTxnId: transaction.sabpaisa_txn_id || null,
+      clientTxnId: transaction.transaction_id || null,
+      clientCode: merchant.merchant_code || null, // Add clientCode from merchant table
+      mandateStatus: result.registration_status || null,
+      mandateDate: new Date().toISOString(), // Example: current timestamp
+      frequency: result.frequency || null,
+      registrationId: result.registration_id || null,
+      customerName: result.customer_name || null,
+      customerMobile: result.customer_mobile || null,
+      customerEmailId: result.customer_email_id || null,
+      bankCode: result.bank_code || null,
+      accountNumber: result.account_number || null,
+      accountType: result.account_type || null,
+      accountHolderName: result.account_holder_name || null,
+      aadharNumber: result.aadhar_number || null,
+      ifscCode: result.ifsc_code || null,
+      startDate: transaction.start_date || null, // Use transaction start_date
+      endDate: transaction.end_date || null, // Use transaction end_date
+      maxAmount: result.max_amount || null,
+      amountType: result.amount_type || null,
+      pan: result.pan || null,
+      phoneNumber: result.phone_number || null,
+      isActive: result.is_active || null,
+      purpose: transaction.purpose || null, // Use transaction purpose
+      mode: result.mode || null,
+      createdOn: result.created_on || null, // Original field
+      bankStatusMessage: result.bank_status_message || null,
+      vpa: result.vpa || null,
+      bankTransactionId: result.bank_transaction_id || null,
+      bankMandateRegNo: result.bank_mandate_reg_no || null,
+      bankReferenceNumber: result.bank_reference_number || null,
     };
 
     // Encrypt cumulative data
-    const encData = encAESString(JSON.stringify(cumulativeData));
+    const encData = encAESString(jsonToQueryParams(cumulativeData));
     logger.debug(`Encrypted mandate data: ${encData}`);
     // Log decrypted response for validation
-    const decryptedData = JSON.parse(decAESString(encData));
-    logger.info('Decrypted cumulative mandate data:', decryptedData);
+    const decryptedData = decAESString(encData);
+    logger.info(`Decrypted cumulative mandate data:${decryptedData}`);
 
     // Render the mandate details page
     // Remove specific fields

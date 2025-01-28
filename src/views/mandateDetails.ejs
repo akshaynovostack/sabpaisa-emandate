@@ -163,18 +163,41 @@
     <script>
       const progressBar = document.getElementById("progressBar");
       const countdown = document.getElementById("countdown");
-      const redirectUrl = "<%= redirectUrl %>"; // Pass the encoded data URL here
-
+      const redirectUrl = "<%= redirectUrl %>"; // Pass the URL where the form should be posted
+    
       let timeLeft = 10;
-
+    
       const timer = setInterval(() => {
         timeLeft -= 1;
         progressBar.style.width = `${(10 - timeLeft) * 10}%`;
         countdown.textContent = `Redirecting in ${timeLeft} seconds...`;
-
+    
         if (timeLeft === 0) {
           clearInterval(timer);
-          window.open(redirectUrl, "_blank"); // Opens the URL in a new tab
+    
+          // Create a form dynamically
+          const form = document.createElement("form");
+          form.method = "POST";
+          form.action = redirectUrl;
+          form.target = "_blank"; // Open in a new tab
+    
+          // Add input fields to the form (if needed)
+          const params = {
+            status: "Redirected",
+            timestamp: new Date().toISOString(),
+          };
+    
+          for (const [key, value] of Object.entries(params)) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = value;
+            form.appendChild(input);
+          }
+    
+          // Append form to the body and submit it
+          document.body.appendChild(form);
+          form.submit();
         }
       }, 1000);
     </script>

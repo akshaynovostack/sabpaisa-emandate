@@ -97,6 +97,7 @@ const saveOrUpdateTransaction = async (data) => {
           end_date: data.end_date,
           purpose: data.purpose,
           max_amount: data.max_amount,
+          sabpaisa_txn_id: data.sabpaisa_txn_id, // Updated to snake_case
           user: {
             connect: {
               user_id: data.user_id,
@@ -122,6 +123,7 @@ const saveOrUpdateTransaction = async (data) => {
           end_date: data.end_date,
           purpose: data.purpose,
           max_amount: data.max_amount,
+          sabpaisa_txn_id: data.sabpaisa_txn_id, // Updated to snake_case
           user: {
             connect: {
               user_id: data.user_id,
