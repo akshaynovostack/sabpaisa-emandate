@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mandate Registration</title>
+</head>
+<body>
+  <form id="mandateForm" action="<%= formUrl %>" method="POST">
+    <!-- Hidden inputs for all fields -->
+    <input type="hidden" name="consumerReferenceNumber" value="<%= consumerReferenceNumber %>">
+    <input type="hidden" name="mandatePurpose" value="<%= mandatePurpose %>">
+    <input type="hidden" name="mandateEndDate" value="<%= mandateEndDate %>">
+    <input type="hidden" name="payerName" value="<%= payerName %>">
+    <input type="hidden" name="mandateMaxAmount" value="<%= mandateMaxAmount %>">
+    <input type="hidden" name="mandateStartDate" value="<%= mandateStartDate %>">
+    <input type="hidden" name="mandateCategory" value="<%= mandateCategory %>">
+    <input type="hidden" name="payerAccountNumber" value="<%= payerAccountNumber %>">
+    <input type="hidden" name="payerAccountType" value="SAVINGS">
+    <input type="hidden" name="payerBank" value="<%= payerBank %>">
+    <input type="hidden" name="payerEmail" value="<%= payerEmail %>">
+    <input type="hidden" name="payerMobile" value="<%= payerMobile %>">
+    <input type="hidden" name="telephone" value="<%= telephone %>">
+    <input type="hidden" name="payerBankIfscCode" value="<%= payerBankIfscCode %>">
+    <input type="hidden" name="authenticationMode" value="<%= authenticationMode %>">
+    <input type="hidden" name="frequency" value="<%= frequency %>">
+    <input type="hidden" name="npciPaymentBankCode" value="<%= npciPaymentBankCode %>">
+    <input type="hidden" name="schemeReferenceNumber" value="<%= schemeReferenceNumber %>">
+    <input type="hidden" name="emiAmount" value="<%= emiAmount %>">
+    <input type="hidden" name="callbackUrl" value="<%= callbackUrl %>">
+
+    <!-- Authorization headers -->
+    <input type="hidden" name="Authorization" value="<%= authorization %>">
+    <input type="hidden" name="auth-token" value="<%= authToken %>">
+    <button type="submit">Open Mandate Registration Form</button>
+  </form>
+
+
+</body>
+</html>
