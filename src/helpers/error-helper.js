@@ -31,7 +31,18 @@ const handleError = (error) => {
           break;
       }
     } 
-
+    // Handle PrismaClientValidationError (Unknown Argument or Type Error)
+    else if (error.name === 'PrismaClientValidationError') {
+      structuredError.type = 'PrismaValidationError';
+      structuredError.message = 'Database validation error';
+      structuredError.details = error.message;
+      
+      // Extract unknown argument if available
+      const unknownArgumentMatch = error.message.match(/Unknown argument `([^`]+)`/);
+      if (unknownArgumentMatch) {
+        structuredError.details = `Invalid field used: ${unknownArgumentMatch[1]}. Check your database schema.`;
+      }
+    } 
     // Handle Axios errors (API call failures)
     else if (error.isAxiosError) {
       structuredError.type = 'AxiosError';
@@ -44,14 +55,12 @@ const handleError = (error) => {
         response_data: error.response?.data || null,
       };
     } 
-
-    // Handle validation errors
+    // Handle Validation Errors
     else if (error.name === 'ValidationError') {
       structuredError.type = 'ValidationError';
       structuredError.message = 'Validation failed';
       structuredError.details = error.errors || error.message;
     }
-
     // Handle general errors
     else {
       structuredError.message = error.message || structuredError.message;
