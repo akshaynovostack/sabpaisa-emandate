@@ -240,7 +240,7 @@ const webHook = async (req, res) => {
     delete result.created_on;
     delete result.redirect_url;
     console.log(process.env.RETURNURL + '?enachResponse=' + encData)
-    res.render('mandateDetails', { mandate: result, redirectUrl: process.env.RETURNURL, enachResponse: encData });
+    res.render('mandateDetails', { mandate: result, redirectUrl: process.env.RETURNURL, enachResponse: decodeURIComponent(encData) });
   } catch (error) {
     const structuredError = handleError(error);
     logger.error('Error while processing webhook', structuredError);
