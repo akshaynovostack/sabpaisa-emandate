@@ -1,5 +1,5 @@
 const logger = require('../../helpers/logger');
-const { decAESString, parseQueryString, encAESString, jsonToQueryParams } = require('../../helpers/common-helper');
+const { decAESString, parseQueryString, encAESString, jsonToQueryParams, getMandateStatus } = require('../../helpers/common-helper');
 const { createMandate, mandateEnquiry, getMerchantSlab } = require('../../services/mandateService');
 const { v4: uuidv4 } = require('uuid');
 const { saveOrUpdateUser } = require('../../services/userService');
@@ -193,12 +193,11 @@ const webHook = async (req, res) => {
     if (!merchant) {
       throw new Error(`Merchant not found for merchant_id: ${transaction.merchant_id}`);
     }
-
     const cumulativeData = {
       sabpaisaTxnId: transaction.sabpaisa_txn_id || null,
       clientTxnId: transaction.transaction_id || null,
       clientCode: merchant.merchant_code || null, // Add clientCode from merchant table
-      mandateStatus: result.registration_status || null,
+      mandateStatus: result.registration_status ? getMandateStatus(result.registration_status) : null,
       mandateDate: new Date().toISOString(), // Example: current timestamp
       frequency: result.frequency || null,
       registrationId: result.registration_id || null,

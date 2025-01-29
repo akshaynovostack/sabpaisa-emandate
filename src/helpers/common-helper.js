@@ -98,3 +98,16 @@ exports.jsonToQueryParams = (json) => {
         .join('&');
     return queryParams;
 }
+exports.getMandateStatus = (registrationStatus) => {
+    switch (registrationStatus) {
+        case "Pending":
+        case "Initiated":
+            return "PENDING";
+        case "Success":
+            return "CREATED"; // or "SUCCESS" based on your requirement
+        case "Failed":
+            return "FAILED";
+        default:
+            return null; // Handles null or undefined cases
+    }
+}
