@@ -3,6 +3,7 @@ const { handleCreateMandate, webHook } = require('../controllers/mandateControll
 const router = express.Router();
 
 router.get('/create', handleCreateMandate);
+router.post('/create', handleCreateMandate);
 router.get('/web-hook/:id', webHook);
 
 module.exports = router;

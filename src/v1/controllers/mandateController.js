@@ -20,10 +20,11 @@ const handleCreateMandate = async (req, res) => {
     logger.info(`Generated UUID: ${uuid}`);
 
     const { encResponse } = req.query;
-    logger.debug(`Encrypted Response: ${encResponse}`);
+
+    logger.debug(`Encrypted Response: ${decodeURIComponent(encResponse)}`);
 
     // Decrypt the response
-    const inputData = await decAESString(encResponse);
+    const inputData = await decAESString(decodeURIComponent(encResponse));
     logger.debug(`Decrypted Data: ${inputData}`);
 
     // Convert the 'data' string into an object
@@ -32,8 +33,7 @@ const handleCreateMandate = async (req, res) => {
 
     // Save or update merchant
     const merchantData = {
-      name: parsedData.bankName,
-      merchant_code: parsedData.clientcode,
+      merchant_code: parsedData.clientCode,
       status: 'Active',
     };
     const merchant = await saveOrUpdateMerchant(merchantData);
@@ -41,9 +41,9 @@ const handleCreateMandate = async (req, res) => {
 
     // Save or update user
     const userData = {
-      name: `${parsedData.payerFName} ${parsedData.payerLName || ''}`,
-      email: parsedData.emailId,
-      mobile: parsedData.mobileNum,
+      name: parsedData.payerName ? `${parsedData.payerName} ${parsedData.payerLName || ''}` : parsedData.payerName,
+      email: parsedData.payerEmail,
+      mobile: parsedData.payerMobile,
     };
     const user = await saveOrUpdateUser(userData);
 
@@ -66,7 +66,7 @@ const handleCreateMandate = async (req, res) => {
         end_date, // End date (calculated)
         purpose: slab.mandate_category || 'NA', // Mandate category or default 'NA'
         max_amount: slab.emi_amount || null, // Maximum transaction amount set as EMI amount
-        sabpaisa_txn_id: parsedData.SPTxnId, // Updated to snake_case
+        sabpaisa_txn_id: parsedData.sabpaisaTxnId, // Updated to snake_case
 
       };
     })();
@@ -86,8 +86,9 @@ const handleCreateMandate = async (req, res) => {
       frequency: slab.frequency, // Frequency from slab
       purpose: 'NA', // As discussed with Rahmat
       mandate_category: slab.mandate_category, // Mandate category from slab
-      client_code: parsedData.clientcode, // Client code from parsed data
+      client_code: parsedData.clientCode, // Client code from parsed data
     };
+
     logger.info('Mandate data prepared:', mandateData);
 
     // Call the service to create the mandate

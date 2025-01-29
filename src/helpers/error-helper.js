@@ -30,8 +30,30 @@ const handleError = (error) => {
           structuredError.details = error.message;
           break;
       }
-    } else {
-      // Handle other error types
+    } 
+
+    // Handle Axios errors (API call failures)
+    else if (error.isAxiosError) {
+      structuredError.type = 'AxiosError';
+      structuredError.message = error.response?.data?.error || 'Request failed';
+      structuredError.details = error.message;
+      structuredError.meta = {
+        status_code: error.response?.status || null,
+        status_text: error.response?.statusText || null,
+        request_url: error.config?.url || null,
+        response_data: error.response?.data || null,
+      };
+    } 
+
+    // Handle validation errors
+    else if (error.name === 'ValidationError') {
+      structuredError.type = 'ValidationError';
+      structuredError.message = 'Validation failed';
+      structuredError.details = error.errors || error.message;
+    }
+
+    // Handle general errors
+    else {
       structuredError.message = error.message || structuredError.message;
       structuredError.details = error.stack || null;
     }
