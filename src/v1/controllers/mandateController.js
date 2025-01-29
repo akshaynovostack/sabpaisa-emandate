@@ -43,7 +43,7 @@ const handleCreateMandate = async (req, res) => {
     const userData = {
       name: parsedData.payerName ? `${parsedData.payerName} ${parsedData.payerLName || ''}` : parsedData.payerName,
       email: parsedData.payerEmail,
-      mobile: parsedData.payerMobile,
+      mobile: parsedData.payerMobile.slice(-10),
     };
     const user = await saveOrUpdateUser(userData);
 
