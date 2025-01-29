@@ -19,7 +19,7 @@ const createMandate = async (mandateData) => {
       purpose: mandateData.purpose,
       mandate_category: mandateData.mandate_category,
       client_code: mandateData.client_code,
-      redirect_url: process.env.BASEURL + 'v1/mandate/web-hook',
+      redirect_url: process.env.BASEURL + 'v1/mandate/web-hook/',
     };
 
     // Set headers
