@@ -164,6 +164,7 @@
       const progressBar = document.getElementById("progressBar");
       const countdown = document.getElementById("countdown");
       const redirectUrl = "<%= redirectUrl %>"; // Pass the URL where the form should be posted
+      const enachResponse = "<%= enachResponse %>"; // Pass the URL where the form should be posted
     
       let timeLeft = 10;
     
@@ -183,8 +184,7 @@
     
           // Add input fields to the form (if needed)
           const params = {
-            status: "Redirected",
-            timestamp: new Date().toISOString(),
+            enachResponse: enachResponse,
           };
     
           for (const [key, value] of Object.entries(params)) {
