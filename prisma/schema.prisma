@@ -9,10 +9,10 @@ datasource db {
 
 model merchant {
   id              Int               @id @unique @default(autoincrement())
-  merchant_id     String?           @unique // This is the correct field
+  merchant_id     String?           @unique
   name            String?
   token           String?
-  merchant_code   String?
+  merchant_code   String?           @unique
   address         String?
   status          Int?              @db.TinyInt
   created_at      DateTime          @default(now())

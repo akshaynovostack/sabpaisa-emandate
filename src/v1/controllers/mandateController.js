@@ -107,6 +107,13 @@ const handleCreateMandate = async (req, res) => {
 };
 
 const handleMandateFailure = (transaction, error, res) => {
+  logger.info('Handling mandate failure', {
+    transactionId: transaction?.transaction_id,
+    sabpaisaTxnId: transaction?.sabpaisa_txn_id,
+    clientTxnId: transaction?.client_transaction_id,
+    error: error.message
+  });
+
   const failureData = {
     sabpaisaTxnId: transaction?.sabpaisa_txn_id || null,
     clientTxnId: transaction?.client_transaction_id || null,
@@ -117,8 +124,16 @@ const handleMandateFailure = (transaction, error, res) => {
     bankStatusMessage: 'Failed'
   };
 
+  logger.debug('Generated failure response data:', failureData);
+
   const encryptedResponse = encAESString(jsonToQueryParams(failureData));
-  return res.redirect(`${process.env.RETURNURL}?enachResponse=${encryptedResponse}`);
+  logger.debug('Encrypted failure response:', encryptedResponse);
+
+  // Log the full redirect URL for debugging
+  const redirectUrl = `${process.env.RETURNURL}?enachResponse=${encryptedResponse}`;
+  logger.info('Redirecting to:', redirectUrl);
+
+  return res.redirect(redirectUrl);
 };
 
 const webHook = async (req, res) => {
