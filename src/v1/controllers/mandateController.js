@@ -13,6 +13,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const handleCreateMandate = async (req, res) => {
+  let transaction = null;
   try {
     logger.info('Received request to create mandate');
 
@@ -70,7 +71,9 @@ const handleCreateMandate = async (req, res) => {
         max_amount: slab.emi_amount || null,
       };
     })();
-    const transaction = await saveOrUpdateTransaction(transactionData);
+
+    // After creating transaction, store it for potential error handling
+    transaction = await saveOrUpdateTransaction(transactionData);
 
     // Prepare mandate data
     const { start_date, end_date } = transactionData;
@@ -99,14 +102,23 @@ const handleCreateMandate = async (req, res) => {
   } catch (error) {
     const structuredError = handleError(error);
     logger.error('Error while creating mandate', structuredError);
-
-    res.status(500).json({
-      error: structuredError.message,
-      details: structuredError.details,
-      type: structuredError.type,
-      meta: structuredError.meta,
-    });
+    return handleMandateFailure(transaction, structuredError, res);
   }
+};
+
+const handleMandateFailure = (transaction, error, res) => {
+  const failureData = {
+    sabpaisaTxnId: transaction?.sabpaisa_txn_id || null,
+    clientTxnId: transaction?.client_transaction_id || null,
+    clientCode: null,
+    mandateStatus: 'FAILED',
+    mandateDate: new Date().toISOString(),
+    errorMessage: error.message || 'Mandate registration failed',
+    bankStatusMessage: 'Failed'
+  };
+
+  const encryptedResponse = encAESString(jsonToQueryParams(failureData));
+  return res.redirect(`${process.env.RETURNURL}?enachResponse=${encryptedResponse}`);
 };
 
 const webHook = async (req, res) => {
@@ -184,7 +196,7 @@ const webHook = async (req, res) => {
     });
 
     if (!transaction) {
-      throw new Error(`No transaction found for sabpaisa_txn_id: ${result.consumer_id}`);
+      return handleMandateFailure(null, new Error('No transaction found'), res);
     }
 
     const user = await prisma.user.findUnique({
@@ -192,7 +204,7 @@ const webHook = async (req, res) => {
     });
 
     if (!user) {
-      throw new Error('Unable to fetch user details.');
+      return handleMandateFailure(transaction, new Error('User not found'), res);
     }
 
     const merchant = await prisma.merchant.findFirst({
@@ -201,7 +213,7 @@ const webHook = async (req, res) => {
     });
 
     if (!merchant) {
-      throw new Error(`Merchant not found for merchant_id: ${transaction.merchant_id}`);
+      return handleMandateFailure(transaction, new Error('Merchant not found'), res);
     }
 
     const cumulativeData = {
@@ -256,12 +268,20 @@ const webHook = async (req, res) => {
     const structuredError = handleError(error);
     logger.error('Error while processing webhook', structuredError);
 
-    res.status(500).json({
-      error: structuredError.message,
-      details: structuredError.details,
-      type: structuredError.type,
-      meta: structuredError.meta,
-    });
+    let transaction = null;
+    try {
+      if (req.params.id) {
+        const enquiryData = await mandateEnquiry(req.params.id);
+        transaction = await prisma.transaction.findFirst({
+          where: { sabpaisa_txn_id: enquiryData.result.consumer_id },
+          orderBy: { created_at: 'desc' },
+        });
+      }
+    } catch (err) {
+      logger.error('Error fetching transaction for failure response:', err);
+    }
+
+    return handleMandateFailure(transaction, structuredError, res);
   }
 };
 
