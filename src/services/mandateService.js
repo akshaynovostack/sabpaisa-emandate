@@ -114,7 +114,7 @@ const getMerchantSlab = async (merchant_id, amount) => {
         slab_to: { gte: amount },
         effective_date: { lte: new Date() },
         expiry_date: { gte: new Date() },
-        status: 'Active',
+        status: 1,
       },
     });
 

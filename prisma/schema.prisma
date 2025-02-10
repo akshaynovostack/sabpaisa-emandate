@@ -14,7 +14,7 @@ model merchant {
   token           String?
   merchant_code   String?
   address         String?
-  status          String?
+  status          Int?              @db.TinyInt
   created_at      DateTime          @default(now())
   updated_at      DateTime          @updatedAt
   merchant_slabs  merchant_slab[]   @relation("merchant_to_slab")
@@ -68,7 +68,7 @@ model merchant_slab {
   effective_date   DateTime?
   expiry_date      DateTime?
   remarks          String?
-  status           String?
+  status           Int?             @db.TinyInt
   mandate_category MandateCategory? // Constrained to the MandateCategory enum
   created_at       DateTime         @default(now())
   updated_at       DateTime         @updatedAt

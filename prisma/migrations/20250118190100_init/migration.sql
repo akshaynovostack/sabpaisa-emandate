@@ -6,7 +6,7 @@ CREATE TABLE `merchant` (
     `token` VARCHAR(191) NOT NULL,
     `merchant_code` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
-    `status` VARCHAR(191) NOT NULL,
+    `status` TINYINT NOT NULL DEFAULT 0,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -28,7 +28,7 @@ CREATE TABLE `merchant_slab` (
     `effective_date` DATETIME(3) NOT NULL,
     `expiry_date` DATETIME(3) NOT NULL,
     `remarks` VARCHAR(191) NOT NULL,
-    `status` VARCHAR(191) NOT NULL,
+    `status` TINYINT NOT NULL DEFAULT 0,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -57,6 +57,7 @@ CREATE TABLE `user` (
 CREATE TABLE `transaction` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `transaction_id` VARCHAR(191) NOT NULL,
+    `client_transaction_id` VARCHAR(191) NOT NULL,
     `user_id` VARCHAR(191) NOT NULL,
     `merchant_id` VARCHAR(191) NOT NULL,
     `txn_id` VARCHAR(191) NOT NULL,

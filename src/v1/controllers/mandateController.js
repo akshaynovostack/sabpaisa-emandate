@@ -34,7 +34,7 @@ const handleCreateMandate = async (req, res) => {
     // Save or update merchant
     const merchantData = {
       merchant_code: parsedData.clientCode,
-      status: 'Active',
+      status: 1,
     };
     const merchant = await saveOrUpdateMerchant(merchantData);
     const slab = await getMerchantSlab(merchant.merchant_id, parseFloat(parsedData.amount));
@@ -57,17 +57,17 @@ const handleCreateMandate = async (req, res) => {
       );
 
       return {
-        transaction_id: parsedData.clientTxnId, // Unique transaction ID
-        user_id: user.user_id || null, // User ID (nullable)
-        merchant_id: merchant.merchant_id || null, // Merchant ID (nullable)
-        amount: parseFloat(parsedData.amount), // Transaction amount (Decimal)
-        monthly_emi: slab.emi_amount || null, // Monthly EMI (nullable Decimal)
-        start_date, // Start date (calculated)
-        end_date, // End date (calculated)
-        purpose: slab.mandate_category || 'NA', // Mandate category or default 'NA'
-        max_amount: slab.emi_amount || null, // Maximum transaction amount set as EMI amount
-        sabpaisa_txn_id: parsedData.sabpaisaTxnId, // Updated to snake_case
-
+        transaction_id: uuidv4(), // Generate new UUID for transaction_id
+        client_transaction_id: parsedData.clientTxnId, // Store client's transaction ID
+        user_id: user.user_id || null,
+        merchant_id: merchant.merchant_id || null,
+        sabpaisa_txn_id: parsedData.sabpaisaTxnId,
+        amount: parseFloat(parsedData.amount),
+        monthly_emi: slab.emi_amount || null,
+        start_date,
+        end_date,
+        purpose: slab.mandate_category || 'NA',
+        max_amount: slab.emi_amount || null,
       };
     })();
     const transaction = await saveOrUpdateTransaction(transactionData);
@@ -76,7 +76,7 @@ const handleCreateMandate = async (req, res) => {
     const { start_date, end_date } = transactionData;
 
     const mandateData = {
-      consumer_id: process.env.ENVIRONMENT == 'dev' ? uuidv4() : user.user_id, // Use `user_id` as the consumer ID
+      consumer_id: process.env.ENVIRONMENT == 'dev' ? uuidv4() : parsedData.sabpaisaTxnId, // Use sabpaisa txn id as per laxmikant
       customer_name: userData.name, // Full name from user data
       customer_mobile: userData.mobile, // Mobile number from user data
       customer_email_id: userData.email, // Email ID from user data
@@ -125,29 +125,30 @@ const webHook = async (req, res) => {
     // Asynchronous database updates
     (async () => {
       try {
-        const user = await prisma.user.findUnique({
-          where: { user_id: result.consumer_id },
-        });
-
-        if (!user) {
-          throw new Error(`User not found for user_id (consumer_id): ${result.consumer_id}`);
-        }
-
-        const latestTransaction = await prisma.transaction.findFirst({
-          where: { user_id: user.user_id },
+        // Find transaction using sabpaisa_txn_id (consumer_id)
+        const transaction = await prisma.transaction.findFirst({
+          where: { sabpaisa_txn_id: result.consumer_id },
           orderBy: { created_at: 'desc' },
         });
 
-        if (!latestTransaction) {
-          throw new Error(`No transactions found for user_id: ${user.user_id}`);
+        if (!transaction) {
+          throw new Error(`No transaction found for sabpaisa_txn_id: ${result.consumer_id}`);
         }
 
-        const { transaction_id, sabpaisa_txn_id } = latestTransaction;
+        const user = await prisma.user.findUnique({
+          where: { user_id: transaction.user_id },
+        });
+
+        if (!user) {
+          throw new Error(`User not found for user_id: ${transaction.user_id}`);
+        }
+
+        const { transaction_id } = transaction;
 
         // Update transaction
         await updateTransaction({
           transaction_id,
-          sabpaisa_txn_id,
+          sabpaisa_txn_id: result.consumer_id,
           user_id: user.user_id,
           start_date: result.start_date,
           end_date: result.end_date,
@@ -176,26 +177,36 @@ const webHook = async (req, res) => {
       }
     })();
 
-    // Fetch the latest transaction and user for cumulative data
-    const transaction = await getLatestTransactionByUserId(result.consumer_id);
-    const user = await prisma.user.findUnique({
-      where: { user_id: result.consumer_id },
+    // Fetch the latest transaction using sabpaisa_txn_id
+    const transaction = await prisma.transaction.findFirst({
+      where: { sabpaisa_txn_id: result.consumer_id },
+      orderBy: { created_at: 'desc' },
     });
 
-    if (!transaction || !user) {
-      throw new Error('Unable to fetch transaction or user details.');
+    if (!transaction) {
+      throw new Error(`No transaction found for sabpaisa_txn_id: ${result.consumer_id}`);
     }
+
+    const user = await prisma.user.findUnique({
+      where: { user_id: transaction.user_id },
+    });
+
+    if (!user) {
+      throw new Error('Unable to fetch user details.');
+    }
+
     const merchant = await prisma.merchant.findFirst({
       where: { merchant_id: transaction.merchant_id },
-      select: { merchant_code: true }, // Assuming `merchant_code` corresponds to `clientCode`
+      select: { merchant_code: true },
     });
 
     if (!merchant) {
       throw new Error(`Merchant not found for merchant_id: ${transaction.merchant_id}`);
     }
+
     const cumulativeData = {
       sabpaisaTxnId: transaction.sabpaisa_txn_id || null,
-      clientTxnId: transaction.transaction_id || null,
+      clientTxnId: transaction.client_transaction_id || null,
       clientCode: merchant.merchant_code || null, // Add clientCode from merchant table
       mandateStatus: result.registration_status ? getMandateStatus(result.registration_status) : null,
       mandateDate: new Date().toISOString(), // Example: current timestamp
