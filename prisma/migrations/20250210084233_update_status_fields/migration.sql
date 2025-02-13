@@ -11,6 +11,3 @@ ALTER TABLE `merchant` MODIFY `status` TINYINT NULL;
 
 -- AlterTable
 ALTER TABLE `merchant_slab` MODIFY `status` TINYINT NULL;
-
--- AlterTable
-ALTER TABLE `transaction` DROP COLUMN `client_transaction_id`;
