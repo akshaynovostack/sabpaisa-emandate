@@ -125,6 +125,7 @@ console.log(data)
           purpose: data.purpose,
           max_amount: data.max_amount,
           sabpaisa_txn_id: data.sabpaisa_txn_id, // Updated to snake_case
+          client_transaction_id: data.client_transaction_id, // Updated to snake_case
           user: {
             connect: {
               user_id: data.user_id,
