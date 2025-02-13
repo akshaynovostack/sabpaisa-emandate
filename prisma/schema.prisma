@@ -92,6 +92,7 @@ model user {
 model transaction {
   id              Int               @id @unique @default(autoincrement())
   transaction_id  String?           @unique // Use this as the unique identifier
+  client_transaction_id  String?   
   user_id         String?
   merchant_id     String?
   monthly_emi     Decimal?
