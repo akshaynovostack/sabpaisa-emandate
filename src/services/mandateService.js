@@ -20,6 +20,7 @@ const createMandate = async (mandateData) => {
       mandate_category: mandateData.mandate_category,
       client_code: mandateData.client_code,
       redirect_url: process.env.BASEURL + 'v1/mandate/web-hook/',
+      customer_type: 'pg',
     };
 
     // Set headers

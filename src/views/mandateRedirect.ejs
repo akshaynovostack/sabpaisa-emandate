@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Success - Mandate Creation</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+    .container { max-width: 700px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 5px; }
+    h1 { color: #4CAF50; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 10px 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    table, th, td { border: 1px solid #ddd; }
+    th, td { padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    /* Progress bar styling */
+    #progressContainer {
+      width: 100%;
+      background-color: #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    #progressBar {
+      height: 20px;
+      width: 0%;
+      background-color: #4CAF50;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Payment Successful!</h1>
+    <p>Your payment has been processed successfully. Please review the mandate details and EMI schedule below. You will be redirected shortly.</p>
+    
+    <h2>Mandate Details</h2>
+    <ul>
+      <li><strong>Payer Name:</strong> <%= mandateDetails.payerName %></li>
+      <li><strong>Email:</strong> <%= mandateDetails.payerEmail %></li>
+      <li><strong>Mobile:</strong> <%= mandateDetails.payerMobile %></li>
+      <li><strong>Transaction ID:</strong> <%= mandateDetails.clientTxnId %></li>
+      <li><strong>Amount:</strong> <%= mandateDetails.amount %></li>
+      <li><strong>Client Code:</strong> <%= mandateDetails.clientCode %></li>
+      <li><strong>Status:</strong> <%= mandateDetails.status %></li>
+      <li><strong>Sabpaisa Transaction ID:</strong> <%= mandateDetails.sabpaisaTxnId %></li>
+      <li><strong>Bank Message:</strong> <%= mandateDetails.bankMessage %></li>
+      <li><strong>Transaction Date:</strong> <%= mandateDetails.transDate %></li>
+      <li><strong>Mandate Start Date:</strong> <%= mandateDetails.startDate %></li>
+      <li><strong>Mandate End Date:</strong> <%= mandateDetails.endDate %></li>
+      <li><strong>Frequency:</strong> <%= mandateDetails.frequency %></li>
+      <li><strong>EMI Amount:</strong> <%= mandateDetails.emiAmount %></li>
+    </ul>
+
+    <h2>EMI Schedule</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Installment</th>
+          <th>Due Date</th>
+          <th>EMI Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% emiSchedule.forEach(schedule => { %>
+          <tr>
+            <td><%= schedule.installment %></td>
+            <td><%= schedule.dueDate %></td>
+            <td><%= schedule.emiAmount %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <p>If you are not redirected automatically, <a href="<%= redirectUrl %>">click here</a>.</p>
+    
+    <!-- Progress bar -->
+    <div id="progressContainer">
+      <div id="progressBar"></div>
+    </div>
+  </div>
+
+  <script>
+    // Total time for redirection in milliseconds (10 seconds)
+    var totalTime = 10000;
+    var progressBar = document.getElementById('progressBar');
+    var startTime = Date.now();
+
+    // Update progress bar every 50 milliseconds
+    var interval = setInterval(function() {
+      var elapsed = Date.now() - startTime;
+      var progress = Math.min((elapsed / totalTime) * 100, 100);
+      progressBar.style.width = progress + '%';
+      if (progress >= 100) {
+        clearInterval(interval);
+        window.location.href = '<%= redirectUrl %>';
+      }
+    }, 50);
+  </script>
+</body>
+</html>

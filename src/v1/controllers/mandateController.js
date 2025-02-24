@@ -12,6 +12,26 @@ const { createOrUpdateUserMandate } = require('./usermandateController');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+// Helper function to generate EMI schedule (assuming monthly frequency)
+const generateEmiSchedule = (startDate, endDate, frequency, emiAmount) => {
+  const schedule = [];
+  let currentDate = moment(startDate);
+  const endMoment = moment(endDate);
+  let installmentNumber = 1;
+
+  // For monthly frequency, increment the date by one month each time
+  while (currentDate.isSameOrBefore(endMoment)) {
+    schedule.push({
+      installment: installmentNumber,
+      dueDate: currentDate.format('YYYY-MM-DD'),
+      emiAmount: emiAmount
+    });
+    installmentNumber++;
+    currentDate = currentDate.add(1, 'month');
+  }
+  return schedule;
+};
+
 const handleCreateMandate = async (req, res) => {
   let transaction = null;
   try {
@@ -21,7 +41,6 @@ const handleCreateMandate = async (req, res) => {
     logger.info(`Generated UUID: ${uuid}`);
 
     const { encResponse } = req.query;
-
     logger.debug(`Encrypted Response: ${decodeURIComponent(encResponse)}`);
 
     // Decrypt the response
@@ -32,7 +51,7 @@ const handleCreateMandate = async (req, res) => {
     const parsedData = parseQueryString(inputData);
     logger.debug('Parsed Data:', parsedData);
 
-    // Save or update merchant
+    // Save or update merchant and user, calculate dates, etc.
     const merchantData = {
       merchant_code: parsedData.clientCode,
       status: 1,
@@ -40,7 +59,6 @@ const handleCreateMandate = async (req, res) => {
     const merchant = await saveOrUpdateMerchant(merchantData);
     const slab = await getMerchantSlab(merchant.merchant_id, parseFloat(parsedData.amount));
 
-    // Save or update user
     const userData = {
       name: parsedData.payerName ? `${parsedData.payerName} ${parsedData.payerLName || ''}` : parsedData.payerName,
       email: parsedData.payerEmail,
@@ -48,7 +66,6 @@ const handleCreateMandate = async (req, res) => {
     };
     const user = await saveOrUpdateUser(userData);
 
-    // Prepare transaction data
     const transactionData = (() => {
       const { start_date, end_date } = calculateDates(
         new Date(),
@@ -58,8 +75,8 @@ const handleCreateMandate = async (req, res) => {
       );
 
       return {
-        transaction_id: uuidv4(), // Generate new UUID for transaction_id
-        client_transaction_id: parsedData.clientTxnId, // Store client's transaction ID
+        transaction_id: uuidv4(),
+        client_transaction_id: parsedData.clientTxnId,
         user_id: user.user_id || null,
         merchant_id: merchant.merchant_id || null,
         sabpaisa_txn_id: parsedData.sabpaisaTxnId,
@@ -72,24 +89,22 @@ const handleCreateMandate = async (req, res) => {
       };
     })();
 
-    // After creating transaction, store it for potential error handling
     transaction = await saveOrUpdateTransaction(transactionData);
 
     // Prepare mandate data
     const { start_date, end_date } = transactionData;
-
     const mandateData = {
-      consumer_id: process.env.ENVIRONMENT == 'dev' ? uuidv4() : parsedData.sabpaisaTxnId, // Use sabpaisa txn id as per laxmikant
-      customer_name: userData.name, // Full name from user data
-      customer_mobile: userData.mobile, // Mobile number from user data
-      customer_email_id: userData.email, // Email ID from user data
-      start_date: moment(start_date).format('YYYY-MM-DD'), // Format start_date
-      end_date: moment(end_date).format('YYYY-MM-DD'), // For/ End date (calculated from transaction data)
-      max_amount: slab.emi_amount, // Max amount set as EMI amount from the slab
-      frequency: slab.frequency, // Frequency from slab
-      purpose: 'NA', // As discussed with Rahmat
-      mandate_category: slab.mandate_category, // Mandate category from slab
-      client_code: parsedData.clientCode, // Client code from parsed data
+      consumer_id: process.env.ENVIRONMENT === 'dev' ? uuidv4() : parsedData.sabpaisaTxnId,
+      customer_name: userData.name,
+      customer_mobile: userData.mobile,
+      customer_email_id: userData.email,
+      start_date: moment(start_date).format('YYYY-MM-DD'),
+      end_date: moment(end_date).format('YYYY-MM-DD'),
+      max_amount: slab.emi_amount,
+      frequency: slab.frequency,
+      purpose: 'NA',
+      mandate_category: slab.mandate_category,
+      client_code: parsedData.clientCode
     };
 
     logger.info('Mandate data prepared:', mandateData);
@@ -98,13 +113,38 @@ const handleCreateMandate = async (req, res) => {
     const result = await createMandate(mandateData);
     logger.info('Mandate created successfully', result);
 
-    res.redirect(result.bank_details_url);
+    // Generate EMI schedule based on the calculated start and end dates and EMI amount
+    const emiSchedule = generateEmiSchedule(transactionData.start_date, transactionData.end_date, slab.frequency, slab.emi_amount);
+
+    // Render the mandate success view with mandate details and EMI schedule
+    return res.render('mandateRedirect', {
+      mandateDetails: {
+        payerName: parsedData.payerName,
+        payerEmail: parsedData.payerEmail,
+        payerMobile: parsedData.payerMobile,
+        clientTxnId: parsedData.clientTxnId,
+        amount: parsedData.amount,
+        clientCode: parsedData.clientCode,
+        status: parsedData.status,
+        sabpaisaTxnId: parsedData.sabpaisaTxnId,
+        bankMessage: parsedData.bankMessage,
+        transDate: parsedData.transDate,
+        startDate: moment(transactionData.start_date).format('YYYY-MM-DD'),
+        endDate: moment(transactionData.end_date).format('YYYY-MM-DD'),
+        frequency: slab.frequency,
+        emiAmount: slab.emi_amount,
+      },
+      emiSchedule,
+      redirectUrl: result.bank_details_url,
+      message: 'Mandate created successfully!'
+    });
   } catch (error) {
     const structuredError = handleError(error);
     logger.error('Error while creating mandate', structuredError);
     return handleMandateFailure(transaction, structuredError, res);
   }
 };
+
 
 const handleMandateFailure = (transaction, error, res) => {
   logger.info('Handling mandate failure', {
