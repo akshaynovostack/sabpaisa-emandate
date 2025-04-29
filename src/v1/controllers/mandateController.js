@@ -68,7 +68,7 @@ const handleCreateMandate = async (req, res) => {
 
     const transactionData = (() => {
       const { start_date, end_date } = calculateDates(
-        new Date(),
+        moment().add(3, 'days').toDate(),
         slab.frequency,
         slab.duration,
         slab.expiry_date
