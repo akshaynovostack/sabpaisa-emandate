@@ -68,7 +68,7 @@ const handleCreateMandate = async (req, res) => {
 
     const transactionData = (() => {
       const { start_date, end_date } = calculateDates(
-        moment().add(3, 'days').toDate(),
+        moment().add(3, 'days').toDate(),//As per the confirmation from Anupam and Bhargava we have to add 3 days to the current date
         slab.frequency,
         slab.duration,
         slab.expiry_date
