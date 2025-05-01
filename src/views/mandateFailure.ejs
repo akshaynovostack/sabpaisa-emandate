@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mandate Registration Failed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .error-icon {
+            color: #dc3545;
+            font-size: 48px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .details {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">❌</div>
+        <div class="error-message">
+            <h2>Mandate Registration Failed</h2>
+            <p><%= message %></p>
+        </div>
+        
+        <div class="details">
+            <h3>Transaction Details:</h3>
+            <p><strong>Transaction ID:</strong> <%= mandateDetails.sabpaisaTxnId %></p>
+            <p><strong>Client Transaction ID:</strong> <%= mandateDetails.clientTxnId %></p>
+            <p><strong>Status:</strong> <%= mandateDetails.mandateStatus %></p>
+            <p><strong>Date:</strong> <%= new Date(mandateDetails.mandateDate).toLocaleString() %></p>
+            <% if (mandateDetails.bankStatusMessage) { %>
+                <p><strong>Bank Message:</strong> <%= mandateDetails.bankStatusMessage %></p>
+            <% } %>
+        </div>
+
+        <form action="<%= redirectUrl %>" method="POST">
+            <input type="hidden" name="enachResponse" value="<%= enachResponse %>">
+            <button type="submit" class="button">Return to Merchant</button>
+        </form>
+    </div>
+</body>
+</html>

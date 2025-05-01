@@ -169,11 +169,16 @@ const handleMandateFailure = (transaction, error, res) => {
   const encryptedResponse = encAESString(jsonToQueryParams(failureData));
   logger.debug('Encrypted failure response:', encryptedResponse);
 
-  // Log the full redirect URL for debugging
-  const redirectUrl = `${process.env.RETURNURL}?enachResponse=${encryptedResponse}`;
-  logger.info('Redirecting to:', redirectUrl);
-
-  return res.redirect(redirectUrl);
+  // Render the mandateFailure template
+  return res.render('mandateFailure', {
+    mandateDetails: {
+      ...failureData,
+      status: 'FAILED'
+    },
+    redirectUrl: process.env.RETURNURL,
+    enachResponse: encryptedResponse,
+    message: failureData.errorMessage
+  });
 };
 
 const webHook = async (req, res) => {
