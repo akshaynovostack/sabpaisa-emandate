@@ -1,82 +1,207 @@
 <!DOCTYPE html>
-<html>
-<head>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mandate Registration Failed</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+    />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .error-icon {
-            color: #dc3545;
-            font-size: 48px;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .error-message {
-            color: #dc3545;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-        .details {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-        }
-        .details p {
-            margin: 5px 0;
-        }
-        .button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-top: 20px;
-        }
-        .button:hover {
-            background-color: #0056b3;
-        }
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .iphone-frame {
+        width: 375px;
+        height: 700px;
+        background-color: #000;
+        border-radius: 40px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+
+      .screen {
+        width: 360px;
+        height: 98%;
+        background-color: #fff;
+        border-radius: 30px;
+        overflow-y: scroll;
+        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+      }
+
+      .notch {
+        width: 100px;
+        height: 15px;
+        background-color: #000;
+        border-radius: 20px;
+        position: absolute;
+        top: 10px;
+      }
+
+      .header {
+        background-color: #dc3545;
+        color: white;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+      }
+
+      .header svg {
+        margin-right: 1rem;
+        cursor: pointer;
+      }
+
+      .details-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #333;
+      }
+
+      .detail-title {
+        font-weight: 500;
+        color: #555;
+      }
+
+      .detail-value {
+        color: #000;
+        font-weight: 400;
+        text-align: right;
+      }
+
+      .progress-container {
+        margin-top: 1rem;
+        text-align: center;
+      }
+
+      .progress-bar {
+        height: 10px;
+        background-color: #dc3545;
+        width: 0%;
+        border-radius: 5px;
+        transition: width 1s linear;
+      }
+
+      .countdown {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #555;
+      }
+
+      .error-message {
+        background-color: #fff3f3;
+        border: 1px solid #ffcdd2;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        color: #dc3545;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="error-icon">❌</div>
-        <div class="error-message">
-            <h2>Mandate Registration Failed</h2>
-            <p><%= message %></p>
-        </div>
-        
-        <div class="details">
-            <h3>Transaction Details:</h3>
-            <p><strong>Transaction ID:</strong> <%= mandateDetails.sabpaisaTxnId %></p>
-            <p><strong>Client Transaction ID:</strong> <%= mandateDetails.clientTxnId %></p>
-            <p><strong>Status:</strong> <%= mandateDetails.mandateStatus %></p>
-            <p><strong>Date:</strong> <%= new Date(mandateDetails.mandateDate).toLocaleString() %></p>
-            <% if (mandateDetails.bankStatusMessage) { %>
-                <p><strong>Bank Message:</strong> <%= mandateDetails.bankStatusMessage %></p>
-            <% } %>
+  </head>
+  <body>
+    <div class="iphone-frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="header">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="white"
+            class="bi bi-exclamation-triangle"
+            viewBox="0 0 16 16"
+          >
+            <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+            <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+          </svg>
+          <b>Mandate Failed</b>
         </div>
 
-        <form action="<%= redirectUrl %>" method="POST">
-            <input type="hidden" name="enachResponse" value="<%= enachResponse %>">
-            <button type="submit" class="button">Return to Merchant</button>
-        </form>
+        <div class="error-message">
+          <strong>Error:</strong> <%= message %>
+        </div>
+
+        <div class="progress-container">
+          <div class="countdown" id="countdown">Redirecting in 10 seconds...</div>
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="details-group">
+          <% const details = {
+            'Transaction ID': mandateDetails.sabpaisaTxnId,
+            'Client Transaction ID': mandateDetails.clientTxnId,
+            'Client Code': mandateDetails.clientCode,
+            'Status': mandateDetails.mandateStatus,
+            'Date': new Date(mandateDetails.mandateDate).toLocaleString(),
+            'Bank Status': mandateDetails.bankStatusMessage,
+            'Error Message': mandateDetails.errorMessage
+          } %>
+
+          <% for (const [key, value] of Object.entries(details)) { %>
+            <% if (value) { %>
+              <div class="detail-item">
+                <span class="detail-title"><%= key %></span>
+                <span class="detail-value"><%= value %></span>
+              </div>
+            <% } %>
+          <% } %>
+        </div>
+      </div>
     </div>
-</body>
+
+    <script>
+      const progressBar = document.getElementById("progressBar");
+      const countdown = document.getElementById("countdown");
+      const redirectUrl = "<%= redirectUrl %>"; 
+      const enachResponse = "<%= enachResponse %>"; 
+    
+      let timeLeft = 10;
+    
+      const timer = setInterval(() => {
+        timeLeft -= 1;
+        progressBar.style.width = `${(10 - timeLeft) * 10}%`;
+        countdown.textContent = `Redirecting in ${timeLeft} seconds...`;
+    
+        if (timeLeft === 0) {
+          clearInterval(timer);
+    
+          const form = document.createElement("form");
+          form.method = "POST";
+          form.action = redirectUrl;
+          form.target = "_blank";
+    
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "enachResponse";
+          input.value = enachResponse;
+          form.appendChild(input);
+    
+          document.body.appendChild(form);
+          form.submit();
+        }
+      }, 1000);
+    </script>
+  </body>
 </html>
