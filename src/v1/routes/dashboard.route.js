@@ -11,32 +11,58 @@ const checkPermission = require('../../middlewares/checkPermission');
  *       type: object
  *       properties:
  *         totalMandates:
- *           type: integer
- *           description: Total number of mandates in the system
+ *           type: object
+ *           properties:
+ *             count:
+ *               type: integer
+ *               description: Total number of mandates in the system
+ *             percentageChange:
+ *               type: number
+ *               format: float
+ *               description: Percentage change from last month
  *         activeMandates:
- *           type: integer
- *           description: Number of currently active mandates
+ *           type: object
+ *           properties:
+ *             count:
+ *               type: integer
+ *               description: Number of currently active mandates
+ *             percentageChange:
+ *               type: number
+ *               format: float
+ *               description: Percentage change from last month
  *         totalTransactions:
- *           type: integer
- *           description: Total number of transactions processed
+ *           type: object
+ *           properties:
+ *             count:
+ *               type: integer
+ *               description: Total number of transactions processed
+ *             percentageChange:
+ *               type: number
+ *               format: float
+ *               description: Percentage change from last month
  *         totalUsers:
- *           type: integer
- *           description: Total number of users in the system
- *         successRate:
- *           type: number
- *           format: float
- *           description: Success rate of transactions (percentage)
- *         totalAmount:
- *           type: number
- *           format: float
- *           description: Total transaction amount processed
+ *           type: object
+ *           properties:
+ *             count:
+ *               type: integer
+ *               description: Total number of users in the system
+ *             percentageChange:
+ *               type: number
+ *               format: float
+ *               description: Percentage change from last month
  *       example:
- *         totalMandates: 1500
- *         activeMandates: 1200
- *         totalTransactions: 5000
- *         totalUsers: 800
- *         successRate: 98.5
- *         totalAmount: 1500000.00
+ *         totalMandates:
+ *           count: 1500
+ *           percentageChange: 15.5
+ *         activeMandates:
+ *           count: 1200
+ *           percentageChange: 12.3
+ *         totalTransactions:
+ *           count: 5000
+ *           percentageChange: 8.7
+ *         totalUsers:
+ *           count: 800
+ *           percentageChange: 5.2
  *     
  *     RecentActivity:
  *       type: object
@@ -54,19 +80,61 @@ const checkPermission = require('../../middlewares/checkPermission');
  *           type: string
  *           format: date-time
  *           description: When the activity occurred
- *         userId:
+ *         user:
+ *           type: object
+ *           properties:
+ *             name:
+ *               type: string
+ *               description: Name of the user
+ *             email:
+ *               type: string
+ *               description: Email of the user
+ *             mobile:
+ *               type: string
+ *               description: Mobile number of the user
+ *         merchant:
+ *           type: object
+ *           properties:
+ *             merchant_code:
+ *               type: string
+ *               description: Merchant code
+ *             name:
+ *               type: string
+ *               description: Merchant name
+ *             status:
+ *               type: string
+ *               description: Merchant status
+ *         amount:
+ *           type: number
+ *           format: float
+ *           description: Transaction amount
+ *         purpose:
  *           type: string
- *           description: ID of the user who performed the activity
- *         userName:
+ *           description: Purpose of the transaction
+ *         status:
  *           type: string
- *           description: Name of the user who performed the activity
+ *           description: Status of the activity
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *           description: When the activity was created
  *       example:
  *         id: "act_123"
- *         type: "MANDATE_CREATED"
- *         description: "New mandate created for user John Doe"
+ *         type: "TRANSACTION_PROCESSED"
+ *         description: "Transaction processed for user John Doe"
  *         timestamp: "2024-03-20T10:30:00Z"
- *         userId: "user_456"
- *         userName: "John Doe"
+ *         user:
+ *           name: "John Doe"
+ *           email: "john@example.com"
+ *           mobile: "9876543210"
+ *         merchant:
+ *           merchant_code: "MERCH001"
+ *           name: "Example Merchant"
+ *           status: "ACTIVE"
+ *         amount: 1000.00
+ *         purpose: "Monthly payment"
+ *         status: "SUCCESS"
+ *         created_at: "2024-03-20T10:30:00Z"
  * 
  * @swagger
  * tags:
@@ -96,6 +164,9 @@ const router = express.Router();
  *                 success:
  *                   type: boolean
  *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Dashboard statistics retrieved successfully"
  *                 data:
  *                   $ref: '#/components/schemas/DashboardStats'
  *       401:
@@ -125,6 +196,7 @@ const router = express.Router();
  *                   type: string
  *                   example: "Insufficient permissions to access dashboard"
  */
+
 router
   .route('/stats')
   .get(
@@ -138,7 +210,7 @@ router
  * /api/v1/dashboard/recent-activities:
  *   get:
  *     summary: Get recent activities
- *     description: Retrieve a list of recent activities in the system
+ *     description: Retrieve a list of recent activities in the system including mandates and transactions
  *     tags: [Dashboard]
  *     security:
  *       - bearerAuth: []
@@ -147,14 +219,10 @@ router
  *         name: limit
  *         schema:
  *           type: integer
- *           default: 10
- *         description: Number of activities to return
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Page number for pagination
+ *           default: 5
+ *           minimum: 1
+ *           maximum: 50
+ *         description: Number of activities to return (default is 5, max is 50)
  *     responses:
  *       200:
  *         description: Successfully retrieved recent activities
@@ -166,28 +234,48 @@ router
  *                 success:
  *                   type: boolean
  *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Recent activities retrieved successfully"
  *                 data:
  *                   type: object
  *                   properties:
- *                     activities:
+ *                     recentMandates:
  *                       type: array
  *                       items:
  *                         $ref: '#/components/schemas/RecentActivity'
- *                     pagination:
- *                       type: object
- *                       properties:
- *                         total:
- *                           type: integer
- *                           example: 100
- *                         page:
- *                           type: integer
- *                           example: 1
- *                         limit:
- *                           type: integer
- *                           example: 10
- *                         pages:
- *                           type: integer
- *                           example: 10
+ *                       description: List of recent mandates
+ *                       example: []
+ *                     recentTransactions:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/RecentActivity'
+ *                       description: List of recent transactions
+ *                       example: []
+ *       204:
+ *         description: No recent activities found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "No recent activities found"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     recentMandates:
+ *                       type: array
+ *                       items: []
+ *                       example: []
+ *                     recentTransactions:
+ *                       type: array
+ *                       items: []
+ *                       example: []
  *       401:
  *         description: Unauthorized - Invalid or missing token
  *         content:
@@ -215,6 +303,7 @@ router
  *                   type: string
  *                   example: "Insufficient permissions to access dashboard"
  */
+
 router
   .route('/recent-activities')
   .get(

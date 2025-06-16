@@ -10,8 +10,7 @@ const docsRoute = require('./docs.route');
 const merchantRoute = require('./merchant.route');
 const userRoute = require('./user.route');
 const transactionRoute = require('./transaction.route');
-const userMandateRoute = require('./usermandateRoutes');
-const mandateRoute = require('./mandateRoutes');
+const mandateRoute = require('./mandate.routes');
 const dashboardRoute = require('./dashboard.route');
 
 const router = express.Router();

@@ -7,11 +7,57 @@ A robust Node.js-based eMandate system for managing recurring payments and manda
 - 🔐 Secure authentication and authorization
 - 👥 Team and role-based access control
 - 📝 Electronic mandate management
-- 📊 Comprehensive API documentation with Swagger
+- 📊 Comprehensive API documentation with Swagger/OpenAPI 3.0
 - 🔄 Database migrations and seeding
 - 🛡️ Security best practices
 - 📈 Rate limiting and request validation
 - 🧪 Testing setup with Jest
+- 🔍 Advanced search and filtering
+- 📱 Mobile-friendly API responses
+- 📊 Dashboard analytics
+- 🔄 Transaction status tracking
+- 💳 Payment mandate processing
+- 📋 Merchant slab management
+- 👤 User profile management
+- 🔐 Permission-based access control
+- 📝 Audit logging
+- 🔄 Webhook support
+- 📊 Transaction reporting
+- 🔍 Advanced querying capabilities
+
+## 📋 Version History
+
+### Current Version: 0.2.0 (2024-03-20)
+- Added comprehensive Swagger documentation for all API endpoints
+- Implemented OpenAPI 3.0 specification compliance
+- Enhanced API documentation with detailed schemas and examples
+- Added authentication and permission requirements documentation
+- Improved endpoint descriptions and response formats
+- Added merchant slab management system
+- Implemented advanced filtering and search capabilities
+- Added dashboard analytics endpoints
+- Enhanced transaction management system
+- Added webhook support for real-time updates
+- Implemented audit logging system
+- Added comprehensive error handling
+- Enhanced security with permission-based access control
+- Added transaction reporting capabilities
+- Implemented advanced querying with Prisma
+
+### Version 0.1.0 (2024-03-10)
+- Initial project setup
+- Basic Express.js server configuration
+- Environment configuration
+- Basic project structure
+- Database schema design
+- Basic CRUD operations
+- Authentication system
+- Role-based access control
+- Basic API endpoints
+- Error handling middleware
+- Logging system
+- Database migrations
+- Basic validation
 
 ## 🛠️ Tech Stack
 
@@ -39,31 +85,86 @@ emandate/
 │   ├── db/                    # Database related files
 │   │   ├── migrations/        # Database migrations
 │   │   ├── seeders/          # Database seeders
+│   │   ├── models/           # Database models
 │   │   └── schema.prisma     # Prisma schema
 │   │
 │   ├── middlewares/          # Custom middlewares
 │   │   ├── auth.js          # Authentication middleware
 │   │   ├── error.js         # Error handling middleware
 │   │   ├── rateLimiter.js   # Rate limiting middleware
-│   │   └── validate.js      # Request validation middleware
+│   │   ├── validate.js      # Request validation middleware
+│   │   ├── audit.js         # Audit logging middleware
+│   │   └── webhook.js       # Webhook handling middleware
 │   │
-│   ├── utils/              # Utility functions
-│   │   ├── catchAsync.js   # Async error handler
-│   │   └── logger.js       # Logging utility
+│   ├── utils/               # Utility functions
+│   │   ├── catchAsync.js    # Async error handler
+│   │   ├── logger.js        # Logging utility
+│   │   ├── validator.js     # Validation utilities
+│   │   ├── formatter.js     # Response formatter
+│   │   ├── webhook.js       # Webhook utilities
+│   │   └── analytics.js     # Analytics utilities
 │   │
-│   ├── v1/                 # API version 1
-│   │   ├── controllers/    # Route controllers
-│   │   ├── middlewares/    # Version-specific middlewares
-│   │   ├── routes/         # API routes
-│   │   ├── services/       # Business logic
-│   │   └── validations/    # Request validations
+│   ├── v1/                  # API version 1
+│   │   ├── controllers/     # Route controllers
+│   │   │   ├── auth.controller.js
+│   │   │   ├── user.controller.js
+│   │   │   ├── transaction.controller.js
+│   │   │   ├── merchant.controller.js
+│   │   │   ├── permission.controller.js
+│   │   │   ├── role.controller.js
+│   │   │   └── dashboard.controller.js
+│   │   │
+│   │   ├── middlewares/     # Version-specific middlewares
+│   │   │   ├── permission.js
+│   │   │   └── validation.js
+│   │   │
+│   │   ├── routes/          # API routes
+│   │   │   ├── auth.route.js
+│   │   │   ├── user.route.js
+│   │   │   ├── transaction.route.js
+│   │   │   ├── merchant.route.js
+│   │   │   ├── permission.route.js
+│   │   │   ├── role.route.js
+│   │   │   └── dashboard.route.js
+│   │   │
+│   │   ├── services/        # Business logic
+│   │   │   ├── auth.service.js
+│   │   │   ├── user.service.js
+│   │   │   ├── transaction.service.js
+│   │   │   ├── merchant.service.js
+│   │   │   ├── permission.service.js
+│   │   │   ├── role.service.js
+│   │   │   └── dashboard.service.js
+│   │   │
+│   │   └── validations/     # Request validations
+│   │       ├── auth.validation.js
+│   │       ├── user.validation.js
+│   │       ├── transaction.validation.js
+│   │       ├── merchant.validation.js
+│   │       ├── permission.validation.js
+│   │       └── role.validation.js
 │   │
-│   ├── app.js             # Express app setup
-│   └── server.js          # Server entry point
+│   ├── app.js              # Express app setup
+│   └── server.js           # Server entry point
 │
-├── tests/                 # Test files
-│   ├── integration/       # Integration tests
-│   └── unit/             # Unit tests
+├── tests/                  # Test files
+│   ├── integration/        # Integration tests
+│   │   ├── auth.test.js
+│   │   ├── user.test.js
+│   │   ├── transaction.test.js
+│   │   ├── merchant.test.js
+│   │   ├── permission.test.js
+│   │   └── role.test.js
+│   │
+│   └── unit/              # Unit tests
+│       ├── services/
+│       ├── utils/
+│       └── middlewares/
+│
+├── scripts/               # Utility scripts
+│   ├── seed.js           # Database seeding
+│   ├── migrate.js        # Migration runner
+│   └── test-setup.js     # Test environment setup
 │
 ├── .env.example          # Environment variables template
 ├── .eslintrc.json       # ESLint configuration
@@ -211,6 +312,104 @@ The system uses MySQL with Prisma ORM. Key models include:
      - `E001`, `I001`, `L001`, `M001`, `F001`
      - `U099`, `T002`, `T001`, `U001`, `U003`, `U006`
 
+## 🔄 Webhook System
+
+### Webhook Events
+- Transaction Status Updates
+- Mandate Registration Status
+- Payment Processing Status
+- User Registration
+- Merchant Updates
+- Role/Permission Changes
+
+### Webhook Configuration
+- Configurable endpoints
+- Event filtering
+- Retry mechanism
+- Signature verification
+- Payload encryption
+
+## 📊 Dashboard Analytics
+
+### Available Metrics
+- Transaction Volume
+- Success/Failure Rates
+- Revenue Analytics
+- User Growth
+- Merchant Performance
+- Mandate Statistics
+- Payment Trends
+
+### Report Types
+- Daily Reports
+- Weekly Summaries
+- Monthly Analytics
+- Custom Date Range Reports
+- Merchant-specific Reports
+- User Activity Reports
+
+## 🔍 Search and Filtering
+
+### Advanced Querying
+- Full-text search
+- Date range filtering
+- Status-based filtering
+- Amount-based filtering
+- Multi-field sorting
+- Pagination support
+
+### Filter Types
+- Transaction filters
+- User filters
+- Merchant filters
+- Mandate filters
+- Date filters
+- Status filters
+
+## 📝 Audit Logging
+
+### Logged Events
+- User actions
+- System events
+- Security events
+- Data modifications
+- Access attempts
+- Configuration changes
+
+### Log Features
+- Timestamp tracking
+- User identification
+- IP address logging
+- Action details
+- Resource information
+- Status tracking
+
+## 🔐 Security Features
+
+### Authentication
+- JWT-based authentication
+- Token refresh mechanism
+- Password hashing
+- Session management
+- Rate limiting
+- IP blocking
+
+### Authorization
+- Role-based access control
+- Permission-based authorization
+- Resource ownership validation
+- API key management
+- Scope-based access
+- Team-based permissions
+
+### Data Protection
+- Input validation
+- Output sanitization
+- SQL injection prevention
+- XSS protection
+- CSRF protection
+- Data encryption
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -262,156 +461,232 @@ The system uses MySQL with Prisma ORM. Key models include:
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:coverage` - Run tests with coverage report
 
+### Environment Variables
+
+```env
+# Server Configuration
+PORT=4000
+NODE_ENV=development
+
+# Database Configuration
+DATABASE_URL="mysql://user:password@localhost:3306/emandate"
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=1d
+JWT_REFRESH_SECRET=your_refresh_secret
+JWT_REFRESH_EXPIRES_IN=7d
+
+# Security
+RATE_LIMIT_WINDOW=15
+RATE_LIMIT_MAX=100
+CORS_ORIGIN=http://localhost:3000
+
+# Logging
+LOG_LEVEL=info
+LOG_FILE=logs/app.log
+
+# Webhook
+WEBHOOK_SECRET=your_webhook_secret
+WEBHOOK_RETRY_ATTEMPTS=3
+WEBHOOK_RETRY_DELAY=5000
+
+# Email (for notifications)
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your_email
+SMTP_PASS=your_password
+
+# Redis (for caching)
+REDIS_URL=redis://localhost:6379
+```
+
 ## 📚 API Documentation
 
-Once the server is running, you can access the API documentation at:
+The API documentation is built using Swagger/OpenAPI 3.0 and provides comprehensive details for all endpoints. Once the server is running, you can access:
+
 - Swagger UI: `http://localhost:4000/api-docs`
 - OpenAPI JSON: `http://localhost:4000/api-docs.json`
 
-### Key Endpoints
+### Documentation Features
+- Detailed request/response schemas
+- Authentication requirements
+- Permission requirements
+- Query parameters
+- Pagination details
+- Error responses
+- Example requests and responses
 
-- **Authentication**
-  - POST `/api/v1/auth/register` - Register a new team
-  - POST `/api/v1/auth/login` - Team login
-  - POST `/api/v1/auth/forgot-password` - Request password reset
-  - POST `/api/v1/auth/reset-password` - Reset password with token
+### Documented Endpoints
 
-- **Teams**
-  - GET `/api/v1/teams` - List teams
-  - POST `/api/v1/teams` - Create a new team
-  - GET `/api/v1/teams/:id` - Get team details
-  - PUT `/api/v1/teams/:id` - Update team
-  - DELETE `/api/v1/teams/:id` - Delete team
+#### Authentication
+- POST `/api/v1/auth/register` - Register a new team
+- POST `/api/v1/auth/login` - Team login
+- POST `/api/v1/auth/forgot-password` - Request password reset
+- POST `/api/v1/auth/reset-password` - Reset password with token
 
-- **Team Members**
-  - GET `/api/v1/teams/:id/members` - List team members
-  - POST `/api/v1/teams/:id/members` - Add team member
-  - DELETE `/api/v1/teams/:id/members/:memberId` - Remove team member
+#### User Management
+- GET `/api/v1/users` - List users with filtering and pagination
+- POST `/api/v1/users` - Create a new user
+- GET `/api/v1/users/:id` - Get user details
+- PATCH `/api/v1/users/:id` - Update user
+- DELETE `/api/v1/users/:id` - Delete user
 
-- **Transactions**
-  - GET `/api/v1/transactions` - List transactions
-  - POST `/api/v1/transactions` - Create transaction
-  - GET `/api/v1/transactions/:id` - Get transaction details
+#### Transaction Management
+- GET `/api/v1/transactions` - List transactions with filtering
+- POST `/api/v1/transactions` - Create transaction
+- GET `/api/v1/transactions/:id` - Get transaction details
+- PATCH `/api/v1/transactions/:id` - Update transaction
+- DELETE `/api/v1/transactions/:id` - Delete transaction
 
-- **Mandates**
-  - GET `/api/v1/mandates` - List mandates
-  - POST `/api/v1/mandates` - Create mandate
-  - GET `/api/v1/mandates/:id` - Get mandate details
+#### Permission Management
+- GET `/api/v1/permissions` - List permissions
+- POST `/api/v1/permissions` - Create permission
+- GET `/api/v1/permissions/:id` - Get permission details
+- PATCH `/api/v1/permissions/:id` - Update permission
+- DELETE `/api/v1/permissions/:id` - Delete permission
 
-## 🔐 Authentication
+#### Role Management
+- GET `/api/v1/roles` - List roles
+- POST `/api/v1/roles` - Create role
+- GET `/api/v1/roles/:id` - Get role details
+- PATCH `/api/v1/roles/:id` - Update role
+- DELETE `/api/v1/roles/:id` - Delete role
 
-The API uses JWT (JSON Web Tokens) for authentication. Include the token in the Authorization header:
+#### Merchant Management
+- GET `/api/v1/merchants` - List merchants
+- POST `/api/v1/merchants` - Create merchant
+- GET `/api/v1/merchants/:id` - Get merchant details
+- PATCH `/api/v1/merchants/:id` - Update merchant
+- DELETE `/api/v1/merchants/:id` - Delete merchant
 
-```
-Authorization: Bearer <your_token>
-```
+#### Merchant Slab Management
+- GET `/api/v1/merchants/:merchantId/slabs` - List merchant slabs
+- POST `/api/v1/merchants/:merchantId/slabs` - Create merchant slab
+- GET `/api/v1/merchants/:merchantId/slabs/:slabId` - Get slab details
+- PATCH `/api/v1/merchants/:merchantId/slabs/:slabId` - Update slab
+- DELETE `/api/v1/merchants/:merchantId/slabs/:slabId` - Delete slab
 
-### Security Features
-- Token expiration
-- Refresh token mechanism
-- Password hashing with bcrypt
-- Rate limiting on auth endpoints
-- Secure cookie handling
+#### Dashboard
+- GET `/api/v1/dashboard` - Get dashboard analytics
 
-### Authentication Flow
-1. Team login/register
-2. Server validates credentials
-3. JWT token generated
-4. Token returned to client
-5. Token used in subsequent requests
+### Response Format
 
-## 🔒 Authorization
+All API responses follow a consistent format:
 
-### Role-Based Access Control (RBAC)
-- Hierarchical role system
-- Role-based permissions
-- Resource ownership validation
-
-### Access Levels
-1. **Super Admin**
-   - Full system access
-   - Manage all teams and roles
-   - System configuration
-
-2. **Admin**
-   - Team management
-   - Role assignment
-   - Limited system access
-
-3. **User**
-   - Basic operations
-   - Own resource management
-   - Limited team access
-
-### Permission Checks
-- Middleware-based permission validation
-- Resource ownership verification
-- Role hierarchy enforcement
-
-## 📝 Logging
-
-### Logging System
-- Uses Winston for logging
-- Multiple log levels:
-  - `error` - Error logs
-  - `warn` - Warning logs
-  - `info` - Information logs
-  - `debug` - Debug logs
-
-### Log Format
 ```json
 {
-  "timestamp": "2024-03-21T10:00:00.000Z",
-  "level": "info",
-  "message": "Team logged in",
-  "teamId": "123",
-  "ip": "192.168.1.1",
-  "method": "POST",
-  "path": "/api/v1/auth/login"
+  "status": "success",
+  "code": 200,
+  "message": "Operation successful",
+  "data": {
+    // Response data
+  },
+  "meta": {
+    "timestamp": "2024-03-21T10:00:00.000Z",
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 100,
+      "pages": 10
+    }
+  }
 }
 ```
 
-### Log Storage
-- Console logging in development
-- File-based logging in production
-- Log rotation
-- Error tracking integration
+### Error Format
 
-## Development
+Error responses follow a consistent format:
+
+```json
+{
+  "status": "error",
+  "code": 400,
+  "message": "Validation error",
+  "errors": [
+    {
+      "field": "email",
+      "message": "Invalid email format"
+    }
+  ],
+  "meta": {
+    "timestamp": "2024-03-21T10:00:00.000Z",
+    "requestId": "req-123"
+  }
+}
+```
+
+## 🧪 Testing
+
+### Test Categories
+- Unit Tests
+- Integration Tests
+- API Tests
+- Security Tests
+- Performance Tests
+
+### Test Coverage
+- Controllers
+- Services
+- Middlewares
+- Utilities
+- Database Operations
+- API Endpoints
 
 ### Running Tests
 ```bash
 # Run all tests
 npm test
 
+# Run specific test category
+npm run test:unit
+npm run test:integration
+npm run test:api
+
+# Run tests with coverage
+npm run test:coverage
+
 # Run tests in watch mode
 npm run test:watch
-
-# Generate coverage report
-npm run test:coverage
 ```
 
-### Code Style
-The project uses ESLint and Prettier for code formatting:
+## 📈 Monitoring and Logging
+
+### Monitoring
+- Request/Response logging
+- Error tracking
+- Performance monitoring
+- Resource usage tracking
+- API endpoint statistics
+- Database query monitoring
+
+### Logging
+- Application logs
+- Access logs
+- Error logs
+- Audit logs
+- Security logs
+- Performance logs
+
+## 🔄 Database Migrations
+
+### Migration Commands
 ```bash
-# Check code style
-npm run lint
+# Create a new migration
+npm run migrate:create -- --name migration_name
 
-# Format code
-npm run format
+# Run pending migrations
+npm run migrate:up
+
+# Rollback last migration
+npm run migrate:down
+
+# Reset database
+npm run migrate:reset
+
+# Check migration status
+npm run migrate:status
 ```
-
-### Database Migrations
-When making schema changes:
-1. Update the Prisma schema
-2. Create a migration:
-   ```bash
-   node --experimental-wasm-reftypes ./node_modules/prisma/build/index.js migrate dev --name <migration_name>
-   ```
-3. Apply the migration:
-   ```bash
-   node --experimental-wasm-reftypes ./node_modules/prisma/build/index.js migrate deploy
-   ```
 
 ## 🤝 Contributing
 
@@ -421,6 +696,22 @@ When making schema changes:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+### Development Workflow
+1. Create feature branch
+2. Write tests
+3. Implement feature
+4. Run tests
+5. Update documentation
+6. Create pull request
+
+### Code Style
+- Follow ESLint rules
+- Use Prettier formatting
+- Write meaningful commits
+- Add appropriate comments
+- Update documentation
+- Include tests
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -428,9 +719,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👥 Authors
 
 - Your Name - Initial work
+- Contributors - See [CONTRIBUTORS.md](CONTRIBUTORS.md)
 
 ## 🙏 Acknowledgments
 
 - Express.js team for the amazing framework
 - Prisma team for the excellent ORM
-- All contributors who have helped shape this project 
+- All contributors who have helped shape this project
+- Open source community for various tools and libraries 
