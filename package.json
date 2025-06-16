@@ -10,7 +10,8 @@
     "generate-swagger": "node scripts/generate-swagger.js"
   },
   "prisma": {
-    "seed": "node src/db/seeders/seed.js"
+    "seed": "node src/db/seeders/seed.js",
+    "schema": "src/db/schema.prisma"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
