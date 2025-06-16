@@ -1,19 +1,34 @@
-const express = require("express");
+const express = require('express');
+
+// Import all route files
+const authRoute = require('./auth.route');
+const teamRoute = require('./team.route');
+const roleRoute = require('./role.route');
+const rolePermissionRoute = require('./rolePermission.route');
+const permissionRoute = require('./permission.route');
+const docsRoute = require('./docs.route');
+const merchantRoute = require('./merchant.route');
+const userRoute = require('./user.route');
+const transactionRoute = require('./transaction.route');
+const userMandateRoute = require('./usermandateRoutes');
+const mandateRoute = require('./mandateRoutes');
+const dashboardRoute = require('./dashboard.route');
 
 const router = express.Router();
 
-const merchantRoutes = require('./merchantRoutes');
-const merchantSlabRoutes = require('./merchantslabRoutes');
-const userRoutes = require('./userRoutes');
-const transactionRoutes = require('./transactionRoutes');
-const userMandateRoutes = require('./usermandateRoutes');
-const mandateRoutes = require('./mandateRoutes');
+// API Routes
+router.use('/auth', authRoute);
+router.use('/teams', teamRoute);
+router.use('/roles', roleRoute);
+router.use('/role-permissions', rolePermissionRoute);
+router.use('/permissions', permissionRoute);
+router.use('/docs', docsRoute);
+router.use('/users', userRoute);
+router.use('/mandates', mandateRoute);
+router.use('/transactions', transactionRoute);
+router.use('/dashboard', dashboardRoute);
 
+// Business Routes
+router.use('/merchants', merchantRoute);
 
-router.use('/merchants', merchantRoutes);
-router.use('/merchantslabs', merchantSlabRoutes);
-router.use('/users', userRoutes);
-router.use('/transactions', transactionRoutes);
-router.use('/usermandates', userMandateRoutes);
-router.use('/mandate', mandateRoutes);
 module.exports = router;

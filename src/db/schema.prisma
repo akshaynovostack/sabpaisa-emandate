@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model merchant {
+  id             Int             @id @default(autoincrement())
+  merchant_id    String?         @unique(map: "merchant_id_key")
+  name           String?
+  token          String?
+  merchant_code  String?         @unique(map: "merchant_code_key")
+  address        String?
+  status         Int?            @db.TinyInt
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
+  merchant_slabs merchant_slab[] @relation("merchant_to_slab")
+  transactions   transaction[]   @relation("merchant_to_transaction")
+}
+
+model merchant_slab {
+  id               Int              @id @default(autoincrement())
+  merchant_id      String?
+  slab_from        Decimal?
+  slab_to          Decimal?
+  base_amount      Decimal?
+  emi_amount       Decimal?
+  emi_tenure       Int?
+  frequency        Frequency?
+  duration         Int?
+  processing_fee   Decimal?
+  effective_date   DateTime?
+  expiry_date      DateTime?
+  remarks          String?
+  status           Int?             @db.TinyInt
+  mandate_category MandateCategory?
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  merchant         merchant?        @relation("merchant_to_slab", fields: [merchant_id], references: [merchant_id])
+
+  @@index([merchant_id], map: "merchant_slab_merchant_id_fkey")
+}
+
+model user {
+  id            Int            @id @default(autoincrement())
+  user_id       String?        @unique(map: "user_id_key")
+  name          String?
+  mobile        String?
+  email         String?
+  pan           String?
+  telephone     String?
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  transactions  transaction[]  @relation("user_to_transaction")
+  user_mandates user_mandate[] @relation("user_to_mandate")
+}
+
+model team {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  email       String   @unique
+  mobile      String?
+  password    String
+  description String?  @db.Text
+  role_id     Int
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  role        role     @relation(fields: [role_id], references: [id])
+
+  @@index([role_id], map: "teams_role_id_fkey")
+  @@map("teams")
+}
+
+model role {
+  id          Int               @id @default(autoincrement())
+  name        String            @unique
+  description String?           @db.Text
+  created_at  DateTime          @default(now())
+  updated_at  DateTime          @updatedAt
+  teams       team[]
+  permissions role_permission[]
+
+  @@map("roles")
+}
+
+model permission {
+  id          String            @id @default(uuid())
+  name        String            @unique
+  description String?           @db.Text
+  created_at  DateTime          @default(now())
+  updated_at  DateTime          @updatedAt
+  roles       role_permission[]
+
+  @@map("permissions")
+}
+
+model role_permission {
+  id            String     @id @default(uuid())
+  role_id       Int
+  permission_id String
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+  permission    permission @relation(fields: [permission_id], references: [id])
+  role          role       @relation(fields: [role_id], references: [id])
+
+  @@unique([role_id, permission_id])
+  @@index([permission_id], map: "role_permissions_permission_id_fkey")
+  @@map("role_permissions")
+}
+
+model transaction {
+  id                    Int            @id @default(autoincrement())
+  transaction_id        String?        @unique(map: "transaction_id_key")
+  client_transaction_id String?
+  user_id               String?
+  merchant_id           String?
+  monthly_emi           Decimal?
+  start_date            DateTime?
+  end_date              DateTime?
+  purpose               String?
+  max_amount            Decimal?
+  amount                Decimal
+  sabpaisa_txn_id       String?
+  created_at            DateTime       @default(now())
+  updated_at            DateTime       @updatedAt
+  merchant              merchant?      @relation("merchant_to_transaction", fields: [merchant_id], references: [merchant_id])
+  user                  user?          @relation("user_to_transaction", fields: [user_id], references: [user_id])
+  user_mandates         user_mandate[] @relation("transaction_to_mandate")
+
+  @@index([merchant_id], map: "transaction_merchant_id_fkey")
+  @@index([user_id], map: "transaction_user_id_fkey")
+}
+
+model user_mandate {
+  id                  Int          @id @default(autoincrement())
+  transaction_id      String?
+  user_id             String?
+  amount              Decimal?
+  due_date            DateTime?
+  paid_date           DateTime?
+  bank_account_number String?
+  bank_account_type   String?
+  bank_name           String?
+  bank_ifsc           String?
+  frequency           String?
+  registration_status String?
+  bank_status_message String?
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @updatedAt
+  transaction         transaction? @relation("transaction_to_mandate", fields: [transaction_id], references: [transaction_id])
+  user                user?        @relation("user_to_mandate", fields: [user_id], references: [user_id])
+
+  @@index([transaction_id], map: "user_mandate_transaction_id_fkey")
+  @@index([user_id], map: "user_mandate_user_id_fkey")
+}
+enum Frequency {
+  ADHO
+  DAIL
+  WEEK
+  MNTH
+  QURT
+  MIAN
+  YEAR
+  BIMN
+  OOFF
+  RCUR
+}
+
+enum MandateCategory {
+  U005
+  B001
+  A001
+  D001
+  I002
+  L002
+  E001
+  I001
+  L001
+  M001
+  F001
+  U099
+  T002
+  T001
+  U001
+  U003
+  U006
+}
+

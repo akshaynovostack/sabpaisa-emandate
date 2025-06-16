@@ -5,25 +5,52 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "migrate": "prisma migrate dev"
+    "migrate": "prisma migrate dev --schema=src/db/schema.prisma",
+    "seed": "node src/db/seeders/seed.js",
+    "generate-swagger": "node scripts/generate-swagger.js"
+  },
+  "prisma": {
+    "seed": "node src/db/seeders/seed.js"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/sdk-trace-node": "^1.30.1",
     "@opentelemetry/tracing": "^0.24.0",
-    "@prisma/client": "^6.2.1",
+    "@prisma/client": "^6.9.0",
+    "accesscontrol": "^2.2.1",
     "axios": "^1.7.9",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.18.2",
+    "express-jwt": "^8.5.1",
+    "express-rate-limit": "^7.5.0",
     "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "http-status": "^2.1.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
+    "morgan": "^1.10.0",
+    "nodemailer": "^7.0.3",
+    "pg": "^8.16.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.5",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.4.1",
     "nodemon": "^2.0.22",
-    "prisma": "^6.2.1"
+    "prettier": "^3.5.3",
+    "prisma": "^6.9.0"
   }
 }

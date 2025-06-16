@@ -86,7 +86,6 @@ const saveOrUpdateTransaction = async (data) => {
 
     if (existingTransaction) {
       logger.info('Updating existing transaction:', data.transaction_id);
-console.log(data)
       // Update the existing transaction
       return await prisma.transaction.update({
         where: { transaction_id: data.transaction_id },

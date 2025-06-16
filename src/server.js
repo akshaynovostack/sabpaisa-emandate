@@ -1,10 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const logger = require('./helpers/logger');
+const helmet = require('helmet');
+const logger = require('./config/logger');
 const routesV1 = require('./v1/routes');
 const path = require('path');
-const { decAESString } = require('./helpers/common-helper');
+const http = require('http');
+const config = require('./config/config');
+const errorHandler = require('./middlewares/error');
+const { initializeAccessControl } = require('./config/roles');
+const { status: httpStatus } = require('http-status');
+const ApiError = require('./utils/ApiError');
 
 // Initialize environment variables
 dotenv.config();
@@ -12,70 +18,155 @@ dotenv.config();
 // Initialize the Express app
 const app = express();
 
+// Helmet configuration
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'", "https:", "data:"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'self'"]
+    }
+  },
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+}));
+
 // Middleware setup
 app.use(cors({ origin: '*' }));
-app.use(express.json({ limit: '50mb' }))
+app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
-// Set the view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Use routes
-
-
-// Middleware to capture request details
+// Request logging middleware
 app.use((req, res, next) => {
-  // Get the client's IP address
-  const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  
-  // Get the User-Agent (browser or device info)
-  const userAgent = req.get('User-Agent');
-  
-  // Capture additional headers if needed (Referer, Accept-Language, etc.)
-  const referer = req.get('Referer');
-  const acceptLanguage = req.get('Accept-Language');
-  const method = req.method;
-  const url = req.originalUrl;
-
-  // Capture the start time for response time tracking
   const startTime = Date.now();
+  const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const userAgent = req.get('User-Agent');
+  const { method, originalUrl: url } = req;
 
-  // Log the incoming request
+  // Log request
   logger.info('Request received', {
     ip: clientIp,
-    userAgent: userAgent,
-    referer: referer,
-    acceptLanguage: acceptLanguage,
-    method: method,
-    url: url,
+    userAgent,
+    method,
+    url,
+    body: req.body,
+    params: req.params,
+    query: req.query,
+    user: req.user ? { id: req.user.id, role: req.user.role_id } : undefined
   });
 
-  // Capture the response once it's finished
+  // Log response
   res.on('finish', () => {
-    const responseTime = Date.now() - startTime; // Calculate response time
-    const statusCode = res.statusCode; // Get the response status code
-
-    // Log the response details
+    const responseTime = Date.now() - startTime;
     logger.info('Response sent', {
       ip: clientIp,
-      userAgent: userAgent,
-      method: method,
-      url: url,
-      statusCode: statusCode,
-      responseTime: responseTime, // Time taken to process the request
+      method,
+      url,
+      statusCode: res.statusCode,
+      responseTime
     });
   });
 
-  next(); // Pass control to the next middleware or route handler
+  next();
 });
-// Error handling middleware
-app.use((err, req, res, next) => {
-  logger.error('Unexpected Error', { error: err.message, stack: err.stack });
-  res.status(500).json({ error: 'Internal Server Error' });
-});
+
+// API routes
 app.use('/v1', routesV1);
-// Starting the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  logger.info(`Server is running on port ${PORT}`);
+
+// Handle 404 errors
+app.use((req, res, next) => {
+  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
+
+
+// Error handling middleware
+app.use(errorHandler);
+
+let server;
+
+const startServer = async () => {
+  try {
+    // Initialize roles and permissions before starting server
+    await initializeAccessControl();
+
+    server = http.createServer(app);
+
+    server.listen(config.port, () => {
+      logger.info(`Server is running on port ${config.port} in ${config.env} mode`);
+      logger.info(`API Documentation available at http://localhost:${config.port}/v1/docs`);
+    });
+
+    server.on('error', (error) => {
+      if (error.syscall !== 'listen') {
+        throw error;
+      }
+
+      const bind = typeof config.port === 'string' ? `Pipe ${config.port}` : `Port ${config.port}`;
+
+      switch (error.code) {
+        case 'EACCES':
+          logger.error(`${bind} requires elevated privileges`);
+          process.exit(1);
+          break;
+        case 'EADDRINUSE':
+          logger.error(`${bind} is already in use`);
+          process.exit(1);
+          break;
+        default:
+          throw error;
+      }
+    });
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+const exitHandler = () => {
+  if (server) {
+    server.close(() => {
+      logger.info('Server closed');
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
+};
+
+const unexpectedErrorHandler = (error) => {
+  logger.error('Unhandled error:', error);
+  exitHandler();
+};
+
+// Handle uncaught exceptions
+process.on('uncaughtException', unexpectedErrorHandler);
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  exitHandler();
+});
+
+// Handle termination signals
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received');
+  exitHandler();
+});
+
+process.on('SIGINT', () => {
+  logger.info('SIGINT received');
+  exitHandler();
+});
+
+// Start the server
+startServer();
+
