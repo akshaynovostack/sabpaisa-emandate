@@ -37,6 +37,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Moved mandate calculation to `/api/v1/external/calculate-mandate`
   - No authentication required for external APIs
   - Separate route organization for public vs protected endpoints
+- **NEW**: Google Tag Manager (GTM) integration in EJS templates
+  - Added GTM script tags to mandate-related EJS templates
+  - Implemented in mandateDetails.ejs, mandateFailure.ejs, mandateForm.ejs, and mandateRedirect.ejs
+  - Includes both head script and noscript iframe for comprehensive tracking
+- **NEW**: Enhanced mandate calculation features
+  - Frequency descriptions in response (e.g., "Daily", "Weekly", "Monthly")
+  - Duration calculation based on frequency and EMI tenure
+  - Fixed EMI calculation logic to use payment amount directly
+  - Improved duration calculation (e.g., bi-monthly tenure × 2 for months)
+- **NEW**: "No recent activities found" response for dashboard endpoints
+- **NEW**: Percentage changes in dashboard statistics
+- **NEW**: Comprehensive Swagger documentation updates
+  - Added detailed response schemas for mandate calculation
+  - Updated dashboard endpoints with new response formats
+  - Enhanced error handling documentation
+  - Added external API documentation section
 
 ### Changed
 - Reorganized database-related files under `src/db/`:
@@ -58,6 +74,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **UPDATED**: Swagger configuration to include multiple server environments:
   - Development server: `http://localhost:4000`
   - UAT server: `https://sabpaisa-crm.novostack.net/api`
+- **FIXED**: Prisma model/table usage in mandate and transaction services
+  - Corrected table names and field references
+  - Fixed database query issues
+  - Improved data consistency
+- **IMPROVED**: Mandate calculation logic
+  - Fixed EMI tenure calculation (removed incorrect multiplication)
+  - Enhanced duration calculation based on frequency
+  - Improved frequency mapping to descriptive names
+  - Better handling of payment amount vs slab ranges
 
 ### Security
 - Implemented password hashing (to be enabled in production)

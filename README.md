@@ -24,10 +24,48 @@ A robust Node.js-based eMandate system for managing recurring payments and manda
 - 🔄 Webhook support
 - 📊 Transaction reporting
 - 🔍 Advanced querying capabilities
+- 🧮 **NEW**: Mandate calculation API for payment planning
+- 🌐 **NEW**: External API routes for public access
+- 📈 **NEW**: Google Tag Manager integration for analytics
+- 📊 **NEW**: Enhanced dashboard with percentage changes
+- 🔧 **NEW**: Improved mandate calculation logic
 
 ## 📋 Version History
 
-### Current Version: 0.2.0 (2024-03-20)
+### Current Version: Unreleased (Latest Updates)
+- **NEW**: Mandate calculation API endpoint without authentication
+  - Calculates mandate details based on merchant ID and payment amount
+  - Returns comprehensive payment schedule with EMI details
+  - Supports various payment frequencies with descriptive names
+  - Duration calculation based on frequency and EMI tenure
+- **NEW**: External API route structure for public endpoints
+  - Separate route organization for public vs protected APIs
+  - No authentication required for external calculations
+  - Clean separation of concerns
+- **NEW**: Google Tag Manager (GTM) integration
+  - Added to all mandate-related EJS templates
+  - Comprehensive tracking for mandate flows
+  - Both head script and noscript implementations
+- **IMPROVED**: Enhanced mandate calculation logic
+  - Fixed EMI tenure calculation issues
+  - Better duration calculation based on frequency
+  - Improved frequency mapping to user-friendly descriptions
+  - Direct payment amount usage in calculations
+- **ENHANCED**: Dashboard analytics
+  - Added "No recent activities found" responses
+  - Percentage changes in statistics
+  - Improved error handling and responses
+- **FIXED**: Database query issues
+  - Corrected Prisma model/table usage
+  - Fixed field name references
+  - Improved data consistency
+- **UPDATED**: Comprehensive Swagger documentation
+  - Added external API documentation
+  - Enhanced mandate calculation schemas
+  - Updated dashboard response formats
+  - Improved error handling documentation
+
+### Version 0.2.0 (2024-03-20)
 - Added comprehensive Swagger documentation for all API endpoints
 - Implemented OpenAPI 3.0 specification compliance
 - Enhanced API documentation with detailed schemas and examples
@@ -70,6 +108,8 @@ A robust Node.js-based eMandate system for managing recurring payments and manda
 - **Validation:** Joi
 - **Testing:** Jest
 - **Code Quality:** ESLint, Prettier
+- **Analytics:** Google Tag Manager
+- **Templates:** EJS
 
 ## 📁 Project Structure
 
@@ -104,6 +144,12 @@ emandate/
 │   │   ├── webhook.js       # Webhook utilities
 │   │   └── analytics.js     # Analytics utilities
 │   │
+│   ├── views/               # EJS templates
+│   │   ├── mandateDetails.ejs
+│   │   ├── mandateFailure.ejs
+│   │   ├── mandateForm.ejs
+│   │   └── mandateRedirect.ejs
+│   │
 │   ├── v1/                  # API version 1
 │   │   ├── controllers/     # Route controllers
 │   │   │   ├── auth.controller.js
@@ -112,7 +158,8 @@ emandate/
 │   │   │   ├── merchant.controller.js
 │   │   │   ├── permission.controller.js
 │   │   │   ├── role.controller.js
-│   │   │   └── dashboard.controller.js
+│   │   │   ├── dashboard.controller.js
+│   │   │   └── external.controller.js
 │   │   │
 │   │   ├── middlewares/     # Version-specific middlewares
 │   │   │   ├── permission.js
@@ -125,7 +172,8 @@ emandate/
 │   │   │   ├── merchant.route.js
 │   │   │   ├── permission.route.js
 │   │   │   ├── role.route.js
-│   │   │   └── dashboard.route.js
+│   │   │   ├── dashboard.route.js
+│   │   │   └── external.route.js
 │   │   │
 │   │   ├── services/        # Business logic
 │   │   │   ├── auth.service.js
@@ -134,15 +182,25 @@ emandate/
 │   │   │   ├── merchant.service.js
 │   │   │   ├── permission.service.js
 │   │   │   ├── role.service.js
-│   │   │   └── dashboard.service.js
+│   │   │   ├── dashboard.service.js
+│   │   │   └── external.service.js
 │   │   │
-│   │   └── validations/     # Request validations
-│   │       ├── auth.validation.js
-│   │       ├── user.validation.js
-│   │       ├── transaction.validation.js
-│   │       ├── merchant.validation.js
-│   │       ├── permission.validation.js
-│   │       └── role.validation.js
+│   │   ├── validations/     # Request validations
+│   │   │   ├── auth.validation.js
+│   │   │   ├── user.validation.js
+│   │   │   ├── transaction.validation.js
+│   │   │   ├── merchant.validation.js
+│   │   │   ├── permission.validation.js
+│   │   │   └── role.validation.js
+│   │   │
+│   │   └── swagger/         # Swagger documentation
+│   │       ├── dashboard.swagger.js
+│   │       ├── mandate.swagger.js
+│   │       ├── merchant.swagger.js
+│   │       ├── permission.swagger.js
+│   │       ├── role.swagger.js
+│   │       ├── transaction.swagger.js
+│   │       └── user.swagger.js
 │   │
 │   ├── app.js              # Express app setup
 │   └── server.js           # Server entry point
@@ -172,6 +230,7 @@ emandate/
 ├── .prettierignore      # Prettier ignore rules
 ├── .prettierrc.json     # Prettier configuration
 ├── package.json         # Project dependencies
+├── CHANGELOG.md         # Project changelog
 └── README.md           # Project documentation
 ```
 
