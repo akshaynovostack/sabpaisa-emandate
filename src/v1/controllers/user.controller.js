@@ -20,23 +20,23 @@ const getUsers = catchAsync(async (req, res) => {
   const { page = 1, limit = 10, search } = req.query;
   const filter = pick(req.query, ['name', 'email', 'mobile']);
   const options = pick(req.query, ['sortBy', 'limit', 'page', 'search']);
-  const result = await userService.getAllUsers(filter, options);
-
+  const {totalPages,totalResults, results} = await userService.getAllUsers(filter, options);
+  
   return success(res, {
     message: 'Users retrieved successfully',
     data: {
-      users: result.users,
+      users: results,
       pagination: {
-        total: result.total,
+        total: totalResults,
         page: Number(page),
         limit: Number(limit),
-        pages: Math.ceil(result.total / limit),
+        pages: totalPages,
       }
     },
     meta: {
-      totalCount: result.total,
+      totalCount: totalResults,
       currentPage: Number(page),
-      totalPages: Math.ceil(result.total / limit)
+      totalPages: totalPages
     }
   });
 });
