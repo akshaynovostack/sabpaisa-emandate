@@ -146,7 +146,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/dashboard/stats:
+ * /v1/dashboard/stats:
  *   get:
  *     summary: Get dashboard statistics
  *     description: Retrieve key statistics for the dashboard including mandate counts, transaction data, and user metrics
@@ -207,7 +207,7 @@ router
 
 /**
  * @swagger
- * /api/v1/dashboard/recent-activities:
+ * /v1/dashboard/recent-activities:
  *   get:
  *     summary: Get recent activities
  *     description: Retrieve a list of recent activities in the system including mandates and transactions

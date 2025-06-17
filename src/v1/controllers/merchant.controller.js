@@ -92,10 +92,44 @@ const deleteMerchant = catchAsync(async (req, res) => {
   });
 });
 
+/**
+ * Calculate mandate details based on merchant ID and payout amount
+ * @route GET /api/v1/merchants/calculate-mandate
+ */
+const calculateMandateDetails = catchAsync(async (req, res) => {
+  const { merchant_id, payout_amount } = req.query;
+
+  if (!merchant_id || !payout_amount) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Merchant ID and payout amount are required'
+    );
+  }
+
+  const payoutAmount = parseFloat(payout_amount);
+  if (isNaN(payoutAmount) || payoutAmount <= 0) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Payout amount must be a valid positive number'
+    );
+  }
+
+  const mandateDetails = await merchantService.calculateMandateDetails(
+    merchant_id,
+    payoutAmount
+  );
+
+  return success(res, {
+    message: 'Mandate details calculated successfully',
+    data: mandateDetails,
+  });
+});
+
 module.exports = {
   createMerchant,
   getMerchants,
   getMerchant,
   updateMerchant,
   deleteMerchant,
+  calculateMandateDetails,
 }; 

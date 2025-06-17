@@ -156,7 +156,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/mandates/create:
+ * /v1/mandates/create:
  *   get:
  *     summary: Create a mandate (Legacy)
  *     description: Legacy endpoint to create a mandate without authentication
@@ -301,7 +301,7 @@ router.post('/create', handleCreateMandate);
 
 /**
  * @swagger
- * /api/v1/mandates/web-hook/{id}:
+ * /v1/mandates/web-hook/{id}:
  *   get:
  *     summary: Webhook endpoint for mandate status updates
  *     description: Endpoint for receiving mandate status updates from the bank
@@ -326,7 +326,7 @@ router.get('/web-hook/:id', webHook);
 
 /**
  * @swagger
- * /api/v1/mandates:
+ * /v1/mandates:
  *   post:
  *     summary: Create a new mandate
  *     description: Create a new mandate with authentication and permissions
@@ -468,7 +468,7 @@ router
 
 /**
  * @swagger
- * /api/v1/mandates/{mandateId}:
+ * /v1/mandates/{mandateId}:
  *   get:
  *     summary: Get a mandate by ID
  *     description: Retrieve a specific mandate by its ID

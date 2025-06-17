@@ -108,7 +108,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/users:
+ * /v1/users:
  *   post:
  *     summary: Create a new user
  *     description: Create a new user with authentication and proper permissions
@@ -271,7 +271,7 @@ router
 
 /**
  * @swagger
- * /api/v1/users/{userId}:
+ * /v1/users/{userId}:
  *   get:
  *     summary: Get a user by ID
  *     description: Retrieve a specific user by their ID

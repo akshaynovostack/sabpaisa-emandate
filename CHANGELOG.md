@@ -28,6 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Role management endpoints
   - Merchant and merchant slab endpoints
   - Dashboard endpoints
+- **NEW**: Mandate calculation API endpoint (`/api/v1/merchants/calculate-mandate`) without authentication
+  - Calculates mandate details based on merchant ID and payout amount
+  - Returns start date, end date, total EMIs, convenience fee, EMI amount, frequency, and duration
+  - Uses merchant slabs to determine applicable rates and terms
+  - Supports various payment frequencies (daily, weekly, monthly, etc.)
 
 ### Changed
 - Reorganized database-related files under `src/db/`:
@@ -46,6 +51,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Pagination details
   - Error responses
   - Examples for all endpoints
+- **UPDATED**: Swagger configuration to include multiple server environments:
+  - Development server: `http://localhost:4000`
+  - UAT server: `https://sabpaisa-crm.novostack.net/api`
 
 ### Security
 - Implemented password hashing (to be enabled in production)

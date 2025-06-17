@@ -121,7 +121,7 @@ const router = express.Router({ mergeParams: true }); // Enable access to parent
 
 /**
  * @swagger
- * /api/v1/merchants/{merchantId}/slabs:
+ * /v1/merchants/{merchantId}/slabs:
  *   post:
  *     summary: Create a new merchant slab
  *     description: Create a new fee slab for a specific merchant
@@ -246,7 +246,7 @@ router
 
 /**
  * @swagger
- * /api/v1/merchants/{merchantId}/slabs/{slabId}:
+ * /v1/merchants/{merchantId}/slabs/{slabId}:
  *   get:
  *     summary: Get a merchant slab by ID
  *     description: Retrieve a specific fee slab for a merchant

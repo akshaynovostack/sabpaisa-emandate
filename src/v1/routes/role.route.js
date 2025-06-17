@@ -179,7 +179,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/roles:
+ * /v1/roles:
  *   post:
  *     summary: Create a new role
  *     description: Create a new role with specified permissions. Only users with role management permissions can create roles.
@@ -313,7 +313,7 @@ router
 
 /**
  * @swagger
- * /api/v1/roles/{roleId}:
+ * /v1/roles/{roleId}:
  *   get:
  *     summary: Get a role by ID
  *     description: Retrieve a specific role by its ID. Only users with role management permissions can fetch roles.

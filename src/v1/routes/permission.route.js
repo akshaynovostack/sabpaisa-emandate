@@ -105,7 +105,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/permissions:
+ * /v1/permissions:
  *   post:
  *     summary: Create a new permission
  *     description: Create a new permission with authentication and admin privileges
@@ -235,7 +235,7 @@ router
 
 /**
  * @swagger
- * /api/v1/permissions/{permissionId}:
+ * /v1/permissions/{permissionId}:
  *   get:
  *     summary: Get a permission by ID
  *     description: Retrieve a specific permission by its ID

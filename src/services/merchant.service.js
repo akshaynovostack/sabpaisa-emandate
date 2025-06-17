@@ -177,10 +177,126 @@ const deleteMerchantById = async (id) => {
   });
 };
 
+/**
+ * Calculate mandate details based on merchant ID and payout amount
+ * @param {string} merchantId
+ * @param {number} payoutAmount
+ * @returns {Promise<Object>}
+ */
+const calculateMandateDetails = async (merchantId, payoutAmount) => {
+  // First, verify merchant exists
+  const merchant = await prisma.merchant.findUnique({
+    where: { merchant_id: merchantId },
+    include: {
+      merchant_slabs: {
+        where: {
+          AND: [
+            { status: 1 }, // Active slabs only
+            { effective_date: { lte: new Date() } },
+            {
+              OR: [
+                { expiry_date: null },
+                { expiry_date: { gt: new Date() } },
+              ],
+            },
+          ],
+        },
+        orderBy: { slab_from: 'asc' },
+      },
+    },
+  });
+
+  if (!merchant) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Merchant not found');
+  }
+
+  if (!merchant.merchant_slabs || merchant.merchant_slabs.length === 0) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'No active slabs found for this merchant'
+    );
+  }
+
+  // Find the appropriate slab for the payout amount
+  const applicableSlab = merchant.merchant_slabs.find(
+    (slab) => 
+      parseFloat(slab.slab_from) <= payoutAmount && 
+      parseFloat(slab.slab_to) >= payoutAmount
+  );
+
+  if (!applicableSlab) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      `Payout amount ${payoutAmount} is not within any active slab range for merchant ${merchantId}`
+    );
+  }
+
+  // Calculate mandate details
+  const startDate = new Date();
+  const endDate = new Date();
+  
+  // Calculate end date based on duration and frequency
+  const duration = parseInt(applicableSlab.duration) || 12; // Default to 12 months
+  const frequency = applicableSlab.frequency;
+  
+  switch (frequency) {
+    case 'DAIL': // Daily
+      endDate.setDate(endDate.getDate() + duration);
+      break;
+    case 'WEEK': // Weekly
+      endDate.setDate(endDate.getDate() + (duration * 7));
+      break;
+    case 'MNTH': // Monthly
+      endDate.setMonth(endDate.getMonth() + duration);
+      break;
+    case 'BIMN': // Bi-monthly
+      endDate.setMonth(endDate.getMonth() + (duration * 2));
+      break;
+    case 'QURT': // Quarterly
+      endDate.setMonth(endDate.getMonth() + (duration * 3));
+      break;
+    case 'YEAR': // Yearly
+      endDate.setFullYear(endDate.getFullYear() + duration);
+      break;
+    default: // Default to monthly
+      endDate.setMonth(endDate.getMonth() + duration);
+  }
+
+  // Calculate convenience fee
+  const convenienceFee = parseFloat(applicableSlab.processing_fee) || 0;
+  
+  // Calculate EMI amount
+  const emiAmount = parseFloat(applicableSlab.emi_amount) || 0;
+  
+  // Calculate total EMIs
+  const totalEmis = Math.ceil(duration);
+
+  return {
+    merchant_id: merchantId,
+    merchant_name: merchant.name,
+    payout_amount: payoutAmount,
+    start_date: startDate.toISOString().split('T')[0],
+    end_date: endDate.toISOString().split('T')[0],
+    total_emis: totalEmis,
+    convenience_fee: convenienceFee,
+    emi_amount: emiAmount,
+    frequency: frequency,
+    duration: duration,
+    slab_details: {
+      slab_from: parseFloat(applicableSlab.slab_from),
+      slab_to: parseFloat(applicableSlab.slab_to),
+      base_amount: parseFloat(applicableSlab.base_amount),
+      emi_tenure: parseInt(applicableSlab.emi_tenure),
+      mandate_category: applicableSlab.mandate_category,
+    }
+  };
+};
+
 module.exports = {
   createMerchant,
   getMerchantById,
   getAllMerchants,
   updateMerchantById,
   deleteMerchantById,
+  calculateMandateDetails,
 }; 

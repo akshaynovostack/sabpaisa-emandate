@@ -139,7 +139,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/transactions:
+ * /v1/transactions:
  *   post:
  *     summary: Create a new transaction
  *     description: Create a new transaction with authentication and proper permissions
@@ -323,7 +323,7 @@ router
 
 /**
  * @swagger
- * /api/v1/transactions/{transactionId}:
+ * /v1/transactions/{transactionId}:
  *   get:
  *     summary: Get a transaction by ID
  *     description: Retrieve a specific transaction by its ID

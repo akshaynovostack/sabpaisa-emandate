@@ -19,6 +19,11 @@ const swaggerDef = {
   servers: [
     {
       url: `http://localhost:${config.port}`,
+      description: 'Development Server',
+    },
+    {
+      url: 'https://sabpaisa-crm.novostack.net/api',
+      description: 'UAT Server',
     },
   ],
   components,

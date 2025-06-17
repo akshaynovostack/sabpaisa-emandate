@@ -10,7 +10,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:4000"
+      "url": "http://localhost:4000",
+      "description": "Development Server"
+    },
+    {
+      "url": "https://sabpaisa-crm.novostack.net/api",
+      "description": "UAT Server"
     }
   ],
   "components": {
