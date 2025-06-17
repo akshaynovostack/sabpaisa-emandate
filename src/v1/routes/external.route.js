@@ -146,7 +146,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/external/calculate-mandate:
+ * /v1/external/calculate-mandate:
  *   get:
  *     summary: Calculate mandate details
  *     description: Calculate mandate details based on merchant ID and payment amount without authentication
