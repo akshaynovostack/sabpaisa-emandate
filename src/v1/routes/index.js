@@ -28,6 +28,7 @@ router.use('/permissions', permissionRoute);
 router.use('/docs', docsRoute);
 router.use('/users', userRoute);
 router.use('/mandates', mandateRoute);
+router.use('/mandate', mandateRoute);
 router.use('/transactions', transactionRoute);
 router.use('/dashboard', dashboardRoute);
 
