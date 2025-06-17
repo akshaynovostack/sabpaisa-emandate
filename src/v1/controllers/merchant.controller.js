@@ -97,17 +97,17 @@ const deleteMerchant = catchAsync(async (req, res) => {
  * @route GET /api/v1/merchants/calculate-mandate
  */
 const calculateMandateDetails = catchAsync(async (req, res) => {
-  const { merchant_id, payout_amount } = req.query;
+  const { merchant_id, payment_amount } = req.query;
 
-  if (!merchant_id || !payout_amount) {
+  if (!merchant_id || !payment_amount) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
       'Merchant ID and payout amount are required'
     );
   }
 
-  const payoutAmount = parseFloat(payout_amount);
-  if (isNaN(payoutAmount) || payoutAmount <= 0) {
+  const paymentAmount = parseFloat(payment_amount);
+  if (isNaN(paymentAmount) || paymentAmount <= 0) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
       'Payout amount must be a valid positive number'
@@ -116,7 +116,7 @@ const calculateMandateDetails = catchAsync(async (req, res) => {
 
   const mandateDetails = await merchantService.calculateMandateDetails(
     merchant_id,
-    payoutAmount
+    paymentAmount
   );
 
   return success(res, {

@@ -1,4 +1,4 @@
-const httpStatus = require('http-status');
+const {status:httpStatus} = require('http-status');
 const { PrismaClient } = require('@prisma/client');
 const ApiError = require('../utils/ApiError');
 
@@ -178,12 +178,23 @@ const deleteMerchantById = async (id) => {
 };
 
 /**
- * Calculate mandate details based on merchant ID and payout amount
+ * Calculate mandate details based on merchant ID and payment amount
  * @param {string} merchantId
- * @param {number} payoutAmount
+ * @param {number} paymentAmount
  * @returns {Promise<Object>}
  */
-const calculateMandateDetails = async (merchantId, payoutAmount) => {
+const calculateMandateDetails = async (merchantId, paymentAmount) => {
+  // Frequency mapping
+  const frequencies = [
+    { code: 'BIMN', description: 'Bi-Monthly', id: 2 },
+    { code: 'DAIL', description: 'Daily', id: 3 },
+    { code: 'MNTH', description: 'Monthly', id: 4 },
+    { code: 'QURT', description: 'Quarterly', id: 5 },
+    { code: 'MIAN', description: 'Semi', id: 6 },
+    { code: 'WEEK', description: 'Weekly', id: 7 },
+    { code: 'YEAR', description: 'Yearly', id: 8 }
+  ];
+
   // First, verify merchant exists
   const merchant = await prisma.merchant.findUnique({
     where: { merchant_id: merchantId },
@@ -217,76 +228,113 @@ const calculateMandateDetails = async (merchantId, payoutAmount) => {
     );
   }
 
-  // Find the appropriate slab for the payout amount
+  // Find the appropriate slab for the payment amount
   const applicableSlab = merchant.merchant_slabs.find(
     (slab) => 
-      parseFloat(slab.slab_from) <= payoutAmount && 
-      parseFloat(slab.slab_to) >= payoutAmount
+      parseFloat(slab.slab_from) <= paymentAmount && 
+      parseFloat(slab.slab_to) >= paymentAmount
   );
 
   if (!applicableSlab) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      `Payout amount ${payoutAmount} is not within any active slab range for merchant ${merchantId}`
+      `Payment amount ${paymentAmount} is not within any active slab range for merchant ${merchantId}`
     );
   }
 
-  // Calculate mandate details
+  // Extract slab details
+  const slabFrom = parseFloat(applicableSlab.slab_from);
+  const slabTo = parseFloat(applicableSlab.slab_to);
+  const baseAmount = parseFloat(applicableSlab.base_amount);
+  const emiTenure = parseInt(applicableSlab.emi_tenure);
+  const processingFeePercentage = parseFloat(applicableSlab.processing_fee) || 0;
+  const frequency = applicableSlab.frequency;
+
+  // Calculate based on the specified formula
+  // Total Amount = Payment amount from request (not average of slab range)
+  const totalAmount = paymentAmount;
+  
+  // Number of Payments = EMI Tenure (already in months, no need to multiply by frequency)
+  const numberOfPayments = emiTenure;
+  
+  // EMI Amount = (Total Amount - Base Amount) / Number of Payments
+  const emiAmount = (totalAmount - baseAmount) / numberOfPayments;
+  
+  // Total EMI Amount = EMI Amount × Number of Payments
+  const totalEmiAmount = emiAmount * numberOfPayments;
+  
+  // Processing Fee = Processing Fee Percentage × Total Amount
+  const processingFee = (processingFeePercentage / 100) * totalAmount;
+  
+  // Total Payable = Base Amount + Total EMI Amount + Processing Fee
+  const totalPayable = baseAmount + totalEmiAmount + processingFee;
+
+  // Calculate mandate dates
   const startDate = new Date();
   const endDate = new Date();
   
-  // Calculate end date based on duration and frequency
-  const duration = parseInt(applicableSlab.duration) || 12; // Default to 12 months
-  const frequency = applicableSlab.frequency;
+  // Calculate duration based on frequency and EMI tenure
+  let durationInMonths = emiTenure; // Default to EMI tenure in months
   
+  // Adjust duration based on frequency
   switch (frequency) {
-    case 'DAIL': // Daily
-      endDate.setDate(endDate.getDate() + duration);
+    case 'DAIL': // Daily - convert to months (approximate)
+      durationInMonths = Math.ceil(emiTenure / 30);
       break;
-    case 'WEEK': // Weekly
-      endDate.setDate(endDate.getDate() + (duration * 7));
+    case 'WEEK': // Weekly - convert to months (approximate)
+      durationInMonths = Math.ceil(emiTenure / 4);
       break;
-    case 'MNTH': // Monthly
-      endDate.setMonth(endDate.getMonth() + duration);
+    case 'MNTH': // Monthly - duration is same as EMI tenure
+      durationInMonths = emiTenure;
       break;
-    case 'BIMN': // Bi-monthly
-      endDate.setMonth(endDate.getMonth() + (duration * 2));
+    case 'BIMN': // Bi-monthly - convert to months
+      durationInMonths = emiTenure * 2;
       break;
-    case 'QURT': // Quarterly
-      endDate.setMonth(endDate.getMonth() + (duration * 3));
+    case 'QURT': // Quarterly - convert to months
+      durationInMonths = emiTenure * 3;
       break;
-    case 'YEAR': // Yearly
-      endDate.setFullYear(endDate.getFullYear() + duration);
+    case 'MIAN': // Semi-annually - convert to months
+      durationInMonths = emiTenure * 6;
+      break;
+    case 'YEAR': // Yearly - convert to months
+      durationInMonths = emiTenure * 12;
       break;
     default: // Default to monthly
-      endDate.setMonth(endDate.getMonth() + duration);
+      durationInMonths = emiTenure;
   }
+  
+  // Calculate end date based on calculated duration
+  endDate.setMonth(endDate.getMonth() + durationInMonths);
 
-  // Calculate convenience fee
-  const convenienceFee = parseFloat(applicableSlab.processing_fee) || 0;
-  
-  // Calculate EMI amount
-  const emiAmount = parseFloat(applicableSlab.emi_amount) || 0;
-  
-  // Calculate total EMIs
-  const totalEmis = Math.ceil(duration);
+  // Get frequency details
+  const frequencyDetails = frequencies.find(f => f.code === frequency) || { code: frequency, description: 'Unknown', id: 0 };
 
   return {
     merchant_id: merchantId,
     merchant_name: merchant.name,
-    payout_amount: payoutAmount,
+    payment_amount: paymentAmount,
     start_date: startDate.toISOString().split('T')[0],
     end_date: endDate.toISOString().split('T')[0],
-    total_emis: totalEmis,
-    convenience_fee: convenienceFee,
+    total_emis: numberOfPayments,
+    convenience_fee: processingFee,
     emi_amount: emiAmount,
-    frequency: frequency,
-    duration: duration,
-    slab_details: {
-      slab_from: parseFloat(applicableSlab.slab_from),
-      slab_to: parseFloat(applicableSlab.slab_to),
-      base_amount: parseFloat(applicableSlab.base_amount),
-      emi_tenure: parseInt(applicableSlab.emi_tenure),
+    downpayment: baseAmount,
+    total_amount: totalAmount,
+    total_emi_amount: totalEmiAmount,
+    total_payable: totalPayable,
+    frequency: {
+      code: frequencyDetails.code,
+      description: frequencyDetails.description,
+      id: frequencyDetails.id
+    },
+    duration: durationInMonths,
+    calculation_details: {
+      slab_from: slabFrom,
+      slab_to: slabTo,
+      base_amount: baseAmount,
+      emi_tenure: emiTenure,
+      frequency_multiplier: 1, // Frequency multiplier is not provided in the new calculation
+      processing_fee_percentage: processingFeePercentage,
       mandate_category: applicableSlab.mandate_category,
     }
   };

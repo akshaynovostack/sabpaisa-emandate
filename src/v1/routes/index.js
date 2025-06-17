@@ -12,8 +12,12 @@ const userRoute = require('./user.route');
 const transactionRoute = require('./transaction.route');
 const mandateRoute = require('./mandate.routes');
 const dashboardRoute = require('./dashboard.route');
+const externalRoute = require('./external.route');
 
 const router = express.Router();
+
+// External/Public API Routes (No Authentication Required)
+router.use('/external', externalRoute);
 
 // API Routes
 router.use('/auth', authRoute);

@@ -33,6 +33,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Returns start date, end date, total EMIs, convenience fee, EMI amount, frequency, and duration
   - Uses merchant slabs to determine applicable rates and terms
   - Supports various payment frequencies (daily, weekly, monthly, etc.)
+- **NEW**: External API route structure (`/api/v1/external/`) for public endpoints
+  - Moved mandate calculation to `/api/v1/external/calculate-mandate`
+  - No authentication required for external APIs
+  - Separate route organization for public vs protected endpoints
 
 ### Changed
 - Reorganized database-related files under `src/db/`:
