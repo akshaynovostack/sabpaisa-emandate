@@ -5,6 +5,7 @@ const { success } = require('../../utils/response');
 const pick = require('../../utils/pick');
 const ApiError = require('../../utils/ApiError');
 const { decAESString, encAESString, jsonToQueryParams, parseQueryString } = require('../../helpers/common-helper');
+const logger = require('../../config/logger');
 
 /**
  * Create a merchant
@@ -136,7 +137,7 @@ const calculateMandateDetails = catchAsync(async (req, res) => {
 
   return success(res, {
     message: 'Mandate details calculated successfully',
-    data: encryptedResponse,
+    data: {encryptedResponse},
   });
 });
 

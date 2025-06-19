@@ -180,9 +180,12 @@ const router = express.Router();
  *                       type: integer
  *                       example: 200
  *                 data:
- *                   type: string
- *                   description: Encrypted response containing mandate calculation details
- *                   example: "encrypted_response_string"
+ *                   type: object
+ *                   properties:
+ *                     encryptedResponse:
+ *                       type: string
+ *                       description: Encrypted response containing mandate calculation details
+ *                       example: "encrypted_response_string"
  *       400:
  *         description: Bad request - Invalid parameters
  *         content:
