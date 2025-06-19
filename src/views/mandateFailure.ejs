@@ -664,39 +664,48 @@
         padding: 12px 18px !important;
       }
 
-      .material-icons {
-        font-family: 'Material Icons';
-        font-weight: normal;
-        font-style: normal;
-        font-size: 24px;
-        line-height: 1;
-        letter-spacing: normal;
-        text-transform: none;
+      /* Icon styles */
+      .icon {
         display: inline-block;
-        white-space: nowrap;
-        word-wrap: normal;
-        direction: ltr;
-        -webkit-font-feature-settings: 'liga';
-        -webkit-font-smoothing: antialiased;
+        font-size: 1.2em;
+        line-height: 1;
+        vertical-align: middle;
       }
-
-      /* Fallback for Material Icons */
-      .material-icons:not(.material-icons-outlined):not(.material-icons-round):not(.material-icons-sharp) {
-        font-family: 'Material Icons';
+      
+      .error-icon .icon {
+        font-size: 3rem;
+        color: var(--warning);
       }
-
-      /* Alternative icon names if the original ones don't work */
-      .icon-calendar::before { content: "📅"; }
-      .icon-expand::before { content: "▼"; }
-      .icon-copy::before { content: "📋"; }
-      .icon-download::before { content: "⬇️"; }
-      .icon-lock::before { content: "🔒"; }
-      .icon-check::before { content: "✓"; }
-      .icon-arrow::before { content: "→"; }
-      .icon-warning::before { content: "⚠️"; }
-      .icon-refresh::before { content: "🔄"; }
-      .icon-support::before { content: "💬"; }
-      .icon-error::before { content: "❌"; }
+      
+      .copy-btn .icon {
+        font-size: 1rem;
+      }
+      
+      .retry-btn .icon {
+        font-size: 1.1rem;
+        margin-right: 0.5rem;
+      }
+      
+      .support-btn .icon {
+        font-size: 1.1rem;
+        margin-right: 0.5rem;
+      }
+      
+      .error-item .icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        color: var(--warning);
+      }
+      
+      .secure-badge .icon {
+        font-size: 1rem;
+        margin-right: 0.5rem;
+      }
+      
+      .notification-icon {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+      }
     </style>
   </head>
   <body>
@@ -736,45 +745,43 @@
             
             <!-- Error Alert -->
             <div class="error-alert">
-              <i class="material-icons">warning</i>
-              <div class="error-alert-content">
-                <div class="error-alert-title">Error Message</div>
-                <div class="error-alert-message"><%= message %></div>
-              </div>
+                <span class="icon">⚠️</span>
+                <div class="error-alert-content">
+                    <div class="error-alert-title">Error Message</div>
+                    <div class="error-alert-message"><%= message %></div>
+                </div>
             </div>
             
             <!-- Error Details -->
-            <div class="details-group">
-              <% const details = {
-                'Transaction ID': mandateDetails.sabpaisaTxnId,
-                'Client Transaction ID': mandateDetails.clientTxnId,
-                'Client Code': mandateDetails.clientCode,
-                'Status': mandateDetails.mandateStatus,
-                'Date': new Date(mandateDetails.mandateDate).toLocaleString(),
-                'Bank Status': mandateDetails.bankStatusMessage,
-                'Error Message': mandateDetails.errorMessage
-              } %>
-
-              <% for (const [key, value] of Object.entries(details)) { %>
-                <% if (value) { %>
-                  <div class="detail-item">
-                    <span class="label"><%= key %></span>
-                    <span class="value"><%= value %></span>
-                  </div>
-                <% } %>
-              <% } %>
+            <div class="error-details">
+                <div class="error-item">
+                    <span class="icon">⚠️</span>
+                    <div class="error-content">
+                        <h4>Error Code</h4>
+                        <p><%= mandateDetails.responseCode || 'Unknown' %></p>
+                    </div>
+                </div>
+                
+                <div class="error-item">
+                    <span class="icon">📝</span>
+                    <div class="error-content">
+                        <h4>Error Message</h4>
+                        <p><%= mandateDetails.responseMessage || 'An unexpected error occurred' %></p>
+                    </div>
+                </div>
             </div>
             
             <!-- Action Buttons -->
             <div class="action-buttons">
-              <button class="retry-btn">
-                <i class="material-icons">refresh</i>
-                <span>Try Again</span>
-              </button>
-              <button class="contact-btn">
-                <i class="material-icons">support_agent</i>
-                <span>Contact Support</span>
-              </button>
+                <button class="retry-btn">
+                    <span class="icon">🔄</span>
+                    <span>Try Again</span>
+                </button>
+                
+                <button class="support-btn">
+                    <span class="icon">💬</span>
+                    <span>Contact Support</span>
+                </button>
             </div>
             
             <!-- Redirect Message -->
@@ -789,238 +796,194 @@
       <!-- Footer -->
       <div class="footer">
         <div class="secure-badge">
-          <i class="material-icons">lock</i>
+          <span class="icon">🔒</span>
           <span>Secured by e-Nach</span>
         </div>
       </div>
     </div>
     
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // Check if Material Icons are loading properly
-        checkMaterialIcons();
-        
-        // Copy transaction ID
-        const copyBtn = document.querySelector('.copy-btn');
-        const transactionId = document.getElementById('transaction-id');
-        
-        if (copyBtn && transactionId) {
-          copyBtn.addEventListener('click', function() {
-            const textToCopy = transactionId.getAttribute('data-value') || transactionId.textContent;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize copy functionality
+            initCopyFunctionality();
             
-            navigator.clipboard.writeText(textToCopy).then(() => {
-              // Change button icon and color temporarily
-              const originalContent = this.innerHTML;
-              this.innerHTML = '<i class="material-icons">check</i>';
-              this.style.color = 'var(--success)';
-              
-              // Show notification
-              showNotification('Transaction ID copied to clipboard', 'content_copy');
-              
-              // Revert button after 1.5 seconds
-              setTimeout(() => {
-                this.innerHTML = originalContent;
-                this.style.color = '';
-              }, 1500);
-            }).catch(err => {
-              console.error('Could not copy text: ', err);
-              showNotification('Failed to copy. Please try again.', 'error', true);
-            });
-          });
+            // Initialize button interactions
+            initButtonInteractions();
+            
+            // Start the countdown timer for auto-redirect
+            startCountdown();
+            
+            // Add entry animations with staggered timing
+            animateElements();
+        });
+
+        // Initialize copy functionality
+        function initCopyFunctionality() {
+            const copyBtn = document.querySelector('.copy-btn');
+            const transactionId = document.getElementById('transaction-id');
+            
+            if (copyBtn && transactionId) {
+                copyBtn.addEventListener('click', function() {
+                    const textToCopy = transactionId.getAttribute('data-value') || transactionId.textContent;
+                    
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        // Change button icon and color temporarily
+                        const originalContent = this.innerHTML;
+                        this.innerHTML = '<span class="icon">✓</span>';
+                        this.style.color = 'var(--success)';
+                        
+                        // Show notification
+                        showNotification('Transaction ID copied to clipboard', '📋');
+                        
+                        // Revert button after 1.5 seconds
+                        setTimeout(() => {
+                            this.innerHTML = originalContent;
+                            this.style.color = '';
+                        }, 1500);
+                    }).catch(err => {
+                        console.error('Could not copy text: ', err);
+                        showNotification('Failed to copy. Please try again.', '⚠️', true);
+                    });
+                });
+            }
         }
 
-        // Button interactions
-        const retryBtn = document.querySelector('.retry-btn');
-        if (retryBtn) {
-          retryBtn.addEventListener('click', function() {
-            showNotification('Redirecting to retry...', 'refresh');
+        // Initialize button interactions
+        function initButtonInteractions() {
+            const retryBtn = document.querySelector('.retry-btn');
+            if (retryBtn) {
+                retryBtn.addEventListener('click', function() {
+                    showNotification('Redirecting to retry...', '🔄');
+                    
+                    // Simulate loading state
+                    this.innerHTML = '<div class="loader"></div> Processing...';
+                    this.disabled = true;
+                    
+                    // Redirect to retry page after 1.5 seconds
+                    setTimeout(() => {
+                        window.location.href = '<%= retryUrl || "/retry" %>';
+                    }, 1500);
+                });
+            }
             
-            // Simulate loading state
-            this.innerHTML = '<div class="loader"></div> Processing...';
-            this.disabled = true;
-            
-            // Redirect to retry page
-            setTimeout(() => {
-              window.location.href = '/mandate-registration';
-            }, 1500);
-          });
+            const supportBtn = document.querySelector('.support-btn');
+            if (supportBtn) {
+                supportBtn.addEventListener('click', function() {
+                    showNotification('Opening support chat...', '💬');
+                    
+                    // Simulate opening support
+                    setTimeout(() => {
+                        window.open('<%= supportUrl || "mailto:support@example.com" %>', '_blank');
+                    }, 1000);
+                });
+            }
         }
         
-        const contactBtn = document.querySelector('.contact-btn');
-        if (contactBtn) {
-          contactBtn.addEventListener('click', function() {
-            showNotification('Opening support chat...', 'support_agent');
-            
-            // Simulate opening support
-            setTimeout(() => {
-              window.open('mailto:support@example.com?subject=Mandate Registration Failed', '_blank');
-            }, 1000);
-          });
-        }
-
         // Notification system
         function showNotification(message, icon, isError = false) {
-          const notification = document.createElement('div');
-          notification.className = 'notification';
-          if (isError) {
-            notification.style.borderLeftColor = 'var(--warning)';
-          }
-          
-          notification.innerHTML = `
-            <i class="material-icons notification-icon">${icon}</i>
-            <span class="notification-message">${message}</span>
-          `;
-          
-          document.body.appendChild(notification);
-          
-          // Show notification with slight delay for better animation
-          setTimeout(() => {
-            notification.classList.add('active');
-          }, 10);
-          
-          // Remove notification after 3 seconds
-          setTimeout(() => {
-            notification.classList.remove('active');
-            setTimeout(() => {
-              notification.remove();
-            }, 400); // Wait for transition to complete
-          }, 3000);
-        }
-        
-        // Start the countdown timer for auto-redirect
-        startCountdown();
-        
-        // Add entry animations with staggered timing
-        animateElements();
-      });
-
-      // Check if Material Icons are loading and provide fallbacks
-      function checkMaterialIcons() {
-        // Test if Material Icons font is loaded
-        const testIcon = document.createElement('span');
-        testIcon.className = 'material-icons';
-        testIcon.textContent = 'home';
-        testIcon.style.position = 'absolute';
-        testIcon.style.left = '-9999px';
-        testIcon.style.visibility = 'hidden';
-        document.body.appendChild(testIcon);
-        
-        // Check if the icon renders as a character (not as text)
-        const iconWidth = testIcon.offsetWidth;
-        document.body.removeChild(testIcon);
-        
-        // If Material Icons aren't loading, replace with emoji fallbacks
-        if (iconWidth < 10) {
-          console.log('Material Icons not loading, using fallback icons');
-          replaceIconsWithFallbacks();
-        }
-      }
-
-      // Replace Material Icons with emoji fallbacks
-      function replaceIconsWithFallbacks() {
-        const iconMappings = {
-          'calendar_today': '📅',
-          'expand_more': '▼',
-          'content_copy': '📋',
-          'download': '⬇️',
-          'lock': '🔒',
-          'check': '✓',
-          'arrow_forward': '→',
-          'warning': '⚠️',
-          'refresh': '🔄',
-          'support_agent': '💬',
-          'check_circle': '✅',
-          'download_done': '✅',
-          'error': '❌'
-        };
-        
-        const materialIcons = document.querySelectorAll('.material-icons');
-        materialIcons.forEach(icon => {
-          const iconName = icon.textContent.trim();
-          if (iconMappings[iconName]) {
-            icon.textContent = iconMappings[iconName];
-            icon.style.fontFamily = 'inherit';
-            icon.style.fontSize = '1.2em';
-          }
-        });
-      }
-
-      // Countdown timer function
-      function startCountdown() {
-        const countdownElement = document.getElementById('countdown');
-        if (!countdownElement) return;
-        
-        let seconds = 10; // Starting seconds
-        countdownElement.textContent = seconds;
-        
-        const interval = setInterval(() => {
-          seconds--;
-          
-          if (seconds <= 0) {
-            clearInterval(interval);
-            // Submit form with eNACH response
-            submitEnachResponse();
-            return;
-          }
-          
-          // Update countdown display
-          countdownElement.textContent = seconds;
-          
-          // Add pulse animation when time is running low
-          if (seconds <= 5) {
-            countdownElement.style.color = 'var(--error)';
-            if (seconds <= 3) {
-              countdownElement.classList.add('pulse');
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            if (isError) {
+                notification.style.borderLeftColor = 'var(--warning)';
             }
-          }
-        }, 1000);
-      }
-
-      // Submit eNACH response form
-      function submitEnachResponse() {
-        const redirectUrl = "<%= redirectUrl %>"; 
-        const enachResponse = "<%= enachResponse %>"; 
-        
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = redirectUrl;
-        form.target = "_blank";
-
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "enachResponse";
-        input.value = enachResponse;
-        form.appendChild(input);
-
-        document.body.appendChild(form);
-        form.submit();
-      }
-
-      // Animate elements with staggered timing
-      function animateElements() {
-        const elements = [
-          '.error-icon',
-          '.error-heading',
-          '.error-message',
-          '.transaction-info',
-          '.error-details-card',
-          '.footer'
-        ];
-        
-        elements.forEach((selector, index) => {
-          const element = document.querySelector(selector);
-          if (element) {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(25px)';
             
+            notification.innerHTML = `
+                <span class="notification-icon">${icon}</span>
+                <span class="notification-message">${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification with slight delay for better animation
             setTimeout(() => {
-              element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-              element.style.opacity = '1';
-              element.style.transform = 'translateY(0)';
-            }, 100 + (index * 120));
-          }
-        });
-      }
+                notification.classList.add('active');
+            }, 10);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('active');
+                setTimeout(() => {
+                    notification.remove();
+                }, 400); // Wait for transition to complete
+            }, 3000);
+        }
+        
+        // Countdown timer function
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            if (!countdownElement) return;
+            
+            let seconds = 10; // Starting seconds
+            countdownElement.textContent = seconds;
+            
+            const interval = setInterval(() => {
+                seconds--;
+                
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    // Submit form with eNACH response
+                    submitEnachResponse();
+                    return;
+                }
+                
+                // Update countdown display
+                countdownElement.textContent = seconds;
+                
+                // Add pulse animation when time is running low
+                if (seconds <= 5) {
+                    countdownElement.style.color = 'var(--error)';
+                    if (seconds <= 3) {
+                        countdownElement.classList.add('pulse');
+                    }
+                }
+            }, 1000);
+        }
+
+        // Submit eNACH response form
+        function submitEnachResponse() {
+            const redirectUrl = "<%= redirectUrl %>"; 
+            const enachResponse = "<%= enachResponse %>"; 
+            
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = redirectUrl;
+            form.target = "_blank";
+
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "enachResponse";
+            input.value = enachResponse;
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Animate elements with staggered timing
+        function animateElements() {
+            const elements = [
+                '.error-icon',
+                '.error-heading',
+                '.error-message',
+                '.transaction-info',
+                '.error-details-card',
+                '.footer'
+            ];
+            
+            elements.forEach((selector, index) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    element.style.opacity = '0';
+                    element.style.transform = 'translateY(25px)';
+                    
+                    setTimeout(() => {
+                        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, 100 + (index * 120));
+                }
+            });
+        }
     </script>
   </body>
 </html>

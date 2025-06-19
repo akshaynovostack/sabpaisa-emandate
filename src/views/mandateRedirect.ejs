@@ -800,38 +800,55 @@
             padding: 12px 18px !important;
         }
 
-        .material-icons {
-            font-family: 'Material Icons';
-            font-weight: normal;
-            font-style: normal;
-            font-size: 24px;
-            line-height: 1;
-            letter-spacing: normal;
-            text-transform: none;
+        /* Icon styles */
+        .icon {
             display: inline-block;
-            white-space: nowrap;
-            word-wrap: normal;
-            direction: ltr;
-            -webkit-font-feature-settings: 'liga';
-            -webkit-font-smoothing: antialiased;
+            font-size: 1.2em;
+            line-height: 1;
+            vertical-align: middle;
         }
-
-        /* Fallback for Material Icons */
-        .material-icons:not(.material-icons-outlined):not(.material-icons-round):not(.material-icons-sharp) {
-            font-family: 'Material Icons';
+        
+        .success-icon .icon {
+            font-size: 3rem;
+            color: var(--success);
         }
-
-        /* Alternative icon names if the original ones don't work */
-        .icon-calendar::before { content: "📅"; }
-        .icon-expand::before { content: "▼"; }
-        .icon-copy::before { content: "📋"; }
-        .icon-download::before { content: "⬇️"; }
-        .icon-lock::before { content: "🔒"; }
-        .icon-check::before { content: "✓"; }
-        .icon-arrow::before { content: "→"; }
-        .icon-warning::before { content: "⚠️"; }
-        .icon-refresh::before { content: "🔄"; }
-        .icon-support::before { content: "💬"; }
+        
+        .error-icon .icon {
+            font-size: 3rem;
+            color: var(--warning);
+        }
+        
+        .copy-btn .icon {
+            font-size: 1rem;
+        }
+        
+        .continue-btn .icon {
+            font-size: 1.1rem;
+            margin-left: 0.5rem;
+        }
+        
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+        
+        .download-btn .icon {
+            font-size: 1.1rem;
+            margin-right: 0.5rem;
+        }
+        
+        .secure-badge .icon {
+            font-size: 1rem;
+            margin-right: 0.5rem;
+        }
+        
+        .notification-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -959,211 +976,20 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if Material Icons are loading properly
-            checkMaterialIcons();
-            
-            // Initialize accordion
-            const accordion = document.querySelector('.accordion');
-            const accordionHeader = document.querySelector('.accordion-header');
-            const accordionContent = document.querySelector('.accordion-content');
-            
-            if (accordionHeader && accordionContent) {
-                accordionHeader.addEventListener('click', function() {
-                    accordion.classList.toggle('active');
-                    if (accordion.classList.contains('active')) {
-                        accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
-                    } else {
-                        accordionContent.style.maxHeight = 0;
-                    }
-                });
-            }
-            
-            // Format dates in the schedule table
-            const dateCells = document.querySelectorAll('.date-cell');
-            dateCells.forEach(cell => {
-                const dateStr = cell.textContent;
-                if (dateStr) {
-                    const date = new Date(dateStr);
-                    if (!isNaN(date)) {
-                        cell.textContent = formatDate(date);
-                    }
-                }
-            });
-            
-            // Button interactions
-            const continueBtn = document.querySelector('.continue-btn');
-            if (continueBtn) {
-                continueBtn.addEventListener('click', function() {
-                    showNotification('Redirecting to mandate registration...', '✓');
-                    
-                    // Simulate loading state
-                    this.innerHTML = '<div class="loader"></div> Processing...';
-                    this.disabled = true;
-                    
-                    // Simulate redirect after 1.5 seconds
-                    setTimeout(() => {
-                        window.location.href = '<%= redirectUrl %>';
-                    }, 1500);
-                });
-            }
-            
-            // Download receipt button
-            const downloadBtn = document.querySelector('.download-btn');
-            if (downloadBtn) {
-                downloadBtn.addEventListener('click', function() {
-                    showNotification('Receipt downloaded successfully', '✅');
-                });
-            }
-            
-            // Copy transaction ID
-            const copyBtn = document.querySelector('.copy-btn');
-            const transactionId = document.getElementById('transaction-id');
-            
-            if (copyBtn && transactionId) {
-                copyBtn.addEventListener('click', function() {
-                    const textToCopy = transactionId.getAttribute('data-value') || transactionId.textContent;
-                    
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        // Change button icon and color temporarily
-                        const originalContent = this.innerHTML;
-                        this.innerHTML = '<span class="icon">✓</span>';
-                        this.style.color = 'var(--success)';
-                        
-                        // Show notification
-                        showNotification('Transaction ID copied to clipboard', '📋');
-                        
-                        // Revert button after 1.5 seconds
-                        setTimeout(() => {
-                            this.innerHTML = originalContent;
-                            this.style.color = '';
-                        }, 1500);
-                    }).catch(err => {
-                        console.error('Could not copy text: ', err);
-                        showNotification('Failed to copy. Please try again.', '⚠️', true);
-                    });
-                });
-            }
-
-            // Notification system
-            function showNotification(message, icon, isError = false) {
-                const notification = document.createElement('div');
-                notification.className = 'notification';
-                if (isError) {
-                    notification.style.borderLeftColor = 'var(--warning)';
-                }
-                
-                notification.innerHTML = `
-                    <span class="notification-icon">${icon}</span>
-                    <span class="notification-message">${message}</span>
-                `;
-                
-                document.body.appendChild(notification);
-                
-                // Show notification with slight delay for better animation
-                setTimeout(() => {
-                    notification.classList.add('active');
-                }, 10);
-                
-                // Remove notification after 3 seconds
-                setTimeout(() => {
-                    notification.classList.remove('active');
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 400); // Wait for transition to complete
-                }, 3000);
-            }
-            
-            // Handle responsive behavior when window resizes
-            window.addEventListener('resize', handleResponsiveElements);
-            
-            function handleResponsiveElements() {
-                // Recalculate accordion content height if open
-                if (accordion && accordion.classList.contains('active') && accordionContent) {
-                    accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
-                }
-                
-                // Adjust other responsive elements as needed
-                const isMobile = window.innerWidth <= 640;
-                
-                // Example: Adjust transaction info display on mobile
-                const transactionInfo = document.querySelector('.transaction-info');
-                if (transactionInfo) {
-                    if (isMobile) {
-                        transactionInfo.classList.add('mobile-view');
-                    } else {
-                        transactionInfo.classList.remove('mobile-view');
-                    }
-                }
-            }
-            
-            // Call once on load to set initial state
-            handleResponsiveElements();
-            
-            // Start the countdown timer for auto-redirect
+            // Initialize countdown
             startCountdown();
             
-            // Add entry animations with staggered timing
-            animateElements();
+            // Initialize accordion
+            initAccordion();
+            
+            // Initialize copy functionality
+            initCopyFunctionality();
+            
+            // Initialize button interactions
+            initButtonInteractions();
         });
 
-        // Check if Material Icons are loading and provide fallbacks
-        function checkMaterialIcons() {
-            // Test if Material Icons font is loaded
-            const testIcon = document.createElement('span');
-            testIcon.className = 'material-icons';
-            testIcon.textContent = 'home';
-            testIcon.style.position = 'absolute';
-            testIcon.style.left = '-9999px';
-            testIcon.style.visibility = 'hidden';
-            document.body.appendChild(testIcon);
-            
-            // Check if the icon renders as a character (not as text)
-            const iconWidth = testIcon.offsetWidth;
-            document.body.removeChild(testIcon);
-            
-            // If Material Icons aren't loading, replace with emoji fallbacks
-            if (iconWidth < 10) {
-                console.log('Material Icons not loading, using fallback icons');
-                replaceIconsWithFallbacks();
-            }
-        }
-
-        // Replace Material Icons with emoji fallbacks
-        function replaceIconsWithFallbacks() {
-            const iconMappings = {
-                'calendar_today': '📅',
-                'expand_more': '▼',
-                'content_copy': '📋',
-                'download': '⬇️',
-                'lock': '🔒',
-                'check': '✓',
-                'arrow_forward': '→',
-                'warning': '⚠️',
-                'refresh': '🔄',
-                'support_agent': '💬',
-                'check_circle': '✅',
-                'download_done': '✅',
-                'error': '❌'
-            };
-            
-            const materialIcons = document.querySelectorAll('.material-icons');
-            materialIcons.forEach(icon => {
-                const iconName = icon.textContent.trim();
-                if (iconMappings[iconName]) {
-                    icon.textContent = iconMappings[iconName];
-                    icon.style.fontFamily = 'inherit';
-                    icon.style.fontSize = '1.2em';
-                }
-            });
-        }
-
-        // Format date to a more readable format
-        function formatDate(date) {
-            const options = { year: 'numeric', month: 'short', day: '2-digit' };
-            return date.toLocaleDateString('en-IN', options);
-        }
-
-        // Countdown timer function
+        // Initialize countdown
         function startCountdown() {
             const countdownElement = document.getElementById('countdown');
             if (!countdownElement) return;
@@ -1194,32 +1020,108 @@
             }, 1000);
         }
 
-        // Animate elements with staggered timing
-        function animateElements() {
-            const elements = [
-                '.success-icon',
-                '.success-heading',
-                '.success-message',
-                '.transaction-info',
-                '.next-step-card',
-                '.accordion',
-                '.download-section',
-                '.footer'
-            ];
+        // Initialize accordion
+        function initAccordion() {
+            const accordion = document.querySelector('.accordion');
+            const accordionHeader = document.querySelector('.accordion-header');
+            const accordionContent = document.querySelector('.accordion-content');
             
-            elements.forEach((selector, index) => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    element.style.opacity = '0';
-                    element.style.transform = 'translateY(25px)';
+            if (accordionHeader && accordionContent) {
+                accordionHeader.addEventListener('click', function() {
+                    accordion.classList.toggle('active');
+                    if (accordion.classList.contains('active')) {
+                        accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
+                    } else {
+                        accordionContent.style.maxHeight = 0;
+                    }
+                });
+            }
+        }
+
+        // Initialize copy functionality
+        function initCopyFunctionality() {
+            const copyBtn = document.querySelector('.copy-btn');
+            const transactionId = document.getElementById('transaction-id');
+            
+            if (copyBtn && transactionId) {
+                copyBtn.addEventListener('click', function() {
+                    const textToCopy = transactionId.getAttribute('data-value') || transactionId.textContent;
                     
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        // Change button icon and color temporarily
+                        const originalContent = this.innerHTML;
+                        this.innerHTML = '<span class="icon">✓</span>';
+                        this.style.color = 'var(--success)';
+                        
+                        // Show notification
+                        showNotification('Transaction ID copied to clipboard', '📋');
+                        
+                        // Revert button after 1.5 seconds
+                        setTimeout(() => {
+                            this.innerHTML = originalContent;
+                            this.style.color = '';
+                        }, 1500);
+                    }).catch(err => {
+                        console.error('Could not copy text: ', err);
+                        showNotification('Failed to copy. Please try again.', '⚠️', true);
+                    });
+                });
+            }
+        }
+
+        // Initialize button interactions
+        function initButtonInteractions() {
+            const continueBtn = document.querySelector('.continue-btn');
+            if (continueBtn) {
+                continueBtn.addEventListener('click', function() {
+                    showNotification('Redirecting to mandate registration...', '✓');
+                    
+                    // Simulate loading state
+                    this.innerHTML = '<div class="loader"></div> Processing...';
+                    this.disabled = true;
+                    
+                    // Simulate redirect after 1.5 seconds
                     setTimeout(() => {
-                        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                        element.style.opacity = '1';
-                        element.style.transform = 'translateY(0)';
-                    }, 100 + (index * 120));
-                }
-            });
+                        window.location.href = '<%= redirectUrl %>';
+                    }, 1500);
+                });
+            }
+
+            const downloadBtn = document.querySelector('.download-btn');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function() {
+                    showNotification('Receipt downloaded successfully', '✅');
+                });
+            }
+        }
+
+        // Notification system
+        function showNotification(message, icon, isError = false) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            if (isError) {
+                notification.style.borderLeftColor = 'var(--warning)';
+            }
+            
+            notification.innerHTML = `
+                <span class="notification-icon">${icon}</span>
+                <span class="notification-message">${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification with slight delay for better animation
+            setTimeout(() => {
+                notification.classList.add('active');
+            }, 10);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('active');
+                setTimeout(() => {
+                    notification.remove();
+                }, 400); // Wait for transition to complete
+            }, 3000);
         }
     </script>
 </body>
