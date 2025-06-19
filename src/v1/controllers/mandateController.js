@@ -15,21 +15,78 @@ const prisma = new PrismaClient();
 // Helper function to generate EMI schedule (assuming monthly frequency)
 const generateEmiSchedule = (startDate, endDate, frequency, emiAmount) => {
   const schedule = [];
-  let currentDate = moment(startDate);
-  const endMoment = moment(endDate);
-  let installmentNumber = 1;
+  const start = moment(startDate);
+  const end = moment(endDate);
+  let current = start.clone();
 
-  // For monthly frequency, increment the date by one month each time
-  while (currentDate.isSameOrBefore(endMoment)) {
+  while (current.isSameOrBefore(end)) {
     schedule.push({
-      installment: installmentNumber,
-      dueDate: currentDate.format('YYYY-MM-DD'),
+      dueDate: current.format('YYYY-MM-DD'),
       emiAmount: emiAmount
     });
-    installmentNumber++;
-    currentDate = currentDate.add(1, 'month');
+    current.add(1, frequency === 'monthly' ? 'month' : 'week');
   }
+
   return schedule;
+};
+
+// Helper function to format mandate data for display
+const formatMandateData = (mandateData) => {
+  const formatted = {};
+  
+  for (const [key, value] of Object.entries(mandateData)) {
+    if (!value || value === 'null' || value === 'undefined') {
+      formatted[key] = 'N/A';
+      continue;
+    }
+    
+    // Format dates
+    if (key.toLowerCase().includes('date') || key.toLowerCase().includes('created')) {
+      try {
+        const date = new Date(value);
+        if (!isNaN(date)) {
+          formatted[key] = date.toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        } else {
+          formatted[key] = value;
+        }
+      } catch (e) {
+        formatted[key] = value;
+      }
+    }
+    // Format amounts
+    else if (key.toLowerCase().includes('amount')) {
+      const num = parseFloat(value);
+      if (!isNaN(num)) {
+        formatted[key] = `₹${num.toLocaleString('en-IN')}`;
+      } else {
+        formatted[key] = value;
+      }
+    }
+    // Format status fields with color classes
+    else if (key.toLowerCase().includes('status')) {
+      const status = value.toString().toLowerCase();
+      let statusClass = '';
+      if (status.includes('active') || status.includes('success')) {
+        statusClass = 'status-active';
+      } else if (status.includes('pending') || status.includes('processing')) {
+        statusClass = 'status-pending';
+      } else if (status.includes('failed') || status.includes('error')) {
+        statusClass = 'status-failed';
+      }
+      formatted[key] = { value, class: statusClass };
+    }
+    else {
+      formatted[key] = value;
+    }
+  }
+  
+  return formatted;
 };
 
 const handleCreateMandate = async (req, res) => {
@@ -326,8 +383,16 @@ const webHook = async (req, res) => {
     delete result.consumer_id;
     delete result.created_on;
     delete result.redirect_url;
+    
+    // Format the mandate data for display
+    const formattedMandate = formatMandateData(result);
+    
     console.log(process.env.RETURNURL + '?enachResponse=' + encData)
-    res.render('mandateDetails', { mandate: result, redirectUrl: process.env.RETURNURL, enachResponse: decodeURIComponent(encData) });
+    res.render('mandateDetails', { 
+      mandate: formattedMandate, 
+      redirectUrl: process.env.RETURNURL, 
+      enachResponse: decodeURIComponent(encData) 
+    });
   } catch (error) {
     const structuredError = handleError(error);
     logger.error('Error while processing webhook', structuredError);

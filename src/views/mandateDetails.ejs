@@ -457,8 +457,8 @@
                 <% for (const [key, value] of Object.entries(mandate)) { %>
                     <div class="detail-item fade-in">
                         <div class="detail-label"><%= key.replace(/_/g, ' ').toUpperCase() %></div>
-                        <div class="detail-value <%= getStatusClass(key, value) %>">
-                            <%= formatValue(key, value) %>
+                        <div class="detail-value <%= typeof value === 'object' && value.class ? value.class : '' %>">
+                            <%= typeof value === 'object' && value.value ? value.value : value %>
                         </div>
                     </div>
                 <% } %>
@@ -477,9 +477,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize countdown and progress
             startCountdown();
-            
-            // Add staggered animations to detail items
-            animateDetailItems();
         });
 
         function startCountdown() {
@@ -532,61 +529,6 @@
             // Append form to the body and submit it
             document.body.appendChild(form);
             form.submit();
-        }
-
-        function animateDetailItems() {
-            const detailItems = document.querySelectorAll('.detail-item');
-            detailItems.forEach((item, index) => {
-                item.style.animationDelay = `${index * 0.1}s`;
-            });
-        }
-
-        function getStatusClass(key, value) {
-            if (key.toLowerCase().includes('status')) {
-                const status = value?.toString().toLowerCase();
-                if (status?.includes('active') || status?.includes('success')) {
-                    return 'status-active';
-                } else if (status?.includes('pending') || status?.includes('processing')) {
-                    return 'status-pending';
-                } else if (status?.includes('failed') || status?.includes('error')) {
-                    return 'status-failed';
-                }
-            }
-            return '';
-        }
-
-        function formatValue(key, value) {
-            if (!value || value === 'null' || value === 'undefined') {
-                return 'N/A';
-            }
-            
-            // Format dates
-            if (key.toLowerCase().includes('date') || key.toLowerCase().includes('created')) {
-                try {
-                    const date = new Date(value);
-                    if (!isNaN(date)) {
-                        return date.toLocaleDateString('en-IN', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                    }
-                } catch (e) {
-                    // If date parsing fails, return original value
-                }
-            }
-            
-            // Format amounts
-            if (key.toLowerCase().includes('amount') || key.toLowerCase().includes('amount')) {
-                const num = parseFloat(value);
-                if (!isNaN(num)) {
-                    return `₹${num.toLocaleString('en-IN')}`;
-                }
-            }
-            
-            return value.toString();
         }
     </script>
   </body>
