@@ -53,6 +53,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated dashboard endpoints with new response formats
   - Enhanced error handling documentation
   - Added external API documentation section
+- **NEW**: AES-GCM encryption/decryption integration
+  - Added AES-GCM encryption and decryption functions using environment variables
+  - Integrated encryption for external API requests and responses
+  - Added AES_KEY_BASE64 and HMAC_KEY_BASE64 to configuration
+  - Enhanced security for mandate calculation endpoint
 
 ### Changed
 - Reorganized database-related files under `src/db/`:
@@ -83,6 +88,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Enhanced duration calculation based on frequency
   - Improved frequency mapping to descriptive names
   - Better handling of payment amount vs slab ranges
+- **NORMALIZED**: Mandate calculation response structure
+  - Flattened nested objects (frequency and calculation_details) to 1NF format
+  - Changed from nested objects to simple properties:
+    - `frequency.code` → `frequency_code`
+    - `frequency.description` → `frequency_description`
+    - `frequency.id` → `frequency_id`
+    - `calculation_details.slab_from` → `slab_from`
+    - `calculation_details.slab_to` → `slab_to`
+    - `calculation_details.base_amount` → `base_amount`
+    - `calculation_details.emi_tenure` → `emi_tenure`
+    - `calculation_details.frequency_multiplier` → `frequency_multiplier`
+    - `calculation_details.processing_fee_percentage` → `processing_fee_percentage`
+    - `calculation_details.mandate_category` → `mandate_category`
+  - Updated Swagger documentation to reflect new normalized structure
+  - Improved client-side data access and serialization
 
 ### Security
 - Implemented password hashing (to be enabled in production)

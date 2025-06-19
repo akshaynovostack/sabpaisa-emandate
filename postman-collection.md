@@ -311,6 +311,74 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "External APIs",
+			"item": [
+				{
+					"name": "Calculate Mandate Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}v1/external/calculate-mandate?encReq={{encryptedRequest}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"external",
+								"calculate-mandate"
+							],
+							"query": [
+								{
+									"key": "encReq",
+									"value": "{{encryptedRequest}}",
+									"description": "Encrypted request containing merchant_id and payment_amount"
+								}
+							]
+						},
+						"description": "Calculate mandate details based on merchant ID and payment amount. The request parameters are encrypted using AES-GCM encryption."
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}v1/external/calculate-mandate?encReq={{encryptedRequest}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"external",
+										"calculate-mandate"
+									],
+									"query": [
+										{
+											"key": "encReq",
+											"value": "{{encryptedRequest}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"meta\": {\n    \"status\": true,\n    \"message\": \"Mandate details calculated successfully\",\n    \"code\": 200\n  },\n  \"data\": {\n    \"encryptedResponse\": \"encrypted_response_string_here\"\n  }\n}"
+						}
+					]
+				}
+			]
 		}
 	],
 	"event": [
@@ -340,6 +408,12 @@
 			"key": "baseUrl",
 			"value": "http://localhost:3000/",
 			"type": "string"
+		},
+		{
+			"key": "encryptedRequest",
+			"value": "your_encrypted_request_string_here",
+			"type": "string",
+			"description": "AES-GCM encrypted request containing merchant_id and payment_amount parameters"
 		}
 	]
 }

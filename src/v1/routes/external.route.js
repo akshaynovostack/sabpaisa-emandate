@@ -14,12 +14,12 @@ const merchantController = require('../controllers/merchant.controller');
  *         merchant_id:
  *           type: string
  *           description: Merchant ID for calculation
- *           example: "MERCH001"
+ *           example: "LPSD1"
  *         payment_amount:
  *           type: number
  *           format: float
  *           description: Total amount to be taken from client
- *           example: 5000.00
+ *           example: 1000.00
  * 
  *     MandateCalculationResponse:
  *       type: object
@@ -27,114 +27,108 @@ const merchantController = require('../controllers/merchant.controller');
  *         merchant_id:
  *           type: string
  *           description: Merchant ID
- *           example: "MERCH001"
+ *           example: "LPSD1"
  *         merchant_name:
  *           type: string
  *           description: Merchant name
- *           example: "Example Merchant"
+ *           example: "Loan Provider South Delhi"
  *         payment_amount:
  *           type: number
  *           format: float
  *           description: Payment amount
- *           example: 5000.00
+ *           example: 100000.00
  *         start_date:
  *           type: string
  *           format: date
  *           description: Mandate start date
- *           example: "2024-03-21"
+ *           example: "2025-06-19"
  *         end_date:
  *           type: string
  *           format: date
  *           description: Mandate end date
- *           example: "2025-03-21"
+ *           example: "2027-06-19"
  *         total_emis:
  *           type: integer
  *           description: Total number of EMIs (same as EMI tenure)
- *           example: 12
+ *           example: 24
  *         convenience_fee:
  *           type: number
  *           format: float
  *           description: Processing fee amount
- *           example: 100.00
+ *           example: 1000000.00
  *         emi_amount:
  *           type: number
  *           format: float
  *           description: EMI amount per payment
- *           example: 416.67
+ *           example: 2083.29
  *         downpayment:
  *           type: number
  *           format: float
  *           description: Downpayment amount (Base Amount)
- *           example: 500.00
+ *           example: 50001.00
  *         total_amount:
  *           type: number
  *           format: float
  *           description: Total amount (same as payment_amount from request)
- *           example: 5000.00
+ *           example: 100000.00
  *         total_emi_amount:
  *           type: number
  *           format: float
  *           description: Total EMI amount
- *           example: 5000.00
+ *           example: 49999.00
  *         total_payable:
  *           type: number
  *           format: float
  *           description: Total payable amount
- *           example: 5600.00
- *         frequency:
- *           type: object
- *           properties:
- *             code:
- *               type: string
- *               description: Frequency code
- *               example: "MNTH"
- *             description:
- *               type: string
- *               description: Frequency description
- *               example: "Monthly"
- *             id:
- *               type: integer
- *               description: Frequency ID
- *               example: 4
+ *           example: 1100000.00
+ *         frequency_code:
+ *           type: string
+ *           description: Frequency code
+ *           example: "MNTH"
+ *         frequency_description:
+ *           type: string
+ *           description: Frequency description
+ *           example: "Monthly"
+ *         frequency_id:
+ *           type: integer
+ *           description: Frequency ID
+ *           example: 4
  *         duration:
  *           type: integer
  *           description: Duration in months
- *           example: 12
- *         calculation_details:
- *           type: object
- *           properties:
- *             slab_from:
- *               type: number
- *               format: float
- *               description: Slab minimum amount
- *               example: 1000.00
- *             slab_to:
- *               type: number
- *               format: float
- *               description: Slab maximum amount
- *               example: 10000.00
- *             base_amount:
- *               type: number
- *               format: float
- *               description: Base amount (Downpayment)
- *               example: 500.00
- *             emi_tenure:
- *               type: integer
- *               description: EMI tenure in months
- *               example: 12
- *             frequency_multiplier:
- *               type: integer
- *               description: Frequency multiplier (not used in current calculation)
- *               example: 1
- *             processing_fee_percentage:
- *               type: number
- *               format: float
- *               description: Processing fee percentage
- *               example: 2.5
- *             mandate_category:
- *               type: string
- *               description: Mandate category
- *               example: "A001"
+ *           example: 24
+ *         slab_from:
+ *           type: number
+ *           format: float
+ *           description: Slab minimum amount
+ *           example: 50001.00
+ *         slab_to:
+ *           type: number
+ *           format: float
+ *           description: Slab maximum amount
+ *           example: 100000.00
+ *         base_amount:
+ *           type: number
+ *           format: float
+ *           description: Base amount (Downpayment)
+ *           example: 50001.00
+ *         emi_tenure:
+ *           type: integer
+ *           description: EMI tenure in months
+ *           example: 24
+ *         frequency_multiplier:
+ *           type: integer
+ *           description: Frequency multiplier
+ *           example: 1
+ *         processing_fee_percentage:
+ *           type: number
+ *           format: float
+ *           description: Processing fee percentage
+ *           example: 1000.00
+ *         mandate_category:
+ *           type: string
+ *           description: Mandate category
+ *           example: "L002"
  * 
  * @swagger
  * tags:
