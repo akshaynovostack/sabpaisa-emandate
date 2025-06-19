@@ -4,7 +4,7 @@ const { merchantService } = require('../../services');
 const { success } = require('../../utils/response');
 const pick = require('../../utils/pick');
 const ApiError = require('../../utils/ApiError');
-const { decAESString, encAESString, jsonToQueryParams, parseQueryString } = require('../../helpers/common-helper');
+const { decAESString, encAESString, jsonToQueryParams, parseQueryString, decryptAesGcm, aesGcmEncrypt } = require('../../helpers/common-helper');
 const logger = require('../../config/logger');
 
 /**
@@ -101,10 +101,10 @@ const deleteMerchant = catchAsync(async (req, res) => {
 const calculateMandateDetails = catchAsync(async (req, res) => {
   
   const { encReq } = req.query;
-  logger.debug(`Encrypted request from calculate mandate: ${decodeURIComponent(encReq)}`);
+  logger.debug(`Encrypted request from calculate mandate: ${encReq}`);
 
   // Decrypt the response
-  const inputData = await decAESString(decodeURIComponent(encReq));
+  const inputData = await decryptAesGcm(encReq);
   logger.debug(`Decrypted input data from calculate mandate: ${inputData}`);
 
   // Convert the 'data' string into an object
@@ -132,7 +132,8 @@ const calculateMandateDetails = catchAsync(async (req, res) => {
     merchant_id,
     paymentAmount
   );
-  const encryptedResponse = encAESString(jsonToQueryParams(mandateDetails));
+  const encryptedResponse = await aesGcmEncrypt(jsonToQueryParams(mandateDetails));
+
   logger.debug('Encrypted mandate details response from calculate mandate:', encryptedResponse);
 
   return success(res, {

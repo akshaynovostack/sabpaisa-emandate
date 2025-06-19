@@ -72,6 +72,8 @@ const config = {
     bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS, 10) || 10,
     passwordMinLength: parseInt(process.env.PASSWORD_MIN_LENGTH, 10) || 8,
     passwordMaxLength: parseInt(process.env.PASSWORD_MAX_LENGTH, 10) || 30,
+    aesKeyBase64: process.env.AES_KEY_BASE64,
+    hmacKeyBase64: process.env.HMAC_KEY_BASE64,
   },
 };
 
@@ -86,6 +88,8 @@ const requiredEnvVars = [
   'SMTP_USERNAME',
   'SMTP_PASSWORD',
   'EMAIL_FROM',
+  'AES_KEY_BASE64',
+  'HMAC_KEY_BASE64',
 ];
 
 const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
