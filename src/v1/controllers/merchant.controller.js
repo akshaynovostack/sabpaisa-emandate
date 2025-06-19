@@ -4,6 +4,7 @@ const { merchantService } = require('../../services');
 const { success } = require('../../utils/response');
 const pick = require('../../utils/pick');
 const ApiError = require('../../utils/ApiError');
+const { decAESString, encAESString, jsonToQueryParams, parseQueryString } = require('../../helpers/common-helper');
 
 /**
  * Create a merchant
@@ -97,12 +98,24 @@ const deleteMerchant = catchAsync(async (req, res) => {
  * @route GET /api/v1/merchants/calculate-mandate
  */
 const calculateMandateDetails = catchAsync(async (req, res) => {
-  const { merchant_id, payment_amount } = req.query;
+  
+  const { encReq } = req.query;
+  logger.debug(`Encrypted request from calculate mandate: ${decodeURIComponent(encReq)}`);
+
+  // Decrypt the response
+  const inputData = await decAESString(decodeURIComponent(encReq));
+  logger.debug(`Decrypted input data from calculate mandate: ${inputData}`);
+
+  // Convert the 'data' string into an object
+  const parsedData = parseQueryString(inputData);
+  logger.debug('Parsed data from calculate mandate:', parsedData);
+
+  const { merchant_id, payment_amount } = parsedData;
 
   if (!merchant_id || !payment_amount) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      'Merchant ID and payout amount are required'
+      'Merchant ID and payment amount are required'
     );
   }
 
@@ -118,10 +131,12 @@ const calculateMandateDetails = catchAsync(async (req, res) => {
     merchant_id,
     paymentAmount
   );
+  const encryptedResponse = encAESString(jsonToQueryParams(mandateDetails));
+  logger.debug('Encrypted mandate details response from calculate mandate:', encryptedResponse);
 
   return success(res, {
     message: 'Mandate details calculated successfully',
-    data: mandateDetails,
+    data: encryptedResponse,
   });
 });
 

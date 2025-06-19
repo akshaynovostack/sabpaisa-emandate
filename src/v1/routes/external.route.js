@@ -149,24 +149,16 @@ const router = express.Router();
  * /v1/external/calculate-mandate:
  *   get:
  *     summary: Calculate mandate details
- *     description: Calculate mandate details based on merchant ID and payment amount without authentication
+ *     description: Calculate mandate details based on merchant ID and payment amount without authentication. The request parameters are encrypted and passed via encReq query parameter.
  *     tags: [External APIs]
  *     parameters:
  *       - in: query
- *         name: merchant_id
+ *         name: encReq
  *         required: true
  *         schema:
  *           type: string
- *         description: Merchant ID
- *         example: "MERCH001"
- *       - in: query
- *         name: payment_amount
- *         required: true
- *         schema:
- *           type: number
- *           format: float
- *         description: Payment amount for mandate calculation
- *         example: 5000.00
+ *         description: Encrypted request containing merchant_id and payment_amount parameters
+ *         example: "encrypted_string_here"
  *     responses:
  *       200:
  *         description: Mandate details calculated successfully
@@ -175,17 +167,22 @@ const router = express.Router();
  *             schema:
  *               type: object
  *               properties:
- *                 status:
- *                   type: string
- *                   example: "success"
- *                 code:
- *                   type: integer
- *                   example: 200
- *                 message:
- *                   type: string
- *                   example: "Mandate details calculated successfully"
+ *                 meta:
+ *                   type: object
+ *                   properties:
+ *                     status:
+ *                       type: boolean
+ *                       example: true
+ *                     message:
+ *                       type: string
+ *                       example: "Mandate details calculated successfully"
+ *                     code:
+ *                       type: integer
+ *                       example: 200
  *                 data:
- *                   $ref: '#/components/schemas/MandateCalculationResponse'
+ *                   type: string
+ *                   description: Encrypted response containing mandate calculation details
+ *                   example: "encrypted_response_string"
  *       400:
  *         description: Bad request - Invalid parameters
  *         content:
@@ -193,15 +190,21 @@ const router = express.Router();
  *             schema:
  *               type: object
  *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 code:
- *                   type: integer
- *                   example: 400
- *                 message:
- *                   type: string
- *                   example: "Merchant ID and payment amount are required"
+ *                 meta:
+ *                   type: object
+ *                   properties:
+ *                     status:
+ *                       type: boolean
+ *                       example: false
+ *                     message:
+ *                       type: string
+ *                       example: "Merchant ID and payment amount are required"
+ *                     code:
+ *                       type: integer
+ *                       example: 400
+ *                 data:
+ *                   type: object
+ *                   example: {}
  *       404:
  *         description: Merchant not found
  *         content:
@@ -209,15 +212,21 @@ const router = express.Router();
  *             schema:
  *               type: object
  *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 code:
- *                   type: integer
- *                   example: 404
- *                 message:
- *                   type: string
- *                   example: "Merchant not found"
+ *                 meta:
+ *                   type: object
+ *                   properties:
+ *                     status:
+ *                       type: boolean
+ *                       example: false
+ *                     message:
+ *                       type: string
+ *                       example: "Merchant not found"
+ *                     code:
+ *                       type: integer
+ *                       example: 404
+ *                 data:
+ *                   type: object
+ *                   example: {}
  */
 
 router.get('/calculate-mandate', merchantController.calculateMandateDetails);
