@@ -140,7 +140,6 @@ const calculateMandateDetails = catchAsync(async (req, res) => {
     data: {encryptedResponse},
   });
 });
-
 module.exports = {
   createMerchant,
   getMerchants,
