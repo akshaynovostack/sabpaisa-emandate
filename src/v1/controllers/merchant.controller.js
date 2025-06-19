@@ -132,7 +132,35 @@ const calculateMandateDetails = catchAsync(async (req, res) => {
     merchant_id,
     paymentAmount
   );
-  const encryptedResponse = await aesGcmEncrypt(jsonToQueryParams(mandateDetails));
+  console.log('mandateDetails', mandateDetails)
+  
+  // Normalize the response to flatten nested objects
+  const normalizedMandateDetails = {
+    merchant_id: mandateDetails.merchant_id,
+    merchant_name: mandateDetails.merchant_name,
+    payment_amount: mandateDetails.payment_amount,
+    start_date: mandateDetails.start_date,
+    end_date: mandateDetails.end_date,
+    total_emis: mandateDetails.total_emis,
+    convenience_fee: mandateDetails.convenience_fee,
+    emi_amount: mandateDetails.emi_amount,
+    downpayment: mandateDetails.downpayment,
+    total_amount: mandateDetails.total_amount,
+    total_emi_amount: mandateDetails.total_emi_amount,
+    total_payable: mandateDetails.total_payable,
+    frequency_code: mandateDetails.frequency?.code,
+    frequency_description: mandateDetails.frequency?.description,
+    frequency_id: mandateDetails.frequency?.id,
+    duration: mandateDetails.duration,
+    slab_from: mandateDetails.calculation_details?.slab_from,
+    slab_to: mandateDetails.calculation_details?.slab_to,
+    base_amount: mandateDetails.calculation_details?.base_amount,
+    emi_tenure: mandateDetails.calculation_details?.emi_tenure,
+    frequency_multiplier: mandateDetails.calculation_details?.frequency_multiplier,
+    processing_fee_percentage: mandateDetails.calculation_details?.processing_fee_percentage,
+    mandate_category: mandateDetails.calculation_details?.mandate_category
+  };
+  const encryptedResponse = await aesGcmEncrypt(jsonToQueryParams(normalizedMandateDetails));
 
   logger.debug('Encrypted mandate details response from calculate mandate:', encryptedResponse);
 
