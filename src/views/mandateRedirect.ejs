@@ -1,111 +1,1139 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-T4F3SZLP');</script>
-  <!-- End Google Tag Manager -->
-  <meta charset="UTF-8">
-  <title>Payment Success - Mandate Creation</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-    .container { max-width: 700px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 5px; }
-    h1 { color: #4CAF50; }
-    ul { list-style: none; padding: 0; }
-    li { margin: 10px 0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    table, th, td { border: 1px solid #ddd; }
-    th, td { padding: 8px; text-align: center; }
-    th { background-color: #f2f2f2; }
-    /* Progress bar styling */
-    #progressContainer {
-      width: 100%;
-      background-color: #ddd;
-      border-radius: 5px;
-      overflow: hidden;
-      margin-top: 20px;
-    }
-    #progressBar {
-      height: 20px;
-      width: 0%;
-      background-color: #4CAF50;
-    }
-  </style>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T4F3SZLP');</script>
+    <!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downpayment Successful</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #006ced;
+            --primary-dark: #002e8b;
+            --white: #ffffff;
+            --success: #22bb66;
+            --success-dark: #199955;
+            --success-light: #e6f7ef;
+            --warning: #f5a623;
+            --background: #f5f8fc;
+            --text: #172b4d;
+            --text-light: #5e6c84;
+            --border: #e4ebf5;
+            --card-shadow: 0 4px 16px rgba(0, 46, 139, 0.1);
+            --hover-shadow: 0 8px 24px rgba(0, 46, 139, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .success-icon {
+            background: var(--success);
+            color: var(--white);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 20px rgba(34, 187, 102, 0.25);
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55), pulse 2s infinite ease-in-out;
+            transition: transform 0.3s ease;
+        }
+
+        .success-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .success-heading {
+            color: var(--primary-dark);
+            font-size: 30px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            animation: slideUp 0.5s ease-out 0.2s both;
+        }
+
+        .success-message {
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 400;
+            margin-bottom: 16px;
+            animation: slideUp 0.5s ease-out 0.3s both;
+        }
+
+        .highlight {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        /* Transaction Info */
+        .transaction-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 46, 139, 0.1);
+            margin-top: 4px;
+            animation: slideUp 0.5s ease-out 0.4s both;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .transaction-info:hover {
+            box-shadow: 0 6px 16px rgba(0, 46, 139, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .transaction-label {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .transaction-id-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #transaction-id {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background-color: rgba(0, 108, 237, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* Cards Container */
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            animation: slideUp 0.5s ease-out;
+            animation-fill-mode: both;
+            width: 100%;
+        }
+
+        .card:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-3px);
+        }
+
+        .card-content {
+            padding: 28px;
+        }
+
+        .next-step-card {
+            animation-delay: 0.1s;
+            border-left: 3px solid var(--primary);
+        }
+
+        .next-step-card h2 {
+            color: var(--primary-dark);
+            font-size: 22px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .next-step-card p {
+            color: var(--text-light);
+            margin-bottom: 24px;
+            font-size: 15px;
+        }
+
+        /* Detail Items */
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            color: var(--text-light);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .value {
+            color: var(--text);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .status-success {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .status-pending {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .mandate-summary {
+            background-color: #f8faff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #e8f0ff;
+            transition: all 0.3s ease;
+        }
+
+        .mandate-summary:hover {
+            box-shadow: 0 4px 12px rgba(0, 108, 237, 0.08);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .summary-item .label {
+            color: var(--text-light);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .summary-item .value {
+            color: var(--text);
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .continue-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 108, 237, 0.3);
+        }
+
+        .continue-btn:hover::before {
+            left: 100%;
+        }
+
+        .continue-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(0, 108, 237, 0.2);
+        }
+
+        .redirect-message {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            font-size: 14px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            animation: pulseDot 1.5s infinite;
+        }
+
+        #countdown {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .accordion-section {
+            animation: slideUp 0.5s ease-out;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .accordion {
+            background-color: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .accordion:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-2px);
+        }
+
+        .accordion-header {
+            padding: 20px 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--white);
+            transition: background-color 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background-color: #f8faff;
+        }
+
+        .accordion-header h3 {
+            color: var(--text);
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .accordion-header h3 i {
+            color: var(--primary);
+        }
+
+        .accordion-icon {
+            color: var(--text-light);
+            transition: transform 0.3s ease;
+        }
+
+        .accordion.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion.active .accordion-header {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion.active .accordion-content {
+            max-height: 500px;
+        }
+
+        .table-wrapper {
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .schedule-table th, .schedule-table td {
+            text-align: left;
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .schedule-table th {
+            color: var(--text-light);
+            font-weight: 600;
+            background-color: #f8faff;
+        }
+
+        .schedule-table td {
+            color: var(--text);
+        }
+
+        .schedule-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .schedule-table tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .schedule-table tr:hover {
+            background-color: #f8faff;
+        }
+
+        .download-section {
+            text-align: center;
+            animation: slideUp 0.5s ease-out 0.3s both;
+        }
+
+        .download-btn {
+            background-color: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 108, 237, 0.2);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 8px rgba(0, 108, 237, 0.15);
+        }
+
+        .footer {
+            text-align: center;
+            animation: slideUp 0.5s ease-out 0.4s both;
+        }
+
+        .secure-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-light);
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: var(--white);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .secure-badge:hover {
+            transform: translateY(-1px);
+        }
+
+        .secure-badge i {
+            font-size: 16px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--white);
+            color: var(--text);
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            border-left: 4px solid var(--success);
+            max-width: 350px;
+        }
+
+        .notification.active {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-icon {
+            color: var(--success);
+        }
+
+        .notification-message {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 10px 20px rgba(34, 187, 102, 0.25);
+            }
+            50% {
+                box-shadow: 0 10px 20px rgba(34, 187, 102, 0.4);
+            }
+            100% {
+                box-shadow: 0 10px 20px rgba(34, 187, 102, 0.25);
+            }
+        }
+
+        @keyframes pulseDot {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 95%;
+                gap: 24px;
+            }
+
+            .mandate-summary {
+                padding: 16px;
+            }
+
+            .hero-section {
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 15px;
+                padding-top: 20px;
+            }
+
+            .container {
+                gap: 20px;
+            }
+
+            .success-heading {
+                font-size: 26px;
+            }
+
+            .success-message {
+                font-size: 15px;
+            }
+
+            .success-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+
+            .transaction-info {
+                padding: 10px 14px;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .card-content {
+                padding: 20px;
+            }
+
+            .redirect-message {
+                font-size: 13px;
+            }
+
+            .summary-item {
+                margin-bottom: 10px;
+            }
+
+            .accordion-header h3 {
+                font-size: 16px;
+            }
+
+            .table-wrapper {
+                padding: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                padding-top: 15px;
+            }
+
+            .container {
+                gap: 16px;
+            }
+
+            .card-content {
+                padding: 16px;
+            }
+
+            .success-heading {
+                font-size: 24px;
+            }
+
+            .success-message {
+                font-size: 14px;
+            }
+
+            .success-icon {
+                width: 55px;
+                height: 55px;
+                font-size: 22px;
+            }
+
+            .continue-btn {
+                padding: 14px 20px;
+                font-size: 15px;
+            }
+
+            .accordion-header {
+                padding: 16px 20px;
+            }
+
+            .accordion-header h3 {
+                font-size: 15px;
+            }
+
+            .table-wrapper {
+                padding: 12px;
+            }
+
+            .schedule-table {
+                font-size: 12px;
+            }
+
+            .schedule-table th, .schedule-table td {
+                padding: 8px 4px;
+            }
+
+            .notification {
+                right: 10px;
+                top: 10px;
+                max-width: calc(100vw - 20px);
+            }
+
+            .notification.active {
+                transform: translateX(0);
+            }
+
+            .download-btn {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+        }
+
+        .card, .transaction-info, .accordion, .continue-btn, .download-btn {
+            will-change: transform, box-shadow;
+        }
+
+        .card:hover, .transaction-info:hover, .accordion:hover {
+            will-change: auto;
+        }
+
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        #countdown.pulse {
+            animation: pulse-text 0.8s infinite;
+        }
+        
+        @keyframes pulse-text {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .mobile-view {
+            padding: 12px 18px !important;
+        }
+    </style>
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T4F3SZLP"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-  <div class="container">
-    <h1>Payment Successful!</h1>
-    <p>Your payment has been processed successfully. Please review the mandate details and EMI schedule below. You will be redirected shortly.</p>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T4F3SZLP"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     
-    <h2>Mandate Details</h2>
-    <ul>
-      <li><strong>Payer Name:</strong> <%= mandateDetails.payerName %></li>
-      <li><strong>Email:</strong> <%= mandateDetails.payerEmail %></li>
-      <li><strong>Mobile:</strong> <%= mandateDetails.payerMobile %></li>
-      <li><strong>Transaction ID:</strong> <%= mandateDetails.clientTxnId %></li>
-      <li><strong>Amount:</strong> <%= mandateDetails.amount %></li>
-      <li><strong>Client Code:</strong> <%= mandateDetails.clientCode %></li>
-      <li><strong>Status:</strong> <%= mandateDetails.status %></li>
-      <li><strong>Sabpaisa Transaction ID:</strong> <%= mandateDetails.sabpaisaTxnId %></li>
-      <li><strong>Bank Message:</strong> <%= mandateDetails.bankMessage %></li>
-      <li><strong>Transaction Date:</strong> <%= mandateDetails.transDate %></li>
-      <li><strong>Mandate Start Date:</strong> <%= mandateDetails.startDate %></li>
-      <li><strong>Mandate End Date:</strong> <%= mandateDetails.endDate %></li>
-      <li><strong>Frequency:</strong> <%= mandateDetails.frequency %></li>
-      <li><strong>EMI Amount:</strong> <%= mandateDetails.emiAmount %></li>
-    </ul>
-
-    <h2>EMI Schedule</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Installment</th>
-          <th>Due Date</th>
-          <th>EMI Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% emiSchedule.forEach(schedule => { %>
-          <tr>
-            <td><%= schedule.installment %></td>
-            <td><%= schedule.dueDate %></td>
-            <td><%= schedule.emiAmount %></td>
-          </tr>
-        <% }); %>
-      </tbody>
-    </table>
-
-    <p>If you are not redirected automatically, <a href="<%= redirectUrl %>">click here</a>.</p>
-    
-    <!-- Progress bar -->
-    <div id="progressContainer">
-      <div id="progressBar"></div>
+    <div class="container">
+        <!-- Hero Section with Success Message -->
+        <div class="hero-section">
+            <div class="success-icon">
+                <i class="material-icons">check</i>
+            </div>
+            <h1 class="success-heading">Hi, <%= mandateDetails.payerName || 'User' %>!</h1>
+            <p class="success-message">Your downpayment of ₹<%= mandateDetails.amount %> was successful on <%= mandateDetails.transDate %>.</p>
+            
+            <!-- Transaction Info -->
+            <div class="transaction-info">
+                <span class="transaction-label">Transaction ID:</span>
+                <div class="transaction-id-wrapper">
+                    <span id="transaction-id" data-value="<%= mandateDetails.clientTxnId %>"><%= mandateDetails.clientTxnId %></span>
+                    <button class="copy-btn" aria-label="Copy transaction ID">
+                        <i class="material-icons">content_copy</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cards Container -->
+        <div class="cards-container">
+            <!-- Next Step Card -->
+            <div class="card next-step-card">
+                <div class="card-content">
+                    <h2>Next: Set Up e-Mandate</h2>
+                    <p>Complete the e-Mandate registration to authorize recurring payments for your loan. This is a one-time setup for your future EMI payments.</p>
+                    
+                    <!-- Mandate Summary -->
+                    <div class="mandate-summary">
+                        <div class="summary-item">
+                            <span class="label">Loan Amount</span>
+                            <span class="value">₹<%= mandateDetails.amount %></span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Mandate Period</span>
+                            <span class="value"><%= mandateDetails.frequency %></span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Monthly EMI</span>
+                            <span class="value">₹<%= mandateDetails.emiAmount %></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Continue Button -->
+                    <button class="continue-btn">
+                        <span>Continue to Mandate</span>
+                        <i class="material-icons">arrow_forward</i>
+                    </button>
+                    
+                    <!-- Redirect Message -->
+                    <div class="redirect-message">
+                        <span class="pulse-dot"></span>
+                        <span>You will be automatically redirected to mandate registration in <span id="countdown">30</span> seconds.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Accordion Section -->
+        <div class="accordion-section">
+            <div class="accordion">
+                <div class="accordion-header">
+                    <h3><i class="material-icons">calendar_today</i> View Payment Schedule</h3>
+                    <i class="material-icons accordion-icon">expand_more</i>
+                </div>
+                <div class="accordion-content">
+                    <div class="table-wrapper">
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Payment</th>
+                                    <th>Due Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Downpayment</td>
+                                    <td class="date-cell"><%= mandateDetails.transDate %></td>
+                                    <td>₹<%= mandateDetails.amount %></td>
+                                    <td class="status-success"><i class="material-icons">check_circle</i> Paid</td>
+                                </tr>
+                                <% emiSchedule.forEach((schedule, index) => { %>
+                                <tr>
+                                    <td>EMI <%= index + 1 %></td>
+                                    <td class="date-cell"><%= schedule.dueDate %></td>
+                                    <td>₹<%= schedule.emiAmount %></td>
+                                    <td class="status-pending">Upcoming</td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Download Section -->
+        <div class="download-section">
+            <button class="download-btn">
+                <i class="material-icons">download</i>
+                Download Receipt
+            </button>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="secure-badge">
+                <i class="material-icons">lock</i>
+                <span>Secured by e-Nach</span>
+            </div>
+        </div>
     </div>
-  </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize accordion
+            const accordion = document.querySelector('.accordion');
+            const accordionHeader = document.querySelector('.accordion-header');
+            const accordionContent = document.querySelector('.accordion-content');
+            
+            if (accordionHeader && accordionContent) {
+                accordionHeader.addEventListener('click', function() {
+                    accordion.classList.toggle('active');
+                    if (accordion.classList.contains('active')) {
+                        accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
+                    } else {
+                        accordionContent.style.maxHeight = 0;
+                    }
+                });
+            }
+            
+            // Format dates in the schedule table
+            const dateCells = document.querySelectorAll('.date-cell');
+            dateCells.forEach(cell => {
+                const dateStr = cell.textContent;
+                if (dateStr) {
+                    const date = new Date(dateStr);
+                    if (!isNaN(date)) {
+                        cell.textContent = formatDate(date);
+                    }
+                }
+            });
+            
+            // Button interactions
+            const continueBtn = document.querySelector('.continue-btn');
+            if (continueBtn) {
+                continueBtn.addEventListener('click', function() {
+                    showNotification('Redirecting to mandate registration...', 'check_circle');
+                    
+                    // Simulate loading state
+                    this.innerHTML = '<div class="loader"></div> Processing...';
+                    this.disabled = true;
+                    
+                    // Simulate redirect after 1.5 seconds
+                    setTimeout(() => {
+                        window.location.href = '<%= redirectUrl %>';
+                    }, 1500);
+                });
+            }
+            
+            // Download receipt button
+            const downloadBtn = document.querySelector('.download-btn');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function() {
+                    showNotification('Receipt downloaded successfully', 'download_done');
+                });
+            }
+            
+            // Copy transaction ID
+            const copyBtn = document.querySelector('.copy-btn');
+            const transactionId = document.getElementById('transaction-id');
+            
+            if (copyBtn && transactionId) {
+                copyBtn.addEventListener('click', function() {
+                    const textToCopy = transactionId.getAttribute('data-value') || transactionId.textContent;
+                    
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        // Change button icon and color temporarily
+                        const originalContent = this.innerHTML;
+                        this.innerHTML = '<i class="material-icons">check</i>';
+                        this.style.color = 'var(--success)';
+                        
+                        // Show notification
+                        showNotification('Transaction ID copied to clipboard', 'content_copy');
+                        
+                        // Revert button after 1.5 seconds
+                        setTimeout(() => {
+                            this.innerHTML = originalContent;
+                            this.style.color = '';
+                        }, 1500);
+                    }).catch(err => {
+                        console.error('Could not copy text: ', err);
+                        showNotification('Failed to copy. Please try again.', 'error', true);
+                    });
+                });
+            }
 
-  <script>
-    // Total time for redirection in milliseconds (10 seconds)
-    var totalTime = 10000;
-    var progressBar = document.getElementById('progressBar');
-    var startTime = Date.now();
+            // Notification system
+            function showNotification(message, icon, isError = false) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                if (isError) {
+                    notification.style.borderLeftColor = 'var(--warning)';
+                }
+                
+                notification.innerHTML = `
+                    <i class="material-icons notification-icon">${icon}</i>
+                    <span class="notification-message">${message}</span>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Show notification with slight delay for better animation
+                setTimeout(() => {
+                    notification.classList.add('active');
+                }, 10);
+                
+                // Remove notification after 3 seconds
+                setTimeout(() => {
+                    notification.classList.remove('active');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 400); // Wait for transition to complete
+                }, 3000);
+            }
+            
+            // Handle responsive behavior when window resizes
+            window.addEventListener('resize', handleResponsiveElements);
+            
+            function handleResponsiveElements() {
+                // Recalculate accordion content height if open
+                if (accordion && accordion.classList.contains('active') && accordionContent) {
+                    accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
+                }
+                
+                // Adjust other responsive elements as needed
+                const isMobile = window.innerWidth <= 640;
+                
+                // Example: Adjust transaction info display on mobile
+                const transactionInfo = document.querySelector('.transaction-info');
+                if (transactionInfo) {
+                    if (isMobile) {
+                        transactionInfo.classList.add('mobile-view');
+                    } else {
+                        transactionInfo.classList.remove('mobile-view');
+                    }
+                }
+            }
+            
+            // Call once on load to set initial state
+            handleResponsiveElements();
+            
+            // Start the countdown timer for auto-redirect
+            startCountdown();
+            
+            // Add entry animations with staggered timing
+            animateElements();
+        });
 
-    // Update progress bar every 50 milliseconds
-    var interval = setInterval(function() {
-      var elapsed = Date.now() - startTime;
-      var progress = Math.min((elapsed / totalTime) * 100, 100);
-      progressBar.style.width = progress + '%';
-      if (progress >= 100) {
-        clearInterval(interval);
-        window.location.href = '<%= redirectUrl %>';
-      }
-    }, 50);
-  </script>
+        // Format date to a more readable format
+        function formatDate(date) {
+            const options = { year: 'numeric', month: 'short', day: '2-digit' };
+            return date.toLocaleDateString('en-IN', options);
+        }
+
+        // Countdown timer function
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            if (!countdownElement) return;
+            
+            let seconds = 30; // Starting seconds
+            countdownElement.textContent = seconds;
+            
+            const interval = setInterval(() => {
+                seconds--;
+                
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    // Redirect to mandate registration
+                    window.location.href = '<%= redirectUrl %>';
+                    return;
+                }
+                
+                // Update countdown display
+                countdownElement.textContent = seconds;
+                
+                // Add pulse animation when time is running low
+                if (seconds <= 10) {
+                    countdownElement.style.color = 'var(--warning)';
+                    if (seconds <= 5) {
+                        countdownElement.classList.add('pulse');
+                    }
+                }
+            }, 1000);
+        }
+
+        // Animate elements with staggered timing
+        function animateElements() {
+            const elements = [
+                '.success-icon',
+                '.success-heading',
+                '.success-message',
+                '.transaction-info',
+                '.next-step-card',
+                '.accordion',
+                '.download-section',
+                '.footer'
+            ];
+            
+            elements.forEach((selector, index) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    element.style.opacity = '0';
+                    element.style.transform = 'translateY(25px)';
+                    
+                    setTimeout(() => {
+                        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, 100 + (index * 120));
+                }
+            });
+        }
+    </script>
 </body>
 </html>

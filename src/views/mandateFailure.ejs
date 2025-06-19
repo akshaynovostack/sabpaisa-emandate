@@ -11,119 +11,657 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mandate Registration Failed</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
     <style>
-      body {
-        font-family: "Roboto", sans-serif;
-        background-color: #f0f0f0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
+      :root {
+        --primary: #006ced;
+        --primary-dark: #002e8b;
+        --white: #ffffff;
+        --error: #dc3545;
+        --error-dark: #c82333;
+        --error-light: #f8d7da;
+        --warning: #f5a623;
+        --background: #f5f8fc;
+        --text: #172b4d;
+        --text-light: #5e6c84;
+        --border: #e4ebf5;
+        --card-shadow: 0 4px 16px rgba(0, 46, 139, 0.1);
+        --hover-shadow: 0 8px 24px rgba(0, 46, 139, 0.15);
+      }
+
+      * {
         margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
-      .iphone-frame {
-        width: 375px;
-        height: 700px;
-        background-color: #000;
-        border-radius: 40px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.5;
+        padding: 20px;
+        min-height: 100vh;
         display: flex;
         justify-content: center;
-        align-items: center;
-        position: relative;
+        align-items: flex-start;
+        padding-top: 40px;
       }
 
-      .screen {
-        width: 360px;
-        height: 98%;
-        background-color: #fff;
-        border-radius: 30px;
-        overflow-y: scroll;
-        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-        padding: 1rem;
-      }
-
-      .notch {
-        width: 100px;
-        height: 15px;
-        background-color: #000;
-        border-radius: 20px;
-        position: absolute;
-        top: 10px;
-      }
-
-      .header {
-        background-color: #dc3545;
-        color: white;
-        padding: 1rem;
-        display: flex;
-        align-items: center;
-        font-weight: 500;
-        border-radius: 12px;
-        margin-bottom: 1rem;
-      }
-
-      .header svg {
-        margin-right: 1rem;
-        cursor: pointer;
-      }
-
-      .details-group {
+      .container {
+        max-width: 600px;
+        width: 100%;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 32px;
       }
 
+      /* Hero Section */
+      .hero-section {
+        text-align: center;
+        animation: fadeIn 0.8s ease-out;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .error-icon {
+        background: var(--error);
+        color: var(--white);
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 28px;
+        margin: 0 auto 20px;
+        box-shadow: 0 10px 20px rgba(220, 53, 69, 0.25);
+        animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        transition: transform 0.3s ease;
+      }
+
+      .error-icon:hover {
+        transform: scale(1.05);
+      }
+
+      .error-heading {
+        color: var(--error-dark);
+        font-size: 30px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        animation: slideUp 0.5s ease-out 0.2s both;
+      }
+
+      .error-message {
+        color: var(--text);
+        font-size: 16px;
+        font-weight: 400;
+        margin-bottom: 16px;
+        animation: slideUp 0.5s ease-out 0.3s both;
+      }
+
+      .highlight {
+        color: var(--error-dark);
+        font-weight: 600;
+      }
+
+      /* Transaction Info */
+      .transaction-info {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--white);
+        padding: 8px 16px;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.1);
+        margin-top: 4px;
+        animation: slideUp 0.5s ease-out 0.4s both;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .transaction-info:hover {
+        box-shadow: 0 6px 16px rgba(220, 53, 69, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .transaction-label {
+        font-size: 13px;
+        color: var(--text-light);
+        font-weight: 500;
+      }
+
+      .transaction-id-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      #transaction-id {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .copy-btn {
+        background: none;
+        border: none;
+        color: var(--error);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+
+      .copy-btn:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+        transform: scale(1.1);
+      }
+
+      /* Cards Container */
+      .cards-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* Card Styles */
+      .card {
+        background-color: var(--white);
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        animation: slideUp 0.5s ease-out;
+        animation-fill-mode: both;
+        width: 100%;
+      }
+
+      .card:hover {
+        box-shadow: var(--hover-shadow);
+        transform: translateY(-3px);
+      }
+
+      .card-content {
+        padding: 28px;
+      }
+
+      .error-details-card {
+        animation-delay: 0.1s;
+        border-left: 3px solid var(--error);
+      }
+
+      .error-details-card h2 {
+        color: var(--error-dark);
+        font-size: 22px;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+
+      .error-details-card p {
+        color: var(--text-light);
+        margin-bottom: 24px;
+        font-size: 15px;
+      }
+
+      /* Error Alert */
+      .error-alert {
+        background-color: var(--error-light);
+        border: 1px solid var(--error);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+        color: var(--error-dark);
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        animation: slideUp 0.5s ease-out 0.2s both;
+      }
+
+      .error-alert i {
+        font-size: 20px;
+        margin-top: 2px;
+      }
+
+      .error-alert-content {
+        flex: 1;
+      }
+
+      .error-alert-title {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .error-alert-message {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      /* Detail Items */
       .detail-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 0.9rem;
-        color: #333;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
       }
 
-      .detail-title {
+      .detail-item:last-child {
+        border-bottom: none;
+      }
+
+      .label {
+        color: var(--text-light);
+        font-size: 14px;
         font-weight: 500;
-        color: #555;
       }
 
-      .detail-value {
-        color: #000;
-        font-weight: 400;
+      .value {
+        color: var(--text);
+        font-weight: 600;
+        font-size: 14px;
         text-align: right;
+        max-width: 60%;
+        word-break: break-word;
       }
 
-      .progress-container {
-        margin-top: 1rem;
-        text-align: center;
+      .status-error {
+        color: var(--error);
+        font-weight: 600;
       }
 
-      .progress-bar {
-        height: 10px;
-        background-color: #dc3545;
-        width: 0%;
-        border-radius: 5px;
-        transition: width 1s linear;
+      .status-pending {
+        color: var(--text-light);
+        font-weight: 500;
       }
 
-      .countdown {
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-        color: #555;
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
       }
 
-      .error-message {
-        background-color: #fff3f3;
-        border: 1px solid #ffcdd2;
+      .retry-btn {
+        background: linear-gradient(135deg, var(--error) 0%, var(--error-dark) 100%);
+        color: var(--white);
+        border: none;
+        padding: 16px 24px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex: 1;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .retry-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      .retry-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+      }
+
+      .retry-btn:hover::before {
+        left: 100%;
+      }
+
+      .retry-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+      }
+
+      .contact-btn {
+        background-color: var(--white);
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        padding: 16px 24px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex: 1;
+        transition: all 0.3s ease;
+      }
+
+      .contact-btn:hover {
+        background-color: var(--primary);
+        color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 108, 237, 0.2);
+      }
+
+      .contact-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 3px 8px rgba(0, 108, 237, 0.15);
+      }
+
+      /* Redirect Message */
+      .redirect-message {
+        margin-top: 16px;
+        padding: 12px 16px;
+        background-color: #fff3cd;
         border-radius: 8px;
-        padding: 1rem;
-        margin: 1rem 0;
-        color: #dc3545;
+        border-left: 3px solid var(--warning);
+        font-size: 14px;
+        color: var(--text-light);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--warning);
+        border-radius: 50%;
+        animation: pulseDot 1.5s infinite;
+      }
+
+      #countdown {
+        color: var(--warning);
+        font-weight: 600;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        animation: slideUp 0.5s ease-out 0.4s both;
+      }
+
+      .secure-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-light);
+        font-size: 14px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        background-color: var(--white);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .secure-badge:hover {
+        transform: translateY(-1px);
+      }
+
+      .secure-badge i {
+        font-size: 16px;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: var(--white);
+        color: var(--text);
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 1000;
+        transform: translateX(400px);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        border-left: 4px solid var(--error);
+        max-width: 350px;
+      }
+
+      .notification.active {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      .notification-icon {
+        color: var(--error);
+      }
+
+      .notification-message {
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes bounceIn {
+        0% {
+          opacity: 0;
+          transform: scale(0.3);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.05);
+        }
+        70% {
+          transform: scale(0.9);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes pulseDot {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.2);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          max-width: 90%;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          max-width: 95%;
+          gap: 24px;
+        }
+
+        .hero-section {
+          gap: 12px;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 15px;
+          padding-top: 20px;
+        }
+
+        .container {
+          gap: 20px;
+        }
+
+        .error-heading {
+          font-size: 26px;
+        }
+
+        .error-message {
+          font-size: 15px;
+        }
+
+        .error-icon {
+          width: 60px;
+          height: 60px;
+          font-size: 24px;
+        }
+
+        .transaction-info {
+          padding: 10px 14px;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .card-content {
+          padding: 20px;
+        }
+
+        .redirect-message {
+          font-size: 13px;
+        }
+
+        .detail-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 4px;
+        }
+
+        .value {
+          max-width: 100%;
+          text-align: left;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 10px;
+          padding-top: 15px;
+        }
+
+        .container {
+          gap: 16px;
+        }
+
+        .card-content {
+          padding: 16px;
+        }
+
+        .error-heading {
+          font-size: 24px;
+        }
+
+        .error-message {
+          font-size: 14px;
+        }
+
+        .error-icon {
+          width: 55px;
+          height: 55px;
+          font-size: 22px;
+        }
+
+        .retry-btn, .contact-btn {
+          padding: 14px 20px;
+          font-size: 15px;
+        }
+
+        .notification {
+          right: 10px;
+          top: 10px;
+          max-width: calc(100vw - 20px);
+        }
+
+        .notification.active {
+          transform: translateX(0);
+        }
+      }
+
+      .card, .transaction-info, .retry-btn, .contact-btn {
+        will-change: transform, box-shadow;
+      }
+
+      .card:hover, .transaction-info:hover {
+        will-change: auto;
+      }
+
+      .loader {
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      
+      #countdown.pulse {
+        animation: pulse-text 0.8s infinite;
+      }
+      
+      @keyframes pulse-text {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      
+      .mobile-view {
+        padding: 12px 18px !important;
       }
     </style>
   </head>
@@ -132,87 +670,269 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T4F3SZLP"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <div class="iphone-frame">
-      <div class="notch"></div>
-      <div class="screen">
-        <div class="header">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="white"
-            class="bi bi-exclamation-triangle"
-            viewBox="0 0 16 16"
-          >
-            <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
-            <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
-          </svg>
-          <b>Mandate Failed</b>
+    
+    <div class="container">
+      <!-- Hero Section with Error Message -->
+      <div class="hero-section">
+        <div class="error-icon">
+          <i class="material-icons">error</i>
         </div>
-
-        <div class="error-message">
-          <strong>Error:</strong> <%= message %>
+        <h1 class="error-heading">Mandate Registration Failed</h1>
+        <p class="error-message">We encountered an issue while processing your mandate registration. Please review the details below.</p>
+        
+        <!-- Transaction Info -->
+        <div class="transaction-info">
+          <span class="transaction-label">Transaction ID:</span>
+          <div class="transaction-id-wrapper">
+            <span id="transaction-id" data-value="<%= mandateDetails.sabpaisaTxnId %>"><%= mandateDetails.sabpaisaTxnId %></span>
+            <button class="copy-btn" aria-label="Copy transaction ID">
+              <i class="material-icons">content_copy</i>
+            </button>
+          </div>
         </div>
-
-        <div class="progress-container">
-          <div class="countdown" id="countdown">Redirecting in 10 seconds...</div>
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-
-        <div class="details-group">
-          <% const details = {
-            'Transaction ID': mandateDetails.sabpaisaTxnId,
-            'Client Transaction ID': mandateDetails.clientTxnId,
-            'Client Code': mandateDetails.clientCode,
-            'Status': mandateDetails.mandateStatus,
-            'Date': new Date(mandateDetails.mandateDate).toLocaleString(),
-            'Bank Status': mandateDetails.bankStatusMessage,
-            'Error Message': mandateDetails.errorMessage
-          } %>
-
-          <% for (const [key, value] of Object.entries(details)) { %>
-            <% if (value) { %>
-              <div class="detail-item">
-                <span class="detail-title"><%= key %></span>
-                <span class="detail-value"><%= value %></span>
+      </div>
+      
+      <!-- Cards Container -->
+      <div class="cards-container">
+        <!-- Error Details Card -->
+        <div class="card error-details-card">
+          <div class="card-content">
+            <h2>Error Details</h2>
+            <p>Please review the following information to understand what went wrong.</p>
+            
+            <!-- Error Alert -->
+            <div class="error-alert">
+              <i class="material-icons">warning</i>
+              <div class="error-alert-content">
+                <div class="error-alert-title">Error Message</div>
+                <div class="error-alert-message"><%= message %></div>
               </div>
-            <% } %>
-          <% } %>
+            </div>
+            
+            <!-- Error Details -->
+            <div class="details-group">
+              <% const details = {
+                'Transaction ID': mandateDetails.sabpaisaTxnId,
+                'Client Transaction ID': mandateDetails.clientTxnId,
+                'Client Code': mandateDetails.clientCode,
+                'Status': mandateDetails.mandateStatus,
+                'Date': new Date(mandateDetails.mandateDate).toLocaleString(),
+                'Bank Status': mandateDetails.bankStatusMessage,
+                'Error Message': mandateDetails.errorMessage
+              } %>
+
+              <% for (const [key, value] of Object.entries(details)) { %>
+                <% if (value) { %>
+                  <div class="detail-item">
+                    <span class="label"><%= key %></span>
+                    <span class="value"><%= value %></span>
+                  </div>
+                <% } %>
+              <% } %>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+              <button class="retry-btn">
+                <i class="material-icons">refresh</i>
+                <span>Try Again</span>
+              </button>
+              <button class="contact-btn">
+                <i class="material-icons">support_agent</i>
+                <span>Contact Support</span>
+              </button>
+            </div>
+            
+            <!-- Redirect Message -->
+            <div class="redirect-message">
+              <span class="pulse-dot"></span>
+              <span>You will be automatically redirected in <span id="countdown">10</span> seconds.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="footer">
+        <div class="secure-badge">
+          <i class="material-icons">lock</i>
+          <span>Secured by e-Nach</span>
         </div>
       </div>
     </div>
-
+    
     <script>
-      const progressBar = document.getElementById("progressBar");
-      const countdown = document.getElementById("countdown");
-      const redirectUrl = "<%= redirectUrl %>"; 
-      const enachResponse = "<%= enachResponse %>"; 
-    
-      let timeLeft = 10;
-    
-      const timer = setInterval(() => {
-        timeLeft -= 1;
-        progressBar.style.width = `${(10 - timeLeft) * 10}%`;
-        countdown.textContent = `Redirecting in ${timeLeft} seconds...`;
-    
-        if (timeLeft === 0) {
-          clearInterval(timer);
-    
-          const form = document.createElement("form");
-          form.method = "POST";
-          form.action = redirectUrl;
-          form.target = "_blank";
-    
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = "enachResponse";
-          input.value = enachResponse;
-          form.appendChild(input);
-    
-          document.body.appendChild(form);
-          form.submit();
+      document.addEventListener('DOMContentLoaded', function() {
+        // Copy transaction ID
+        const copyBtn = document.querySelector('.copy-btn');
+        const transactionId = document.getElementById('transaction-id');
+        
+        if (copyBtn && transactionId) {
+          copyBtn.addEventListener('click', function() {
+            const textToCopy = transactionId.getAttribute('data-value') || transactionId.textContent;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+              // Change button icon and color temporarily
+              const originalContent = this.innerHTML;
+              this.innerHTML = '<i class="material-icons">check</i>';
+              this.style.color = 'var(--success)';
+              
+              // Show notification
+              showNotification('Transaction ID copied to clipboard', 'content_copy');
+              
+              // Revert button after 1.5 seconds
+              setTimeout(() => {
+                this.innerHTML = originalContent;
+                this.style.color = '';
+              }, 1500);
+            }).catch(err => {
+              console.error('Could not copy text: ', err);
+              showNotification('Failed to copy. Please try again.', 'error', true);
+            });
+          });
         }
-      }, 1000);
+
+        // Button interactions
+        const retryBtn = document.querySelector('.retry-btn');
+        if (retryBtn) {
+          retryBtn.addEventListener('click', function() {
+            showNotification('Redirecting to retry...', 'refresh');
+            
+            // Simulate loading state
+            this.innerHTML = '<div class="loader"></div> Processing...';
+            this.disabled = true;
+            
+            // Redirect to retry page
+            setTimeout(() => {
+              window.location.href = '/mandate-registration';
+            }, 1500);
+          });
+        }
+        
+        const contactBtn = document.querySelector('.contact-btn');
+        if (contactBtn) {
+          contactBtn.addEventListener('click', function() {
+            showNotification('Opening support chat...', 'support_agent');
+            
+            // Simulate opening support
+            setTimeout(() => {
+              window.open('mailto:support@example.com?subject=Mandate Registration Failed', '_blank');
+            }, 1000);
+          });
+        }
+
+        // Notification system
+        function showNotification(message, icon, isError = false) {
+          const notification = document.createElement('div');
+          notification.className = 'notification';
+          if (isError) {
+            notification.style.borderLeftColor = 'var(--warning)';
+          }
+          
+          notification.innerHTML = `
+            <i class="material-icons notification-icon">${icon}</i>
+            <span class="notification-message">${message}</span>
+          `;
+          
+          document.body.appendChild(notification);
+          
+          // Show notification with slight delay for better animation
+          setTimeout(() => {
+            notification.classList.add('active');
+          }, 10);
+          
+          // Remove notification after 3 seconds
+          setTimeout(() => {
+            notification.classList.remove('active');
+            setTimeout(() => {
+              notification.remove();
+            }, 400); // Wait for transition to complete
+          }, 3000);
+        }
+        
+        // Start the countdown timer for auto-redirect
+        startCountdown();
+        
+        // Add entry animations with staggered timing
+        animateElements();
+      });
+
+      // Countdown timer function
+      function startCountdown() {
+        const countdownElement = document.getElementById('countdown');
+        if (!countdownElement) return;
+        
+        let seconds = 10; // Starting seconds
+        countdownElement.textContent = seconds;
+        
+        const interval = setInterval(() => {
+          seconds--;
+          
+          if (seconds <= 0) {
+            clearInterval(interval);
+            // Submit form with eNACH response
+            submitEnachResponse();
+            return;
+          }
+          
+          // Update countdown display
+          countdownElement.textContent = seconds;
+          
+          // Add pulse animation when time is running low
+          if (seconds <= 5) {
+            countdownElement.style.color = 'var(--error)';
+            if (seconds <= 3) {
+              countdownElement.classList.add('pulse');
+            }
+          }
+        }, 1000);
+      }
+
+      // Submit eNACH response form
+      function submitEnachResponse() {
+        const redirectUrl = "<%= redirectUrl %>"; 
+        const enachResponse = "<%= enachResponse %>"; 
+        
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = redirectUrl;
+        form.target = "_blank";
+
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "enachResponse";
+        input.value = enachResponse;
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+        form.submit();
+      }
+
+      // Animate elements with staggered timing
+      function animateElements() {
+        const elements = [
+          '.error-icon',
+          '.error-heading',
+          '.error-message',
+          '.transaction-info',
+          '.error-details-card',
+          '.footer'
+        ];
+        
+        elements.forEach((selector, index) => {
+          const element = document.querySelector(selector);
+          if (element) {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(25px)';
+            
+            setTimeout(() => {
+              element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+              element.style.opacity = '1';
+              element.style.transform = 'translateY(0)';
+            }, 100 + (index * 120));
+          }
+        });
+      }
     </script>
   </body>
 </html>

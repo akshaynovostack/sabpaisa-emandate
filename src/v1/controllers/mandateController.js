@@ -52,6 +52,7 @@ const handleCreateMandate = async (req, res) => {
     logger.debug('Parsed Data:', parsedData);
 
     // Save or update merchant and user, calculate dates, etc.
+    console.log(parsedData,'parsedData')
     const merchantData = {
       merchant_code: parsedData.clientCode,
       status: 1,
@@ -106,15 +107,17 @@ const handleCreateMandate = async (req, res) => {
       mandate_category: slab.mandate_category,
       client_code: parsedData.clientCode
     };
-
+console.log(mandateData,'mandateData')
     logger.info('Mandate data prepared:', mandateData);
 
     // Call the service to create the mandate
     const result = await createMandate(mandateData);
     logger.info('Mandate created successfully', result);
+    console.log(result,'result')
 
     // Generate EMI schedule based on the calculated start and end dates and EMI amount
     const emiSchedule = generateEmiSchedule(transactionData.start_date, transactionData.end_date, slab.frequency, slab.emi_amount);
+    console.log(emiSchedule,'emiSchedule')
 
     // Render the mandate success view with mandate details and EMI schedule
     return res.render('mandateRedirect', {
@@ -139,6 +142,7 @@ const handleCreateMandate = async (req, res) => {
       message: 'Mandate created successfully!'
     });
   } catch (error) {
+    console.log(error,'error')
     const structuredError = handleError(error);
     logger.error('Error while creating mandate', structuredError);
     return handleMandateFailure(transaction, structuredError, res);
