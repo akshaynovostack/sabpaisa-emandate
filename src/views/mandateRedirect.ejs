@@ -844,7 +844,7 @@
         <!-- Hero Section with Success Message -->
         <div class="hero-section">
             <div class="success-icon">
-                <i class="material-icons">check</i>
+                <span class="icon">✓</span>
             </div>
             <h1 class="success-heading">Hi, <%= mandateDetails.payerName || 'User' %>!</h1>
             <p class="success-message">Your downpayment of ₹<%= mandateDetails.amount %> was successful on <%= mandateDetails.transDate %>.</p>
@@ -855,7 +855,7 @@
                 <div class="transaction-id-wrapper">
                     <span id="transaction-id" data-value="<%= mandateDetails.clientTxnId %>"><%= mandateDetails.clientTxnId %></span>
                     <button class="copy-btn" aria-label="Copy transaction ID">
-                        <i class="material-icons">content_copy</i>
+                        <span class="icon">📋</span>
                     </button>
                 </div>
             </div>
@@ -888,7 +888,7 @@
                     <!-- Continue Button -->
                     <button class="continue-btn">
                         <span>Continue to Mandate</span>
-                        <i class="material-icons">arrow_forward</i>
+                        <span class="icon">→</span>
                     </button>
                     
                     <!-- Redirect Message -->
@@ -904,8 +904,8 @@
         <div class="accordion-section">
             <div class="accordion">
                 <div class="accordion-header">
-                    <h3><i class="material-icons">calendar_today</i> View Payment Schedule</h3>
-                    <i class="material-icons accordion-icon">expand_more</i>
+                    <h3><span class="icon">📅</span> View Payment Schedule</h3>
+                    <span class="icon accordion-icon">▼</span>
                 </div>
                 <div class="accordion-content">
                     <div class="table-wrapper">
@@ -923,7 +923,7 @@
                                     <td>Downpayment</td>
                                     <td class="date-cell"><%= mandateDetails.transDate %></td>
                                     <td>₹<%= mandateDetails.amount %></td>
-                                    <td class="status-success"><i class="material-icons">check_circle</i> Paid</td>
+                                    <td class="status-success"><span class="icon">✅</span> Paid</td>
                                 </tr>
                                 <% emiSchedule.forEach((schedule, index) => { %>
                                 <tr>
@@ -943,7 +943,7 @@
         <!-- Download Section -->
         <div class="download-section">
             <button class="download-btn">
-                <i class="material-icons">download</i>
+                <span class="icon">⬇️</span>
                 Download Receipt
             </button>
         </div>
@@ -951,7 +951,7 @@
         <!-- Footer -->
         <div class="footer">
             <div class="secure-badge">
-                <i class="material-icons">lock</i>
+                <span class="icon">🔒</span>
                 <span>Secured by e-Nach</span>
             </div>
         </div>
@@ -994,7 +994,7 @@
             const continueBtn = document.querySelector('.continue-btn');
             if (continueBtn) {
                 continueBtn.addEventListener('click', function() {
-                    showNotification('Redirecting to mandate registration...', 'check_circle');
+                    showNotification('Redirecting to mandate registration...', '✓');
                     
                     // Simulate loading state
                     this.innerHTML = '<div class="loader"></div> Processing...';
@@ -1011,7 +1011,7 @@
             const downloadBtn = document.querySelector('.download-btn');
             if (downloadBtn) {
                 downloadBtn.addEventListener('click', function() {
-                    showNotification('Receipt downloaded successfully', 'download_done');
+                    showNotification('Receipt downloaded successfully', '✅');
                 });
             }
             
@@ -1026,11 +1026,11 @@
                     navigator.clipboard.writeText(textToCopy).then(() => {
                         // Change button icon and color temporarily
                         const originalContent = this.innerHTML;
-                        this.innerHTML = '<i class="material-icons">check</i>';
+                        this.innerHTML = '<span class="icon">✓</span>';
                         this.style.color = 'var(--success)';
                         
                         // Show notification
-                        showNotification('Transaction ID copied to clipboard', 'content_copy');
+                        showNotification('Transaction ID copied to clipboard', '📋');
                         
                         // Revert button after 1.5 seconds
                         setTimeout(() => {
@@ -1039,7 +1039,7 @@
                         }, 1500);
                     }).catch(err => {
                         console.error('Could not copy text: ', err);
-                        showNotification('Failed to copy. Please try again.', 'error', true);
+                        showNotification('Failed to copy. Please try again.', '⚠️', true);
                     });
                 });
             }
@@ -1053,7 +1053,7 @@
                 }
                 
                 notification.innerHTML = `
-                    <i class="material-icons notification-icon">${icon}</i>
+                    <span class="notification-icon">${icon}</span>
                     <span class="notification-message">${message}</span>
                 `;
                 
