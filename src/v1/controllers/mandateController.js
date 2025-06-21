@@ -251,7 +251,7 @@ const webHook = async (req, res) => {
 
     // Fetch mandate details
     const enquiryData = await mandateEnquiry(id);
-
+console.log(enquiryData,'enquiryData')
     logger.info('Mandate details fetched successfully');
     const { result } = enquiryData;
 
