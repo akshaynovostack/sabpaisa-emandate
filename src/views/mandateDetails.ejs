@@ -530,6 +530,8 @@
         //     document.body.appendChild(form);
         //     form.submit();
         // }
+        let timeLeft = 10;
+
         const timer = setInterval(() => {
         timeLeft -= 1;
         progressBar.style.width = `${(10 - timeLeft) * 10}%`;
