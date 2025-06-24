@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-T4F3SZLP');</script>
-    <!-- End Google Tag Manager -->
-    <meta charset="UTF-8">
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-T4F3SZLP');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Downpayment Successful</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <style>
+  <style>
         :root {
             --primary: #006ced;
             --primary-dark: #002e8b;
@@ -305,7 +305,7 @@
             position: absolute;
             top: 0;
             left: -100%;
-            width: 100%;
+      width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
@@ -412,7 +412,7 @@
 
         .accordion-content {
             max-height: 0;
-            overflow: hidden;
+      overflow: hidden;
             transition: max-height 0.3s ease;
         }
 
@@ -769,7 +769,7 @@
 
         .loader {
             width: 20px;
-            height: 20px;
+      height: 20px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
@@ -848,14 +848,14 @@
         .notification-icon {
             font-size: 1.2rem;
             margin-right: 0.5rem;
-        }
-    </style>
+    }
+  </style>
 </head>
 <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T4F3SZLP"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T4F3SZLP"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
     
     <div class="container">
         <!-- Hero Section with Success Message -->
@@ -927,15 +927,15 @@
                 <div class="accordion-content">
                     <div class="table-wrapper">
                         <table class="schedule-table">
-                            <thead>
-                                <tr>
+      <thead>
+        <tr>
                                     <th>Payment</th>
-                                    <th>Due Date</th>
+          <th>Due Date</th>
                                     <th>Amount</th>
                                     <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+        </tr>
+      </thead>
+      <tbody>
                                 <tr>
                                     <td>Downpayment</td>
                                     <td class="date-cell"><%= mandateDetails.transDate %></td>
@@ -948,10 +948,10 @@
                                     <td class="date-cell"><%= schedule.dueDate %></td>
                                     <td>₹<%= schedule.emiAmount %></td>
                                     <td class="status-pending">Upcoming</td>
-                                </tr>
-                                <% }); %>
-                            </tbody>
-                        </table>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
                     </div>
                 </div>
             </div>
@@ -972,9 +972,9 @@
                 <span>Secured by e-Nach</span>
             </div>
         </div>
-    </div>
-    
-    <script>
+  </div>
+
+  <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize countdown
             startCountdown();
@@ -1001,7 +1001,7 @@
                 seconds--;
                 
                 if (seconds <= 0) {
-                    clearInterval(interval);
+        clearInterval(interval);
                     // Redirect to mandate registration
                     window.location.href = '<%= redirectUrl %>';
                     return;
@@ -1082,7 +1082,7 @@
                     
                     // Simulate redirect after 1.5 seconds
                     setTimeout(() => {
-                        window.location.href = '<%= redirectUrl %>';
+        window.location.href = '<%= redirectUrl %>';
                     }, 1500);
                 });
             }
@@ -1123,6 +1123,6 @@
                 }, 400); // Wait for transition to complete
             }, 3000);
         }
-    </script>
+  </script>
 </body>
 </html>

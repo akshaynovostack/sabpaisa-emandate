@@ -101,8 +101,7 @@ exports.jsonToQueryParams = (json) => {
 }
 exports.getMandateStatus = (registrationStatus) => {
     switch (registrationStatus) {
-        case "Processing":
-            return "PENDING";
+        case "Pending":
         case "Initiated":
             return "PENDING";
         case "Success":
@@ -110,7 +109,7 @@ exports.getMandateStatus = (registrationStatus) => {
         case "Failed":
             return "FAILED";
         default:
-            return 'PENDING'; // Handles null or undefined cases
+            return null; // Handles null or undefined cases
     }
 }
 
