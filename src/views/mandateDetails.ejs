@@ -506,30 +506,53 @@
             }, 1000);
         }
 
-        function submitForm(redirectUrl, enachResponse) {
-            // Create a form dynamically
-            const form = document.createElement("form");
-            form.method = "POST";
-            form.action = redirectUrl;
-            form.target = "_blank";
+        // function submitForm(redirectUrl, enachResponse) {
+        //     // Create a form dynamically
+        //     const form = document.createElement("form");
+        //     form.method = "POST";
+        //     form.action = redirectUrl;
+        //     form.target = "_blank";
             
-            // Add input fields to the form
-            const params = {
-                enachResponse: enachResponse,
-            };
+        //     // Add input fields to the form
+        //     const params = {
+        //         enachResponse: enachResponse,
+        //     };
             
-            for (const [key, value] of Object.entries(params)) {
-                const input = document.createElement("input");
-                input.type = "hidden";
-                input.name = key;
-                input.value = value;
-                form.appendChild(input);
-            }
+        //     for (const [key, value] of Object.entries(params)) {
+        //         const input = document.createElement("input");
+        //         input.type = "hidden";
+        //         input.name = key;
+        //         input.value = value;
+        //         form.appendChild(input);
+        //     }
             
-            // Append form to the body and submit it
-            document.body.appendChild(form);
-            form.submit();
+        //     // Append form to the body and submit it
+        //     document.body.appendChild(form);
+        //     form.submit();
+        // }
+        const timer = setInterval(() => {
+        timeLeft -= 1;
+        progressBar.style.width = `${(10 - timeLeft) * 10}%`;
+        countdown.textContent = `Redirecting in ${timeLeft} seconds...`;
+    
+        if (timeLeft === 0) {
+          clearInterval(timer);
+    
+          const form = document.createElement("form");
+          form.method = "POST";
+          form.action = redirectUrl;
+          form.target = "_blank";
+    
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "enachResponse";
+          input.value = enachResponse;
+          form.appendChild(input);
+    
+          document.body.appendChild(form);
+          form.submit();
         }
+      }, 1000);
     </script>
   </body>
 </html>
