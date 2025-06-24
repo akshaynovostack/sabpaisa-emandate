@@ -20,7 +20,7 @@ const app = express();
 
 // Helmet configuration
 app.use(helmet({
-  contentSecurityPolicy: {
+  contentSecurityPolicy: config.env === 'production' ? {
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
@@ -32,7 +32,7 @@ app.use(helmet({
       mediaSrc: ["'self'"],
       frameSrc: ["'self'"]
     }
-  },
+  }: false,
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" },
   crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
