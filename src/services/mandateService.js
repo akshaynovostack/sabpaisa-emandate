@@ -23,7 +23,7 @@ const createMandate = async (mandateData) => {
       customer_type: 'pg',
       amount_type: "Fixed",
       until_cancel:0,
-      emi_amount: mandateData.max_amount
+      emi_amount: mandateData.max_amount //as discussed with Bhargava
 
     };
 
