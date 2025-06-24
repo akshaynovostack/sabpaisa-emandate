@@ -14,7 +14,7 @@ const createMandate = async (mandateData) => {
       customer_email_id: mandateData.customer_email_id,
       start_date: mandateData.start_date,
       end_date: mandateData.end_date,
-      max_amount: mandateData.max_amount.toFixed(2),
+      max_amount: mandateData.max_amount.toFixed(2).toString(),
       frequency: mandateData.frequency,
       purpose: mandateData.purpose,
       mandate_category: mandateData.mandate_category,
@@ -23,7 +23,7 @@ const createMandate = async (mandateData) => {
       customer_type: 'pg',
       amount_type: "Fixed",
       until_cancel:0,
-      emi_amount: mandateData.max_amount.toFixed(2) //as discussed with Bhargava
+      emi_amount: mandateData.max_amount.toFixed(2).toString() //as discussed with Bhargava
 
     };
 
