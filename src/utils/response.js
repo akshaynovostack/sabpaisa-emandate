@@ -1,4 +1,4 @@
-const {status: httpStatus} = require('http-status');
+const { status: httpStatus } = require('http-status');
 
 /**
  * Send a standardized response
@@ -23,8 +23,8 @@ const sendResponse = (res, {
     data,
     ...(token && { token })
   };
-
-  return res.status(code).json(response);
+  let statusCode = (code == 400) ? 200 : code
+  return res.status(statusCode).json(response);
 };
 
 /**
