@@ -261,7 +261,6 @@ const handleCreateMandate = async (req, res) => {
       mandate_category: slab.mandate_category,
       client_code: parsedData.clientCode
     };
-console.log(mandateData,'mandateData')
     logger.info('Mandate data prepared:', mandateData);
 
     // Call the service to create the mandate
