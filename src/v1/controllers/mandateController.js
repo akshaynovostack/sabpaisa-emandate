@@ -357,7 +357,6 @@ const webHook = async (req, res) => {
     const enquiryData = await mandateEnquiry(id);
     logger.info('Mandate details fetched successfully');
     const { result } = enquiryData;
-console.log(result,'result')
     // Asynchronous database updates
     (async () => {
       try {
@@ -473,7 +472,6 @@ console.log(result,'result')
       bankMandateRegNo: result.bank_mandate_reg_no || null,
       bankReferenceNumber: result.bank_reference_number || null,
     };
-    console.log(cumulativeData, 'cumulativeData')
     // Encrypt cumulative data
     const encData = encAESString(jsonToQueryParams(cumulativeData));
     logger.debug(`Encrypted mandate data: ${encData}`);
