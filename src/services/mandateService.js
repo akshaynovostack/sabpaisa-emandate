@@ -120,7 +120,7 @@ const getMerchantSlab = async (merchant_id, amount) => {
     });
 
     if (!slab) {
-      throw new Error(`No slab found for merchant ${merchant_code} and amount ${amount}`);
+      throw new Error(`No slab found for merchant ${merchant_id} and amount ${amount}`);
     }
 
     logger.info('Merchant slab found:', slab);

@@ -12,19 +12,49 @@ const { createOrUpdateUserMandate } = require('./usermandateController');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// Helper function to generate EMI schedule (assuming monthly frequency)
+// Helper function to generate EMI schedule based on frequency
 const generateEmiSchedule = (startDate, endDate, frequency, emiAmount) => {
   const schedule = [];
   const start = moment(startDate);
   const end = moment(endDate);
   let current = start.clone();
+  let installmentNumber = 1;
 
   while (current.isSameOrBefore(end)) {
     schedule.push({
+      installment: installmentNumber,
       dueDate: current.format('YYYY-MM-DD'),
       emiAmount: emiAmount
     });
-    current.add(1, frequency === 'monthly' ? 'month' : 'week');
+    
+    // Increment based on frequency
+    switch (frequency) {
+      case 'DAIL': // Daily
+        current.add(1, 'day');
+        break;
+      case 'WEEK': // Weekly
+        current.add(1, 'week');
+        break;
+      case 'MNTH': // Monthly
+        current.add(1, 'month');
+        break;
+      case 'BIMN': // Bi-monthly
+        current.add(2, 'months');
+        break;
+      case 'QURT': // Quarterly
+        current.add(3, 'months');
+        break;
+      case 'MIAN': // Semi-annually
+        current.add(6, 'months');
+        break;
+      case 'YEAR': // Yearly
+        current.add(1, 'year');
+        break;
+      default: // Default to monthly
+        current.add(1, 'month');
+    }
+    
+    installmentNumber++;
   }
 
   return schedule;
@@ -117,6 +147,72 @@ const handleCreateMandate = async (req, res) => {
     const merchant = await saveOrUpdateMerchant(merchantData);
     const slab = await getMerchantSlab(merchant.merchant_id, parseFloat(parsedData.amount));
 
+    // Calculate EMI and tenure similar to calculateMandateDetails
+    const paymentAmount = parseFloat(parsedData.amount);
+    const slabFrom = parseFloat(slab.slab_from);
+    const slabTo = parseFloat(slab.slab_to);
+    const baseAmount = parseFloat(slab.base_amount);
+    const emiTenure = parseInt(slab.emi_tenure);
+    const processingFeePercentage = parseFloat(slab.processing_fee) || 0;
+    const frequency = slab.frequency;
+
+    // Calculate EMI details using the same formula as calculateMandateDetails
+    const totalAmount = paymentAmount;
+    const numberOfPayments = emiTenure;
+    const emiAmount = (totalAmount - baseAmount) / numberOfPayments;
+    const totalEmiAmount = emiAmount * numberOfPayments;
+    const processingFee = (processingFeePercentage / 100) * totalAmount;
+    const totalPayable = baseAmount + totalEmiAmount + processingFee;
+
+    // Calculate mandate dates based on frequency and EMI tenure
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() + 3); // Add 3 days as per requirement
+    
+    let durationInMonths = emiTenure;
+    
+    // Adjust duration based on frequency
+    switch (frequency) {
+      case 'DAIL': // Daily - convert to months (approximate)
+        durationInMonths = Math.ceil(emiTenure / 30);
+        break;
+      case 'WEEK': // Weekly - convert to months (approximate)
+        durationInMonths = Math.ceil(emiTenure / 4);
+        break;
+      case 'MNTH': // Monthly - duration is same as EMI tenure
+        durationInMonths = emiTenure;
+        break;
+      case 'BIMN': // Bi-monthly - convert to months
+        durationInMonths = emiTenure * 2;
+        break;
+      case 'QURT': // Quarterly - convert to months
+        durationInMonths = emiTenure * 3;
+        break;
+      case 'MIAN': // Semi-annually - convert to months
+        durationInMonths = emiTenure * 6;
+        break;
+      case 'YEAR': // Yearly - convert to months
+        durationInMonths = emiTenure * 12;
+        break;
+      default: // Default to monthly
+        durationInMonths = emiTenure;
+    }
+    
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + durationInMonths);
+
+    console.log('EMI Calculation Details:', {
+      paymentAmount,
+      baseAmount,
+      emiTenure,
+      emiAmount,
+      totalEmiAmount,
+      processingFee,
+      totalPayable,
+      durationInMonths,
+      startDate: startDate.toISOString().split('T')[0],
+      endDate: endDate.toISOString().split('T')[0]
+    });
+
     const userData = {
       name: parsedData.payerName ? `${parsedData.payerName} ${parsedData.payerLName || ''}` : parsedData.payerName,
       email: parsedData.payerEmail,
@@ -125,25 +221,26 @@ const handleCreateMandate = async (req, res) => {
     const user = await saveOrUpdateUser(userData);
 
     const transactionData = (() => {
-      const { start_date, end_date } = calculateDates(
-        moment().add(3, 'days').toDate(),//As per the confirmation from Anupam and Bhargava we have to add 3 days to the current date
-        slab.frequency,
-        slab.duration,
-        slab.expiry_date
-      );
-
       return {
         transaction_id: uuidv4(),
         client_transaction_id: parsedData.clientTxnId,
         user_id: user.user_id || null,
         merchant_id: merchant.merchant_id || null,
         sabpaisa_txn_id: parsedData.sabpaisaTxnId,
-        amount: parseFloat(parsedData.amount),
-        monthly_emi: slab.emi_amount || null,
-        start_date,
-        end_date,
+        amount: paymentAmount,
+        monthly_emi: emiAmount,
+        start_date: startDate,
+        end_date: endDate,
         purpose: slab.mandate_category || 'NA',
-        max_amount: slab.emi_amount || null,
+        max_amount: emiAmount,
+        // Add additional EMI calculation fields
+        downpayment: baseAmount,
+        total_emi_amount: totalEmiAmount,
+        processing_fee: processingFee,
+        total_payable: totalPayable,
+        emi_tenure: emiTenure,
+        frequency: frequency,
+        duration: durationInMonths
       };
     })();
 
@@ -158,8 +255,8 @@ const handleCreateMandate = async (req, res) => {
       customer_email_id: userData.email,
       start_date: moment(start_date).format('YYYY-MM-DD'),
       end_date: moment(end_date).format('YYYY-MM-DD'),
-      max_amount: slab.emi_amount,
-      frequency: slab.frequency,
+      max_amount: emiAmount,
+      frequency: frequency,
       purpose: 'NA',
       mandate_category: slab.mandate_category,
       client_code: parsedData.clientCode
@@ -173,7 +270,7 @@ console.log(mandateData,'mandateData')
     console.log(result,'result')
 
     // Generate EMI schedule based on the calculated start and end dates and EMI amount
-    const emiSchedule = generateEmiSchedule(transactionData.start_date, transactionData.end_date, slab.frequency, slab.emi_amount);
+    const emiSchedule = generateEmiSchedule(transactionData.start_date, transactionData.end_date, frequency, emiAmount);
     console.log(emiSchedule,'emiSchedule')
 
     // Render the mandate success view with mandate details and EMI schedule
@@ -183,16 +280,24 @@ console.log(mandateData,'mandateData')
         payerEmail: parsedData.payerEmail,
         payerMobile: parsedData.payerMobile,
         clientTxnId: parsedData.clientTxnId,
-        amount: parsedData.amount,
+        amount: paymentAmount,
         clientCode: parsedData.clientCode,
         status: parsedData.status,
         sabpaisaTxnId: parsedData.sabpaisaTxnId,
         bankMessage: parsedData.bankMessage,
         transDate: parsedData.transDate,
-        startDate: moment(transactionData.start_date).format('YYYY-MM-DD'),
-        endDate: moment(transactionData.end_date).format('YYYY-MM-DD'),
-        frequency: slab.frequency,
-        emiAmount: slab.emi_amount,
+        startDate: moment(startDate).format('YYYY-MM-DD'),
+        endDate: moment(endDate).format('YYYY-MM-DD'),
+        frequency: frequency,
+        emiAmount: emiAmount,
+        // Add additional EMI calculation details
+        downpayment: baseAmount,
+        totalEmiAmount: totalEmiAmount,
+        processingFee: processingFee,
+        totalPayable: totalPayable,
+        emiTenure: emiTenure,
+        duration: durationInMonths,
+        numberOfPayments: numberOfPayments
       },
       emiSchedule,
       redirectUrl: result.bank_details_url,
@@ -251,7 +356,6 @@ const webHook = async (req, res) => {
 
     // Fetch mandate details
     const enquiryData = await mandateEnquiry(id);
-console.log(enquiryData,'enquiryData')
     logger.info('Mandate details fetched successfully');
     const { result } = enquiryData;
 
