@@ -10,413 +10,427 @@
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mandate Details</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' *; media-src 'self' ; frame-src 'self'; form-action 'self' https://stage-securepay.sabpaisa.in https://securepay.sabpaisa.in;"/>
+    <title>e-Mandate Registration Success</title>
     <style>
-      :root {
-        --primary: #006CED;
-        --primary-dark: #0056B3;
-        --success: #28A745;
-        --warning: #FFC107;
-        --error: #DC3545;
-        --white: #FFFFFF;
-        --gray-50: #F9FAFB;
-        --gray-100: #F3F4F6;
-        --gray-200: #E5E7EB;
-        --gray-300: #D1D5DB;
-        --gray-400: #9CA3AF;
-        --gray-500: #6B7280;
-        --gray-600: #4B5563;
-        --gray-700: #374151;
-        --gray-800: #1F2937;
-        --gray-900: #111827;
-      }
+        /* ===== DESIGN TOKENS ===== */
+        :root {
+          /* Palette – neutrals */
+          --white: #ffffff;
+          --gray-050: #f8f9fa;
+          --gray-100: #f5f8fc;
+          --gray-200: #e9ecef;
+          --gray-900: #172b4d;
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+          /* Palette – Finloom brand blues */
+          --blue-500: #006ced;
+          --blue-700: #002e8b;
 
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem;
-      }
+          /* Palette – semantic */
+          --success-500: #22bb66;
+          --success-050: #e6f7ef;
+          --error-500: #dc3545;
+          --error-050: #ffeded;
+          --warning-500: #ffc107;
+          --warning-050: #fff8e1;
 
-      .container {
-        max-width: 480px;
-        width: 100%;
-        background: var(--white);
-        border-radius: 24px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        position: relative;
-      }
+          /* Shadows & radii */
+          --radius-sm: 4px;
+          --radius-md: 10px;
+          --radius-lg: 16px;
+          --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+          --shadow-md: 0 4px 16px rgba(0,46,139,.10);
+          --shadow-lg: 0 8px 24px rgba(0,46,139,.15);
 
-      /* Header */
-      .header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-        color: var(--white);
-        padding: 2rem 1.5rem 1.5rem;
-        text-align: center;
-        position: relative;
-      }
+          /* Typography */
+          --font-base: 'Inter', 'Segoe UI', Arial, sans-serif;
+          --fs-base: 16px;
+        }
 
-      .header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-        opacity: 0.3;
-      }
-
-      .header-content {
-        position: relative;
-        z-index: 1;
-      }
-
-      .header-icon {
-        width: 64px;
-        height: 64px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        font-size: 2rem;
-      }
-
-      .header h1 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-      }
-
-      .header p {
-        font-size: 1rem;
-        opacity: 0.9;
-        font-weight: 400;
-      }
-
-      .iphone-frame {
-        width: 375px;
-        height: 700px;
-        background-color: #000;
-        border-radius: 40px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-      }
-
-      .screen {
-        width: 360px;
-        height: 98%;
-        background-color: #fff;
-        border-radius: 30px;
-        overflow-y: scroll;
-        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-        padding: 1rem;
-      }
-
-      .notch {
-        width: 100px;
-        height: 15px;
-        background-color: #000;
-        border-radius: 20px;
-        position: absolute;
-        top: 10px;
-      }
-
-      .header {
-        background-color: #1565c0;
-        color: white;
-        padding: 1rem;
-        display: flex;
-        align-items: center;
-        font-weight: 500;
-      }
-
-      .header svg {
-        margin-right: 1rem;
-        cursor: pointer;
-      }
-
-      .details-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .detail-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.9rem;
-        color: #333;
-      }
-
-      .detail-title {
-        font-weight: 500;
-        color: #555;
-      }
-
-      .detail-value {
-        color: #000;
-        font-weight: 400;
-        text-align: right;
-      }
-
-      .progress-container {
-        margin-top: 1rem;
-        text-align: center;
-      }
-
-      .progress-bar {
-        height: 10px;
-        background-color: #1565c0;
-        width: 0%;
-        border-radius: 5px;
-        transition: width 1s linear;
-      }
-
-      .countdown {
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-        color: #555;
-      }
-
-      .btn-primary {
-        background-color: #1565c0;
-        border: none;
-        border-radius: 12px;
-        padding: 0.75rem;
-        width: 100%;
-        margin-top: 1.5rem;
-        font-size: 1rem;
-        font-weight: 500;
-      }
-
-      .btn-primary:hover {
-        background-color: #0d47a1;
-      }
-
-      /* Progress Section */
-      .progress-section {
-        padding: 1.5rem;
-        background: var(--gray-50);
-        border-bottom: 1px solid var(--gray-200);
-      }
-
-      .progress-container {
-        text-align: center;
-      }
-
-      .countdown {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--gray-700);
-        margin-bottom: 1rem;
-      }
-
-      .progress-bar-container {
-        background: var(--gray-200);
-        border-radius: 12px;
-        height: 8px;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .progress-bar {
-        height: 100%;
-        background: linear-gradient(90deg, var(--primary) 0%, var(--success) 100%);
-        border-radius: 12px;
-        transition: width 1s ease;
-        position: relative;
-      }
-
-      .progress-bar::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        animation: shimmer 2s infinite;
-      }
-
-      @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
-      }
-
-      /* Details Section */
-      .details-section {
-        padding: 1.5rem;
-      }
-
-      .details-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1.5rem;
-      }
-
-      .details-header .icon {
-        font-size: 1.5rem;
-        margin-right: 0.75rem;
-        color: var(--primary);
-      }
-
-      .details-header h2 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--gray-800);
-      }
-
-      .details-grid {
-        display: grid;
-        gap: 1rem;
-      }
-
-      .detail-item {
-        background: var(--white);
-        border: 1px solid var(--gray-200);
-        border-radius: 12px;
-        padding: 1rem;
-        transition: all 0.3s ease;
-      }
-
-      .detail-item:hover {
-        border-color: var(--primary);
-        box-shadow: 0 4px 12px rgba(0, 108, 237, 0.1);
-        transform: translateY(-1px);
-      }
-
-      .detail-label {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--gray-600);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.5rem;
-      }
-
-      .detail-value {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--gray-900);
-        word-break: break-word;
-      }
-
-      .detail-value.status-active {
-        color: var(--success);
-      }
-
-      .detail-value.status-pending {
-        color: var(--warning);
-      }
-
-      .detail-value.status-failed {
-        color: var(--error);
-      }
-
-      /* Footer */
-      .footer {
-        padding: 1.5rem;
-        background: var(--gray-50);
-        border-top: 1px solid var(--gray-200);
-        text-align: center;
-      }
-
-      .secure-badge {
-        display: inline-flex;
-        align-items: center;
-        background: var(--white);
-        border: 1px solid var(--gray-200);
-        border-radius: 20px;
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-        color: var(--gray-600);
-        font-weight: 500;
-      }
-
-      .secure-badge .icon {
-        font-size: 1rem;
-        margin-right: 0.5rem;
-        color: var(--success);
-      }
-
-      /* Icon styles */
-      .icon {
-        display: inline-block;
-        font-size: 1.2em;
-        line-height: 1;
-        vertical-align: middle;
-      }
-
-      /* Responsive Design */
-      @media (max-width: 480px) {
-        .container {
+        /* ===== THEME ===== */
+        body {
+          --brand-bg: var(--gray-100);
+          --brand-primary: var(--blue-500);
+          --brand-primary-dark: var(--blue-700);
+          --hero-accent: var(--success-500);
+          
+          font: var(--fs-base)/1.5 var(--font-base);
+          background: var(--brand-bg);
+          color: var(--gray-900);
           margin: 0;
-          border-radius: 0;
-          min-height: 100vh;
+          padding: 20px;
         }
 
-        .header {
-          padding: 1.5rem 1rem 1rem;
+        /* ===== FINLOOM UI COMPONENTS ===== */
+        .hero-icon {
+          width: 80px; height: 80px;
+          border-radius: 50%;
+          background: var(--hero-accent);
+          color: var(--white);
+          display: flex; justify-content: center; align-items: center;
+          font-size: 36px;
+          font-weight: bold;
+          box-shadow: 0 12px 24px rgba(34, 187, 102, 0.25);
+          animation: iconBounceIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+                     iconPulse 2s infinite ease-in-out;
+          margin: 0 auto 20px;
+          position: relative;
+          transition: transform 0.3s ease;
         }
 
-        .header h1 {
-          font-size: 1.5rem;
+        .hero-icon::before {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: var(--hero-accent);
+          opacity: 0.3;
+          animation: ripple 2s infinite;
         }
 
-        .details-section {
-          padding: 1rem;
+        .hero-icon:hover {
+          transform: scale(1.05);
+        }
+
+        /* ===== ENHANCED ANIMATIONS ===== */
+        .hero-section {
+          animation: slideUpFade 0.8s ease-out;
+        }
+
+        h1.hero-heading {
+          font-size: 30px; font-weight: 700;
+          color: var(--brand-primary-dark);
+          margin: 12px 0 4px;
+          animation: slideUpFade 0.6s ease-out 0.2s both;
+        }
+
+        p.hero-message { 
+          font-size: 16px; 
+          margin-bottom: 18px; 
+          color: var(--gray-900);
+          animation: slideUpFade 0.6s ease-out 0.3s both;
+        }
+
+        .tx-pill {
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 8px 16px; border-radius: 24px;
+          background: var(--white);
+          box-shadow: var(--shadow-md);
+          transition: .3s;
+          font-weight: 600; font-size: 14px;
+          margin-bottom: 20px;
+          animation: slideUpFade 0.6s ease-out 0.4s both;
+        }
+
+        .tx-pill button {
+          background: none; border: none; cursor: pointer;
+          color: var(--brand-primary); font-size: 14px;
+        }
+
+        .tx-pill:hover { 
+          box-shadow: var(--shadow-lg); 
+          transform: translateY(-2px); 
+        }
+
+        .card {
+          background: var(--white); 
+          border-radius: var(--radius-lg);
+          box-shadow: var(--shadow-md); 
+          overflow: hidden;
+          padding: 28px; 
+          margin: 20px 0; 
+          position: relative;
+          transition: .3s;
+          animation: slideUpFade 0.6s ease-out 0.6s both;
+        }
+
+        .card:hover { 
+          box-shadow: var(--shadow-lg); 
+          transform: translateY(-3px); 
+        }
+
+        .btn-primary {
+          width: 100%; padding: 16px; border: none;
+          border-radius: var(--radius-md); font-weight: 600; cursor: pointer;
+          position: relative; overflow: hidden; transition: .3s;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          background: var(--brand-primary); 
+          color: var(--white);
+          text-decoration: none;
+          font-size: 16px;
+        }
+
+        .btn-primary:hover { background: var(--brand-primary-dark); }
+        .btn-primary:active { transform: translateY(1px); }
+
+        .btn-secondary {
+          width: 100%; padding: 12px; border: 1px solid var(--gray-200);
+          border-radius: var(--radius-md); font-weight: 500; cursor: pointer;
+          background: var(--white); color: var(--brand-primary);
+          text-decoration: none; transition: .3s;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          font-size: 14px;
+        }
+
+        .btn-secondary:hover { 
+          background: var(--gray-050); 
+          border-color: var(--brand-primary);
+        }
+
+        .accordion {
+          border: 1px solid var(--gray-200);
+          border-radius: var(--radius-md);
+          margin: 20px 0;
+          animation: slideUpFade 0.6s ease-out 0.7s both;
+        }
+
+        .accordion-header {
+          padding: 18px 20px; cursor: pointer; display: flex;
+          align-items: center; justify-content: space-between;
+          transition: .2s; background: var(--white);
+          font-weight: 600;
+          color: var(--brand-primary);
+        }
+
+        .accordion-header:hover { background: var(--gray-100); }
+
+        .accordion-content {
+          max-height: 0; overflow: hidden; transition: max-height .3s ease;
+          background: var(--gray-050);
+        }
+
+        .accordion.active .accordion-content { max-height: 500px; }
+
+        .toast {
+          position: fixed; bottom: 30px; right: 30px;
+          background: var(--brand-primary-dark); color: var(--white);
+          padding: 14px 18px; border-radius: var(--radius-md);
+          box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none;
+          transition: opacity .4s, transform .4s;
+          transform: translateY(20px);
+        }
+
+        .toast.show { 
+          opacity: 1; 
+          transform: translateY(0); 
+          pointer-events: auto; 
+        }
+
+        /* ===== CUSTOM MANDATE COMPONENTS ===== */
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          text-align: center;
+        }
+
+        .status-badge {
+          display: inline-flex; align-items: center; gap: 6px;
+          background: var(--success-500);
+          color: var(--white);
+          padding: 8px 14px;
+          border-radius: 24px;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 15px;
+          animation: slideUpFade 0.6s ease-out 0.5s both;
+          box-shadow: 0 4px 12px rgba(34, 187, 102, 0.2);
+        }
+
+        .details-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 20px;
+          text-align: left;
+          margin: 20px 0;
         }
 
         .detail-item {
-          padding: 0.875rem;
+          padding: 16px;
+          background: var(--gray-050);
+          border-radius: var(--radius-md);
+          border-left: 3px solid var(--brand-primary);
         }
-      }
 
-      /* Animation Classes */
-      .fade-in {
-        animation: fadeIn 0.6s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .pulse {
-        animation: pulse 1s infinite;
-      }
-
-      @keyframes pulse {
-        0%, 100% {
-          opacity: 1;
-        }
-        50% {
+        .detail-label {
+          font-size: 12px;
+          color: var(--gray-900);
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 6px;
           opacity: 0.7;
         }
-      }
+
+        .detail-value {
+          font-size: 14px;
+          color: var(--gray-900);
+          font-weight: 600;
+          word-break: break-all;
+        }
+
+        .amount-highlight {
+          color: var(--success-500);
+          font-weight: 700;
+          font-size: 16px;
+        }
+
+        .info-card {
+          background: var(--success-050);
+          border: 1px solid var(--success-500);
+          border-radius: var(--radius-md);
+          padding: 20px;
+          margin: 20px 0;
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          text-align: left;
+          animation: slideUpFade 0.6s ease-out 0.8s both;
+        }
+
+        .info-icon {
+          color: var(--success-500);
+          font-size: 20px;
+          margin-top: 2px;
+        }
+
+        .info-content h3 {
+          color: var(--brand-primary-dark);
+          font-size: 16px;
+          font-weight: 600;
+          margin: 0 0 8px 0;
+        }
+
+        .info-content p {
+          color: var(--gray-900);
+          font-size: 14px;
+          line-height: 1.5;
+          margin: 0;
+        }
+
+        .back-home {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          background: var(--white);
+          border: 1px solid var(--gray-200);
+          color: var(--gray-900);
+          padding: 8px 16px;
+          border-radius: var(--radius-sm);
+          text-decoration: none;
+          font-size: 12px;
+          font-weight: 500;
+          transition: .3s;
+        }
+
+        .back-home:hover {
+          background: var(--gray-050);
+          border-color: var(--brand-primary);
+        }
+
+        .footer-security {
+          background: var(--gray-050);
+          padding: 12px 20px;
+          text-align: center;
+          color: var(--gray-900);
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          border-radius: var(--radius-md);
+          margin-top: 20px;
+          opacity: 0.8;
+          animation: slideUpFade 0.6s ease-out 1s both;
+        }
+
+        .security-icon {
+          color: var(--success-500);
+        }
+
+        /* ===== ENHANCED KEYFRAMES ===== */
+        @keyframes iconBounceIn {
+          0% {
+            opacity: 0;
+            transform: scale(0.2) rotate(-180deg);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.1) rotate(0deg);
+          }
+          70% {
+            transform: scale(0.95);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes iconPulse {
+          0%, 100% {
+            box-shadow: 0 12px 24px rgba(34, 187, 102, 0.25), 0 0 0 0 rgba(34, 187, 102, 0.3);
+          }
+          50% {
+            box-shadow: 0 12px 24px rgba(34, 187, 102, 0.4), 0 0 0 10px rgba(34, 187, 102, 0);
+          }
+        }
+
+        @keyframes ripple {
+          0% {
+            transform: scale(1);
+            opacity: 0.3;
+          }
+          100% {
+            transform: scale(1.5);
+            opacity: 0;
+          }
+        }
+
+        @keyframes slideUpFade {
+          0% {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes bounceIn { 
+          0% { transform: scale(.2); opacity: 0; } 
+          100% { transform: scale(1); opacity: 1; } 
+        }
+
+        @keyframes pulse { 
+          0%, 100% { box-shadow: 0 0 0 0 rgba(34, 187, 102, .3); } 
+          50% { box-shadow: 0 0 0 12px rgba(34, 187, 102, 0); } 
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+          .details-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+          }
+          
+          .container {
+            margin: 10px;
+          }
+          
+          .back-home {
+            position: static;
+            display: inline-block;
+            margin-bottom: 20px;
+          }
+          
+          body {
+            padding: 10px;
+          }
+        }
     </style>
   </head>
   <body>
@@ -424,55 +438,138 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T4F3SZLP"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-content">
-                <div class="header-icon">
-                    <span class="icon">📋</span>
-                </div>
-                <h1>Mandate Details</h1>
-                <p>Your mandate registration information</p>
-            </div>
+    
+    <a href="#" class="back-home">Back to Home</a>
+    
+    <main class="container">
+        <!-- Hero Section -->
+        <div class="hero-icon">✓</div>
+        <h1 class="hero-heading">Hi, <%= mandate.customer_name || 'User' %>!</h1>
+        <p class="hero-message">Your e-Mandate setup was successful on <%= new Date(mandate.created_on).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>.</p>
+        
+        <!-- Transaction ID Pill -->
+        <span class="tx-pill">
+            <span id="mandateId"><%= mandate.registration_id %></span>
+            <button data-copy data-value="<%= mandate.registration_id %>" onclick="copyToClipboard('<%= mandate.registration_id %>')">
+                📋
+            </button>
+        </span>
+
+        <!-- Status Badge -->
+        <div class="status-badge">
+            ✓ Mandate Active
         </div>
 
-        <!-- Progress Section -->
-        <div class="progress-section">
-            <div class="progress-container">
-                <div class="countdown" id="countdown">Redirecting in 10 seconds...</div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Details Section -->
-        <div class="details-section">
-            <div class="details-header">
-                <span class="icon">📊</span>
-                <h2>Mandate Information</h2>
-            </div>
+        <!-- Mandate Details Card -->
+        <section class="card">
+            <h2 style="color: var(--brand-primary-dark); margin: 0 0 20px 0; font-size: 20px;">Mandate Details</h2>
             
             <div class="details-grid">
-                <% for (const [key, value] of Object.entries(mandate)) { %>
-                    <div class="detail-item fade-in">
-                        <div class="detail-label"><%= key.replace(/_/g, ' ').toUpperCase() %></div>
-                        <div class="detail-value <%= typeof value === 'object' && value.class ? value.class : '' %>">
-                            <%= typeof value === 'object' && value.value ? value.value : value %>
+                <div class="detail-item">
+                    <div class="detail-label">Bank Account</div>
+                    <div class="detail-value">
+                        <%= mandate.bank_code %> Bank<br>
+                        ****<%= mandate.account_number.slice(-4) %>
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Mandate Amount</div>
+                    <div class="detail-value amount-highlight">₹<%= mandate.max_amount %>/<%= mandate.frequency.toLowerCase() %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Start Date</div>
+                    <div class="detail-value"><%= new Date(mandate.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">End Date</div>
+                    <div class="detail-value"><%= new Date(mandate.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Frequency</div>
+                    <div class="detail-value"><%= mandate.frequency %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Purpose</div>
+                    <div class="detail-value"><%= mandate.purpose %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Account Holder</div>
+                    <div class="detail-value"><%= mandate.account_holder_name %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Account Type</div>
+                    <div class="detail-value"><%= mandate.account_type %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">IFSC Code</div>
+                    <div class="detail-value"><%= mandate.ifsc_code.toUpperCase() %></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Primary Action Button -->
+        <a href="#" class="btn-primary">
+            🏠 Go to Dashboard
+        </a>
+
+        <!-- Payment Schedule Accordion -->
+        <div class="accordion" id="paymentAccordion">
+            <div class="accordion-header" onclick="toggleAccordion('paymentAccordion')">
+                <span>📅 View Payment Schedule</span>
+                <span id="accordionIcon">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div style="padding: 20px;">
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Next Payment</div>
+                            <div class="detail-value"><%= new Date(mandate.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Payment Mode</div>
+                            <div class="detail-value"><%= mandate.mode %></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Amount Type</div>
+                            <div class="detail-value"><%= mandate.amount_type %></div>
                         </div>
                     </div>
-                <% } %>
+                </div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="footer">
-            <div class="secure-badge">
-                <span class="icon">🔒</span>
-                <span>Secured by e-Nach</span>
+        <!-- Information Card -->
+        <div class="info-card">
+            <div class="info-icon">ℹ️</div>
+            <div class="info-content">
+                <h3>Important Information</h3>
+                <p>Your e-Mandate has been successfully registered with your bank. <%= mandate.frequency %> <%= mandate.amount_type.toLowerCase() %> payments of ₹<%= mandate.max_amount %> will be automatically debited from your account on the scheduled dates.</p>
             </div>
         </div>
-    </div>
+
+        <!-- Download Certificate Button -->
+        <a href="#" class="btn-secondary">
+            ⬇️ Download Mandate Certificate
+        </a>
+
+        <!-- Security Footer -->
+        <div class="footer-security">
+            <span class="security-icon">🔒</span>
+            Secured by e-Nach
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Mandate ID copied to clipboard!</div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize countdown and progress
@@ -480,23 +577,17 @@
         });
 
         function startCountdown() {
-            const progressBar = document.getElementById("progressBar");
-            const countdown = document.getElementById("countdown");
             const redirectUrl = "<%= redirectUrl %>";
-            const enachResponse = "<%= enachResponse %>";
+            const enachResponse = document.getElementById('enach-response-data').getAttribute('data-response');
             
             let timeLeft = 10;
             
             const timer = setInterval(() => {
                 timeLeft -= 1;
-                const progress = ((10 - timeLeft) / 10) * 100;
-                progressBar.style.width = `${progress}%`;
-                countdown.textContent = `Redirecting in ${timeLeft} seconds...`;
                 
                 // Add pulse animation when time is running low
                 if (timeLeft <= 5) {
-                    countdown.classList.add('pulse');
-                    countdown.style.color = 'var(--error)';
+                    // You can add visual indicators here if needed
                 }
                 
                 if (timeLeft === 0) {
@@ -523,7 +614,6 @@
                 input.type = "hidden";
                 input.name = key;
                 input.value = value;
-                input.target = "_blank";
                 form.appendChild(input);
             }
             
@@ -531,6 +621,41 @@
             document.body.appendChild(form);
             form.submit();
         }
+
+        // Copy to clipboard functionality
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        // Show toast notification
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Toggle accordion
+        function toggleAccordion(accordionId) {
+            const accordion = document.getElementById(accordionId);
+            const icon = document.getElementById('accordionIcon');
+            
+            if (accordion.classList.contains('active')) {
+                accordion.classList.remove('active');
+                icon.textContent = '▼';
+            } else {
+                accordion.classList.add('active');
+                icon.textContent = '▲';
+            }
+        }
     </script>
+    
+    <!-- Hidden element to store enachResponse data -->
+    <div id="enach-response-data" data-response="<%= enachResponse %>" style="display: none;"></div>
   </body>
 </html>

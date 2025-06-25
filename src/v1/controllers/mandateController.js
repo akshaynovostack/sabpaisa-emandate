@@ -26,7 +26,7 @@ const generateEmiSchedule = (startDate, endDate, frequency, emiAmount) => {
       dueDate: current.format('YYYY-MM-DD'),
       emiAmount: emiAmount
     });
-    
+
     // Increment based on frequency
     switch (frequency) {
       case 'DAIL': // Daily
@@ -53,7 +53,7 @@ const generateEmiSchedule = (startDate, endDate, frequency, emiAmount) => {
       default: // Default to monthly
         current.add(1, 'month');
     }
-    
+
     installmentNumber++;
   }
 
@@ -63,13 +63,13 @@ const generateEmiSchedule = (startDate, endDate, frequency, emiAmount) => {
 // Helper function to format mandate data for display
 const formatMandateData = (mandateData) => {
   const formatted = {};
-  
+
   for (const [key, value] of Object.entries(mandateData)) {
     if (!value || value === 'null' || value === 'undefined') {
       formatted[key] = 'N/A';
       continue;
     }
-    
+
     // Format dates
     if (key.toLowerCase().includes('date') || key.toLowerCase().includes('created')) {
       try {
@@ -115,7 +115,7 @@ const formatMandateData = (mandateData) => {
       formatted[key] = value;
     }
   }
-  
+
   return formatted;
 };
 
@@ -139,7 +139,7 @@ const handleCreateMandate = async (req, res) => {
     logger.debug('Parsed Data:', parsedData);
 
     // Save or update merchant and user, calculate dates, etc.
-    console.log(parsedData,'parsedData')
+    console.log(parsedData, 'parsedData')
     const merchantData = {
       merchant_code: parsedData.clientCode,
       status: 1,
@@ -167,9 +167,9 @@ const handleCreateMandate = async (req, res) => {
     // Calculate mandate dates based on frequency and EMI tenure
     const startDate = new Date();
     startDate.setDate(startDate.getDate() + 3); // Add 3 days as per requirement
-    
+
     let durationInMonths = emiTenure;
-    
+
     // Adjust duration based on frequency
     switch (frequency) {
       case 'DAIL': // Daily - convert to months (approximate)
@@ -196,7 +196,7 @@ const handleCreateMandate = async (req, res) => {
       default: // Default to monthly
         durationInMonths = emiTenure;
     }
-    
+
     const endDate = new Date(startDate);
     endDate.setMonth(endDate.getMonth() + durationInMonths);
 
@@ -266,11 +266,11 @@ const handleCreateMandate = async (req, res) => {
     // Call the service to create the mandate
     const result = await createMandate(mandateData);
     logger.info('Mandate created successfully', result);
-    console.log(result,'result')
+    console.log(result, 'result')
 
     // Generate EMI schedule based on the calculated start and end dates and EMI amount
     const emiSchedule = generateEmiSchedule(transactionData.start_date, transactionData.end_date, frequency, emiAmount);
-    console.log(emiSchedule,'emiSchedule')
+    console.log(emiSchedule, 'emiSchedule')
 
     // Render the mandate success view with mandate details and EMI schedule
     return res.render('mandateRedirect', {
@@ -303,7 +303,7 @@ const handleCreateMandate = async (req, res) => {
       message: 'Mandate created successfully!'
     });
   } catch (error) {
-    console.log(error,'error')
+    console.log(error, 'error')
     const structuredError = handleError(error);
     logger.error('Error while creating mandate', structuredError);
     return handleMandateFailure(transaction, structuredError, res);
@@ -357,7 +357,6 @@ const webHook = async (req, res) => {
     const enquiryData = await mandateEnquiry(id);
     logger.info('Mandate details fetched successfully');
     const { result } = enquiryData;
-
     // Asynchronous database updates
     (async () => {
       try {
@@ -473,7 +472,6 @@ const webHook = async (req, res) => {
       bankMandateRegNo: result.bank_mandate_reg_no || null,
       bankReferenceNumber: result.bank_reference_number || null,
     };
-
     // Encrypt cumulative data
     const encData = encAESString(jsonToQueryParams(cumulativeData));
     logger.debug(`Encrypted mandate data: ${encData}`);
@@ -486,15 +484,15 @@ const webHook = async (req, res) => {
     delete result.consumer_id;
     delete result.created_on;
     delete result.redirect_url;
-    
+
     // Format the mandate data for display
     const formattedMandate = formatMandateData(result);
-    
+
     console.log(process.env.RETURNURL + '?enachResponse=' + encData)
-    res.render('mandateDetails', { 
-      mandate: formattedMandate, 
-      redirectUrl: process.env.RETURNURL, 
-      enachResponse: decodeURIComponent(encData) 
+    res.render('mandateDetails', {
+      mandate: formattedMandate,
+      redirectUrl: process.env.RETURNURL,
+      enachResponse: decodeURIComponent(encData)
     });
   } catch (error) {
     const structuredError = handleError(error);

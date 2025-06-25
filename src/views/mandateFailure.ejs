@@ -10,618 +10,400 @@
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mandate Registration Failed</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' *; media-src 'self' ; frame-src 'self'; form-action 'self' https://stage-securepay.sabpaisa.in https://securepay.sabpaisa.in;"/>
+    <title>e-Mandate Registration Failed</title>
     <style>
-      :root {
-        --primary: #006ced;
-        --primary-dark: #002e8b;
-        --white: #ffffff;
-        --error: #dc3545;
-        --error-dark: #c82333;
-        --error-light: #f8d7da;
-        --warning: #f5a623;
-        --background: #f5f8fc;
-        --text: #172b4d;
-        --text-light: #5e6c84;
-        --border: #e4ebf5;
-        --card-shadow: 0 4px 16px rgba(0, 46, 139, 0.1);
-        --hover-shadow: 0 8px 24px rgba(0, 46, 139, 0.15);
-      }
+        /* ===== DESIGN TOKENS ===== */
+        :root {
+          /* Palette – neutrals */
+          --white: #ffffff;
+          --gray-050: #f8f9fa;
+          --gray-100: #f5f8fc;
+          --gray-200: #e9ecef;
+          --gray-900: #172b4d;
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+          /* Palette – Finloom brand blues */
+          --blue-500: #006ced;
+          --blue-700: #002e8b;
 
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: var(--background);
-        color: var(--text);
-        line-height: 1.5;
-        padding: 20px;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        padding-top: 40px;
-      }
+          /* Palette – semantic */
+          --success-500: #22bb66;
+          --success-050: #e6f7ef;
+          --error-500: #dc3545;
+          --error-050: #ffeded;
+          --warning-500: #ffc107;
+          --warning-050: #fff8e1;
 
-      .container {
-        max-width: 600px;
-        width: 100%;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-      }
+          /* Shadows & radii */
+          --radius-sm: 4px;
+          --radius-md: 10px;
+          --radius-lg: 16px;
+          --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+          --shadow-md: 0 4px 16px rgba(0,46,139,.10);
+          --shadow-lg: 0 8px 24px rgba(0,46,139,.15);
 
-      /* Hero Section */
-      .hero-section {
-        text-align: center;
-        animation: fadeIn 0.8s ease-out;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-      }
-
-      .error-icon {
-        background: var(--error);
-        color: var(--white);
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 28px;
-        margin: 0 auto 20px;
-        box-shadow: 0 10px 20px rgba(220, 53, 69, 0.25);
-        animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        transition: transform 0.3s ease;
-      }
-
-      .error-icon:hover {
-        transform: scale(1.05);
-      }
-
-      .error-heading {
-        color: var(--error-dark);
-        font-size: 30px;
-        margin-bottom: 12px;
-        font-weight: 700;
-        animation: slideUp 0.5s ease-out 0.2s both;
-      }
-
-      .error-message {
-        color: var(--text);
-        font-size: 16px;
-        font-weight: 400;
-        margin-bottom: 16px;
-        animation: slideUp 0.5s ease-out 0.3s both;
-      }
-
-      .highlight {
-        color: var(--error-dark);
-        font-weight: 600;
-      }
-
-      /* Transaction Info */
-      .transaction-info {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background-color: var(--white);
-        padding: 8px 16px;
-        border-radius: 20px;
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.1);
-        margin-top: 4px;
-        animation: slideUp 0.5s ease-out 0.4s both;
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .transaction-info:hover {
-        box-shadow: 0 6px 16px rgba(220, 53, 69, 0.15);
-        transform: translateY(-2px);
-      }
-
-      .transaction-label {
-        font-size: 13px;
-        color: var(--text-light);
-        font-weight: 500;
-      }
-
-      .transaction-id-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      #transaction-id {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text);
-      }
-
-      .copy-btn {
-        background: none;
-        border: none;
-        color: var(--error);
-        cursor: pointer;
-        padding: 4px;
-        border-radius: 4px;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-      }
-
-      .copy-btn:hover {
-        background-color: rgba(220, 53, 69, 0.1);
-        transform: scale(1.1);
-      }
-
-      /* Cards Container */
-      .cards-container {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      /* Card Styles */
-      .card {
-        background-color: var(--white);
-        border-radius: 16px;
-        box-shadow: var(--card-shadow);
-        overflow: hidden;
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
-        animation: slideUp 0.5s ease-out;
-        animation-fill-mode: both;
-        width: 100%;
-      }
-
-      .card:hover {
-        box-shadow: var(--hover-shadow);
-        transform: translateY(-3px);
-      }
-
-      .card-content {
-        padding: 28px;
-      }
-
-      .error-details-card {
-        animation-delay: 0.1s;
-        border-left: 3px solid var(--error);
-      }
-
-      .error-details-card h2 {
-        color: var(--error-dark);
-        font-size: 22px;
-        margin-bottom: 10px;
-        font-weight: 600;
-      }
-
-      .error-details-card p {
-        color: var(--text-light);
-        margin-bottom: 24px;
-        font-size: 15px;
-      }
-
-      /* Error Alert */
-      .error-alert {
-        background-color: var(--error-light);
-        border: 1px solid var(--error);
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 24px;
-        color: var(--error-dark);
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        animation: slideUp 0.5s ease-out 0.2s both;
-      }
-
-      .error-alert i {
-        font-size: 20px;
-        margin-top: 2px;
-      }
-
-      .error-alert-content {
-        flex: 1;
-      }
-
-      .error-alert-title {
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
-
-      .error-alert-message {
-        font-size: 14px;
-        opacity: 0.9;
-      }
-
-      /* Detail Items */
-      .detail-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .detail-item:last-child {
-        border-bottom: none;
-      }
-
-      .label {
-        color: var(--text-light);
-        font-size: 14px;
-        font-weight: 500;
-      }
-
-      .value {
-        color: var(--text);
-        font-weight: 600;
-        font-size: 14px;
-        text-align: right;
-        max-width: 60%;
-        word-break: break-word;
-      }
-
-      .status-error {
-        color: var(--error);
-        font-weight: 600;
-      }
-
-      .status-pending {
-        color: var(--text-light);
-        font-weight: 500;
-      }
-
-      /* Redirect Message */
-      .redirect-message {
-        margin-top: 16px;
-        padding: 12px 16px;
-        background-color: #fff3cd;
-        border-radius: 8px;
-        border-left: 3px solid var(--warning);
-        font-size: 14px;
-        color: var(--text-light);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .pulse-dot {
-        width: 8px;
-        height: 8px;
-        background-color: var(--warning);
-        border-radius: 50%;
-        animation: pulseDot 1.5s infinite;
-      }
-
-      #countdown {
-        color: var(--warning);
-        font-weight: 600;
-      }
-
-      /* Footer */
-      .footer {
-        text-align: center;
-        animation: slideUp 0.5s ease-out 0.4s both;
-      }
-
-      .secure-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: var(--text-light);
-        font-size: 14px;
-        padding: 8px 16px;
-        border-radius: 20px;
-        background-color: var(--white);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-      }
-
-      .secure-badge:hover {
-        transform: translateY(-1px);
-      }
-
-      .secure-badge i {
-        font-size: 16px;
-      }
-
-      .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: var(--white);
-        color: var(--text);
-        padding: 16px 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        z-index: 1000;
-        transform: translateX(400px);
-        opacity: 0;
-        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        border-left: 4px solid var(--error);
-        max-width: 350px;
-      }
-
-      .notification.active {
-        transform: translateX(0);
-        opacity: 1;
-      }
-
-      .notification-icon {
-        color: var(--error);
-      }
-
-      .notification-message {
-        font-size: 14px;
-        font-weight: 500;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes slideUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes bounceIn {
-        0% {
-          opacity: 0;
-          transform: scale(0.3);
-        }
-        50% {
-          opacity: 1;
-          transform: scale(1.05);
-        }
-        70% {
-          transform: scale(0.9);
-        }
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      @keyframes pulseDot {
-        0% {
-          opacity: 1;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.5;
-          transform: scale(1.2);
-        }
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      @media (max-width: 1024px) {
-        .container {
-          max-width: 90%;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .container {
-          max-width: 95%;
-          gap: 24px;
+          /* Typography */
+          --font-base: 'Inter', 'Segoe UI', Arial, sans-serif;
+          --fs-base: 16px;
         }
 
-        .hero-section {
-          gap: 12px;
-        }
-      }
-
-      @media (max-width: 640px) {
+        /* ===== FAILURE THEME ===== */
         body {
-          padding: 15px;
-          padding-top: 20px;
-        }
-
-        .container {
-          gap: 20px;
-        }
-
-        .error-heading {
-          font-size: 26px;
-        }
-
-        .error-message {
-          font-size: 15px;
-        }
-
-        .error-icon {
-          width: 60px;
-          height: 60px;
-          font-size: 24px;
-        }
-
-        .transaction-info {
-          padding: 10px 14px;
-          flex-direction: column;
-          gap: 4px;
-        }
-
-        .card-content {
+          --brand-bg: var(--gray-050);
+          --brand-primary: var(--error-500);
+          --brand-primary-dark: var(--error-500);
+          --hero-accent: var(--error-500);
+          
+          font: var(--fs-base)/1.5 var(--font-base);
+          background: var(--brand-bg);
+          color: var(--gray-900);
+          margin: 0;
           padding: 20px;
         }
 
-        .redirect-message {
-          font-size: 13px;
+        /* ===== ENHANCED ANIMATIONS ===== */
+        .hero-section {
+          animation: slideUpFade 0.8s ease-out;
         }
 
-        .detail-item {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 4px;
+        /* ===== FINLOOM UI COMPONENTS ===== */
+        .hero-icon {
+          width: 80px; height: 80px;
+          border-radius: 50%;
+          background: var(--hero-accent);
+          color: var(--white);
+          display: flex; justify-content: center; align-items: center;
+          font-size: 36px;
+          font-weight: bold;
+          box-shadow: 0 12px 24px rgba(220, 53, 69, 0.25);
+          animation: iconShakeIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+                     iconPulseError 2s infinite ease-in-out;
+          margin: 0 auto 20px;
+          position: relative;
+          transition: transform 0.3s ease;
         }
 
-        .value {
-          max-width: 100%;
-          text-align: left;
-        }
-      }
-
-      @media (max-width: 480px) {
-        body {
-          padding: 10px;
-          padding-top: 15px;
-        }
-
-        .container {
-          gap: 16px;
+        .hero-icon::before {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: var(--hero-accent);
+          opacity: 0.3;
+          animation: rippleError 2s infinite;
         }
 
-        .card-content {
-          padding: 16px;
+        .hero-icon:hover {
+          transform: scale(1.05);
         }
 
-        .error-heading {
-          font-size: 24px;
+        h1.hero-heading {
+          font-size: 30px; font-weight: 700;
+          color: var(--brand-primary-dark);
+          margin: 12px 0 4px;
+          animation: slideUpFade 0.6s ease-out 0.2s both;
         }
 
-        .error-message {
+        p.hero-message { 
+          font-size: 16px; 
+          margin-bottom: 18px; 
+          color: var(--gray-900);
+          animation: slideUpFade 0.6s ease-out 0.3s both;
+        }
+
+        .tx-pill {
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 8px 16px; border-radius: 24px;
+          background: var(--white);
+          box-shadow: var(--shadow-md);
+          transition: .3s;
+          font-weight: 600; font-size: 14px;
+          margin-bottom: 20px;
+          animation: slideUpFade 0.6s ease-out 0.4s both;
+        }
+
+        .tx-pill button {
+          background: none; border: none; cursor: pointer;
+          color: var(--brand-primary); font-size: 14px;
+        }
+
+        .tx-pill:hover { 
+          box-shadow: var(--shadow-lg); 
+          transform: translateY(-2px); 
+        }
+
+        .status-badge {
+          display: inline-flex; align-items: center; gap: 6px;
+          background: var(--error-500);
+          color: var(--white);
+          padding: 8px 14px;
+          border-radius: 24px;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 15px;
+          animation: slideUpFade 0.6s ease-out 0.5s both;
+          box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+        }
+
+        .card {
+          background: var(--white); 
+          border-radius: var(--radius-lg);
+          box-shadow: var(--shadow-md); 
+          overflow: hidden;
+          padding: 28px; 
+          margin: 20px 0; 
+          position: relative;
+          transition: .3s;
+          animation: slideUpFade 0.6s ease-out 0.6s both;
+        }
+
+        .card:hover { 
+          box-shadow: var(--shadow-lg); 
+          transform: translateY(-3px); 
+        }
+
+        .card.error-card {
+          border-left: 4px solid var(--error-500);
+        }
+
+        .btn-warning {
+          width: 100%; padding: 16px; border: none;
+          border-radius: var(--radius-md); font-weight: 600; cursor: pointer;
+          position: relative; overflow: hidden; transition: .3s;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          background: var(--warning-500); 
+          color: var(--gray-900);
+          text-decoration: none;
+          font-size: 16px;
+        }
+
+        .btn-warning:hover { background: #e0a800; }
+        .btn-warning:active { transform: translateY(1px); }
+
+        .btn-secondary {
+          width: 100%; padding: 12px; border: 1px solid var(--gray-200);
+          border-radius: var(--radius-md); font-weight: 500; cursor: pointer;
+          background: var(--white); color: var(--brand-primary);
+          text-decoration: none; transition: .3s;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
           font-size: 14px;
         }
 
-        .error-icon {
-          width: 55px;
-          height: 55px;
-          font-size: 22px;
+        .btn-secondary:hover { 
+          background: var(--gray-050); 
+          border-color: var(--brand-primary);
         }
 
-        .notification {
-          right: 10px;
-          top: 10px;
-          max-width: calc(100vw - 20px);
+        .toast {
+          position: fixed; bottom: 30px; right: 30px;
+          background: var(--brand-primary-dark); color: var(--white);
+          padding: 14px 18px; border-radius: var(--radius-md);
+          box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none;
+          transition: opacity .4s, transform .4s;
+          transform: translateY(20px);
         }
 
-        .notification.active {
-          transform: translateX(0);
+        .toast.show { 
+          opacity: 1; 
+          transform: translateY(0); 
+          pointer-events: auto; 
         }
-      }
 
-      .card, .transaction-info {
-        margin-bottom: 1rem;
-      }
-
-      .card:hover, .transaction-info:hover {
-        will-change: auto;
-      }
-
-      .loader {
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        border-top-color: white;
-        animation: spin 1s ease-in-out infinite;
-      }
-      
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-      
-      #countdown.pulse {
-        animation: pulse-text 0.8s infinite;
-      }
-      
-      @keyframes pulse-text {
-        0% {
-          transform: scale(1);
+        /* ===== CUSTOM FAILURE COMPONENTS ===== */
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          text-align: center;
         }
-        50% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      
-      .mobile-view {
-        padding: 12px 18px !important;
-      }
 
-      /* Icon styles */
-      .icon {
-        display: inline-block;
-        font-size: 1.2em;
-        line-height: 1;
-        vertical-align: middle;
-      }
-      
-      .error-icon .icon {
-        font-size: 3rem;
-        color: var(--warning);
-      }
-      
-      .copy-btn .icon {
-        font-size: 1rem;
-      }
-      
-      .retry-btn .icon {
-        font-size: 1.1rem;
-        margin-right: 0.5rem;
-      }
-      
-      .support-btn .icon {
-        font-size: 1.1rem;
-        margin-right: 0.5rem;
-      }
-      
-      .error-item .icon {
-        font-size: 1.5rem;
-        margin-right: 1rem;
-        color: var(--warning);
-      }
-      
-      .secure-badge .icon {
-        font-size: 1rem;
-        margin-right: 0.5rem;
-      }
-      
-      .notification-icon {
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
-      }
+        .details-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+          text-align: left;
+          margin: 20px 0;
+        }
 
-      /* Error details styles */
-      .error-details {
-        margin-top: 2rem;
-      }
+        .detail-item {
+          padding: 16px;
+          background: var(--gray-050);
+          border-radius: var(--radius-md);
+          border-left: 3px solid var(--error-500);
+        }
+
+        .detail-label {
+          font-size: 12px;
+          color: var(--gray-900);
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 6px;
+          opacity: 0.7;
+        }
+
+        .detail-value {
+          font-size: 14px;
+          color: var(--gray-900);
+          font-weight: 600;
+          word-break: break-all;
+        }
+
+        .error-highlight {
+          color: var(--error-500);
+          font-weight: 700;
+          font-size: 16px;
+        }
+
+        .info-card {
+          background: var(--error-050);
+          border: 1px solid var(--error-500);
+          border-radius: var(--radius-md);
+          padding: 20px;
+          margin: 20px 0;
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          text-align: left;
+          animation: slideUpFade 0.6s ease-out 0.7s both;
+        }
+
+        .info-icon {
+          color: var(--error-500);
+          font-size: 20px;
+          margin-top: 2px;
+        }
+
+        .info-content h3 {
+          color: var(--brand-primary-dark);
+          font-size: 16px;
+          font-weight: 600;
+          margin: 0 0 8px 0;
+        }
+
+        .info-content p {
+          color: var(--gray-900);
+          font-size: 14px;
+          line-height: 1.5;
+          margin: 0;
+        }
+
+        .back-home {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          background: var(--white);
+          border: 1px solid var(--gray-200);
+          color: var(--gray-900);
+          padding: 8px 16px;
+          border-radius: var(--radius-sm);
+          text-decoration: none;
+          font-size: 12px;
+          font-weight: 500;
+          transition: .3s;
+        }
+
+        .back-home:hover {
+          background: var(--gray-050);
+          border-color: var(--brand-primary);
+        }
+
+        .footer-security {
+          background: var(--gray-050);
+          padding: 12px 20px;
+          text-align: center;
+          color: var(--gray-900);
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          border-radius: var(--radius-md);
+          margin-top: 20px;
+          opacity: 0.8;
+          animation: slideUpFade 0.6s ease-out 0.8s both;
+        }
+
+        .security-icon {
+          color: var(--success-500);
+        }
+
+        /* ===== ENHANCED KEYFRAMES ===== */
+        @keyframes iconShakeIn {
+          0% {
+            opacity: 0;
+            transform: scale(0.2) rotate(45deg);
+          }
+          25% {
+            opacity: 1;
+            transform: scale(1.1) rotate(-15deg);
+          }
+          50% {
+            transform: scale(0.95) rotate(5deg);
+          }
+          75% {
+            transform: scale(1.05) rotate(-2deg);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+          }
+        }
+
+        @keyframes iconPulseError {
+          0%, 100% {
+            box-shadow: 0 12px 24px rgba(220, 53, 69, 0.25), 0 0 0 0 rgba(220, 53, 69, 0.3);
+          }
+          50% {
+            box-shadow: 0 12px 24px rgba(220, 53, 69, 0.4), 0 0 0 10px rgba(220, 53, 69, 0);
+          }
+        }
+
+        @keyframes rippleError {
+          0% {
+            transform: scale(1);
+            opacity: 0.3;
+          }
+          100% {
+            transform: scale(1.5);
+            opacity: 0;
+          }
+        }
+
+        @keyframes slideUpFade {
+          0% {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+          .details-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+          }
+          
+          .container {
+            margin: 10px;
+          }
+          
+          .back-home {
+            position: static;
+            display: inline-block;
+            margin-bottom: 20px;
+          }
+          
+          body {
+            padding: 10px;
+          }
+        }
     </style>
   </head>
   <body>
@@ -630,81 +412,102 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     
-    <div class="container">
-      <!-- Hero Section with Error Message -->
-      <div class="hero-section">
-        <div class="error-icon">
-          <span class="icon">❌</span>
-        </div>
-        <h1 class="error-heading">Mandate Registration Failed</h1>
-        <p class="error-message">We encountered an issue while processing your mandate registration. Please review the details below.</p>
-        
-        <!-- Transaction Info -->
-        <div class="transaction-info">
-          <span class="transaction-label">Transaction ID:</span>
-          <div class="transaction-id-wrapper">
-            <span id="transaction-id" data-value="<%= mandateDetails.sabpaisaTxnId %>"><%= mandateDetails.sabpaisaTxnId %></span>
-            <button class="copy-btn" aria-label="Copy transaction ID">
-              <span class="icon">📋</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Cards Container -->
-      <div class="cards-container">
-        <!-- Error Details Card -->
-        <div class="card error-details-card">
-          <div class="card-content">
-            <h2>Error Details</h2>
-            <p>Please review the following information to understand what went wrong.</p>
+    <a href="#" class="back-home">Back to Home</a>
+    
+    <main class="container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-icon">✕</div>
+            <h1 class="hero-heading">Mandate Setup Failed</h1>
+            <p class="hero-message">We couldn't complete the e-Mandate registration. But don't worry – your down payment is safe and will be refunded shortly.</p>
             
-            <!-- Error Alert -->
-            <div class="error-alert">
-                <span class="icon">⚠️</span>
-                <div class="error-alert-content">
-                    <div class="error-alert-title">Error Message</div>
-                    <div class="error-alert-message"><%= message %></div>
-                </div>
-            </div>
+            <!-- Transaction ID Pill -->
+            <span class="tx-pill">
+                <span style="color: var(--gray-900); opacity: 0.7; font-size: 12px;">Transaction ID:</span>
+                <span id="transactionId" style="font-family: monospace; color: var(--brand-primary);"><%= mandateDetails.sabpaisaTxnId %></span>
+                <button data-copy data-value="<%= mandateDetails.sabpaisaTxnId %>" onclick="copyToClipboard('<%= mandateDetails.sabpaisaTxnId %>')" style="color: var(--brand-primary);">
+                    📋
+                </button>
+            </span>
+        </div>
+
+        <!-- Status Badge -->
+        <div class="status-badge">
+            ✕ Mandate Failed
+        </div>
+
+        <!-- Transaction Summary Card -->
+        <section class="card error-card">
+            <h2 style="color: var(--brand-primary-dark); margin: 0 0 20px 0; font-size: 20px;">Transaction Summary</h2>
             
-            <!-- Error Details -->
-            <div class="error-details">
-                <div class="error-item">
-                    <span class="icon">⚠️</span>
-                    <div class="error-content">
-                        <h4>Error Code</h4>
-                        <p><%= mandateDetails.responseCode || 'Unknown' %></p>
-                    </div>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Payer Name</div>
+                    <div class="detail-value"><%= mandateDetails.customer_name || 'N/A' %></div>
                 </div>
                 
-                <div class="error-item">
-                    <span class="icon">📝</span>
-                    <div class="error-content">
-                        <h4>Error Message</h4>
-                        <p><%= mandateDetails.responseMessage || 'An unexpected error occurred' %></p>
-                    </div>
+                <div class="detail-item">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-value"><%= mandateDetails.customer_email_id || 'N/A' %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Amount Paid</div>
+                    <div class="detail-value error-highlight">₹<%= mandateDetails.max_amount || '0.00' %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value error-highlight"><%= mandateDetails.registration_status || 'Mandate Setup Failed' %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Error Code</div>
+                    <div class="detail-value"><%= mandateDetails.responseCode || 'N/A' %></div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Error Message</div>
+                    <div class="detail-value"><%= mandateDetails.responseMessage || mandateDetails.bank_status_message || 'An unexpected error occurred' %></div>
                 </div>
             </div>
-            
-            <!-- Redirect Message -->
-            <div class="redirect-message">
-                <span class="pulse-dot"></span>
-                <span>You will be automatically redirected in <span id="countdown">10</span> seconds.</span>
+        </section>
+
+        <!-- Retry Section -->
+        <div class="info-card">
+            <div class="info-icon">🔄</div>
+            <div class="info-content">
+                <h3>Want to Try Again?</h3>
+                <p>You can retry the mandate setup process or contact our support team for assistance.</p>
             </div>
-          </div>
         </div>
-      </div>
-      
-      <!-- Footer -->
-      <div class="footer">
-        <div class="secure-badge">
-          <span class="icon">🔒</span>
-          <span>Secured by e-Nach</span>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 12px; margin: 20px 0;">
+            <a href="#" class="btn-warning">
+                🔄 Retry Mandate Setup
+            </a>
+            
+            <a href="#" class="btn-secondary">
+                💬 Need help? Contact Support
+            </a>
         </div>
-      </div>
-    </div>
-    
+
+        <!-- Download Section -->
+        <a href="#" class="btn-secondary" style="margin-top: 10px;">
+            ⬇️ Download Transaction Receipt
+        </a>
+
+        <!-- Security Footer -->
+        <div class="footer-security">
+            <span class="security-icon">🔒</span>
+            Secured by e-Nach
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Transaction ID copied to clipboard!</div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize copy functionality
@@ -719,21 +522,21 @@
 
         // Initialize copy functionality
         function initCopyFunctionality() {
-            const copyBtn = document.querySelector('.copy-btn');
-            const transactionId = document.getElementById('transaction-id');
+            const copyBtn = document.querySelector('.tx-pill button');
+            const transactionId = document.getElementById('transactionId');
             
             if (copyBtn && transactionId) {
                 copyBtn.addEventListener('click', function() {
-                    const textToCopy = transactionId.getAttribute('data-value') || transactionId.textContent;
+                    const textToCopy = transactionId.textContent;
                     
                     navigator.clipboard.writeText(textToCopy).then(() => {
                         // Change button icon and color temporarily
                         const originalContent = this.innerHTML;
-                        this.innerHTML = '<span class="icon">✓</span>';
-                        this.style.color = 'var(--success)';
+                        this.innerHTML = '✓';
+                        this.style.color = 'var(--success-500)';
                         
                         // Show notification
-                        showNotification('Transaction ID copied to clipboard', '📋');
+                        showToast('Transaction ID copied to clipboard!');
                         
                         // Revert button after 1.5 seconds
                         setTimeout(() => {
@@ -742,48 +545,15 @@
                         }, 1500);
                     }).catch(err => {
                         console.error('Could not copy text: ', err);
-                        showNotification('Failed to copy. Please try again.', '⚠️', true);
+                        showToast('Failed to copy. Please try again.', true);
                     });
                 });
             }
         }
         
-        // Notification system
-        function showNotification(message, icon, isError = false) {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            if (isError) {
-                notification.style.borderLeftColor = 'var(--warning)';
-            }
-            
-            notification.innerHTML = `
-                <span class="notification-icon">${icon}</span>
-                <span class="notification-message">${message}</span>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Show notification with slight delay for better animation
-            setTimeout(() => {
-                notification.classList.add('active');
-            }, 10);
-            
-            // Remove notification after 3 seconds
-            setTimeout(() => {
-                notification.classList.remove('active');
-                setTimeout(() => {
-                    notification.remove();
-                }, 400); // Wait for transition to complete
-            }, 3000);
-        }
-        
         // Countdown timer function
         function startCountdown() {
-            const countdownElement = document.getElementById('countdown');
-            if (!countdownElement) return;
-            
             let seconds = 10; // Starting seconds
-            countdownElement.textContent = seconds;
             
             const interval = setInterval(() => {
                 seconds--;
@@ -795,15 +565,9 @@
                     return;
                 }
                 
-                // Update countdown display
-                countdownElement.textContent = seconds;
-                
                 // Add pulse animation when time is running low
                 if (seconds <= 5) {
-                    countdownElement.style.color = 'var(--error)';
-                    if (seconds <= 3) {
-                        countdownElement.classList.add('pulse');
-                    }
+                    // You can add visual indicators here if needed
                 }
             }, 1000);
         }
@@ -816,13 +580,11 @@
             const form = document.createElement("form");
             form.method = "POST";
             form.action = redirectUrl;
-            form.target = "_blank";
 
             const input = document.createElement("input");
             input.type = "hidden";
             input.name = "enachResponse";
             input.value = enachResponse;
-            input.target = "_blank";
             form.appendChild(input);
 
             document.body.appendChild(form);
@@ -832,12 +594,14 @@
         // Animate elements with staggered timing
         function animateElements() {
             const elements = [
-                '.error-icon',
-                '.error-heading',
-                '.error-message',
-                '.transaction-info',
-                '.error-details-card',
-                '.footer'
+                '.hero-icon',
+                '.hero-heading',
+                '.hero-message',
+                '.tx-pill',
+                '.status-badge',
+                '.error-card',
+                '.info-card',
+                '.footer-security'
             ];
             
             elements.forEach((selector, index) => {
@@ -854,6 +618,70 @@
                 }
             });
         }
+
+        // Copy to clipboard functionality
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Transaction ID copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy. Please try again.', true);
+            });
+        }
+
+        // Show toast notification
+        function showToast(message = 'Transaction ID copied to clipboard!', isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            if (isError) {
+                toast.style.borderLeftColor = 'var(--warning-500)';
+            }
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add button interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Retry button functionality
+            const retryBtn = document.querySelector('.btn-warning');
+            if (retryBtn) {
+                retryBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Add loading state
+                    this.innerHTML = '⏳ Processing...';
+                    this.style.opacity = '0.7';
+                    this.style.pointerEvents = 'none';
+                    
+                    setTimeout(() => {
+                        // Simulate redirect to mandate setup
+                        window.location.href = '/mandate-setup';
+                    }, 1500);
+                });
+            }
+
+            // Support button functionality
+            const supportBtn = document.querySelector('.btn-secondary[href="#"]:not([style*="margin-top"])');
+            if (supportBtn) {
+                supportBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showToast('Redirecting to support...');
+                    setTimeout(() => {
+                        window.location.href = '/support';
+                    }, 1000);
+                });
+            }
+
+            // Download receipt functionality
+            const downloadBtn = document.querySelector('.btn-secondary[style*="margin-top"]');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showToast('Receipt download started');
+                });
+            }
+        });
     </script>
   </body>
 </html>
